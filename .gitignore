@@ -1,0 +1,22 @@
+# CMake fucking noobs files
+CMakeCache.txt
+CMakeFiles
+Makefile
+cmake_install.cmake
+VSproj/
+
+# Compiled Object files
+*.gch
+*.slo
+*.lo
+*.o
+*.tlog
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
