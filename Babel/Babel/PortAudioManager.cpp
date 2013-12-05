@@ -9,7 +9,10 @@ bool	PortAudioManager::init(void)
 {
   this->_err = Pa_Initialize();
   if (this->_err != paNoError)
-      return false;
+  {
+	  std::cerr << this->getError() << std::endl;
+	  return false;
+  }
   return true;
 }
 
@@ -17,7 +20,10 @@ bool	PortAudioManager::cleanup(void)
 {
   this->_err =  Pa_Terminate();
   if (this->_err != paNoError)
-      return false;
+  {
+	  std::cerr << this->getError() << std::endl;
+	  return false;
+  }
   return true;
 }
 
@@ -34,15 +40,21 @@ void	PortAudioManager::playSound(void)
 	this->_outputParams.sampleFormat =  PA_SAMPLE_TYPE;
 	this->_outputParams.suggestedLatency = Pa_GetDeviceInfo( this->_outputParams.device )->defaultLowOutputLatency;
 	this->_outputParams.hostApiSpecificStreamInfo = NULL;
+	std::cout << "now playin back" << std::endl;
 	this->_err = Pa_OpenStream(
 	              &this->_Stream,
 	              NULL, /* no input */
-	              &this->_inputParams,
+	              &this->_outputParams,
 	              SAMPLE_RATE,
 	              FRAMES_PER_BUFFER,
 	              paClipOff,      /* we won't output out of range samples so don't bother clipping them */
 	              &PortAudioManager::playCallback,
 	              this);
+	  if (this->_err != paNoError)
+	  {
+		  std::cerr << this->getError() << std::endl;
+		  return;
+	  }
 	if(this->_Stream)
 	    {
 	        this->_err = Pa_StartStream(this->_Stream);
@@ -104,7 +116,7 @@ int PortAudioManager::playCallback( const void *inputBuffer, void *outputBuffer,
                            PaStreamCallbackFlags statusFlags,
                            void *userData)
 {
-	return ((PortAudioManager*)userData)->memberrecordCallback(inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
+	return ((PortAudioManager*)userData)->memberplayCallback(inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
 }
 
 
@@ -117,11 +129,10 @@ void	PortAudioManager::recordSound(void)
 	int			max, val;
 	double		average;
 
+	std::cout << NUM_SECONDS << " " << SAMPLE_RATE << std::endl;
 	this->_data.maxFrameIndex = totalFrames = NUM_SECONDS * SAMPLE_RATE; /* Record for a few seconds. */
 	this->_data.frameIndex = 0;
 	numSamples = totalFrames * NUM_CHANNELS;
-	std::cout << "totalframes: " << totalFrames << std::endl;
-	std::cout << numSamples << " : numsamples" << std::endl;
 	this->_data.recordedSamples = new float[numSamples]; /* From now on, recordedSamples is initialised. */
 	if( this->_data.recordedSamples == NULL )
 	{
@@ -132,7 +143,6 @@ void	PortAudioManager::recordSound(void)
 	{
 		this->_data.recordedSamples[i] = 0;
 	}
-	//this->_err = Pa_Initialize();
 	this->_inputParams.device = Pa_GetDefaultInputDevice(); /* default input device */
 	if (this->_inputParams.device == paNoDevice) {
 	   std::cerr << "Error: No default input device" << std::endl;
@@ -153,23 +163,30 @@ void	PortAudioManager::recordSound(void)
               paClipOff,      /* we won't output out of range samples so don't bother clipping them */
               &PortAudioManager::recordCallback,
               this);
+    if (this->_err != paNoError)
+        	std::cerr << this->getError() << std::endl;
     this->_err = Pa_StartStream( this->_Stream );
+    if (this->_err != paNoError)
+        	std::cerr << this->getError() << std::endl;
     std::cout << "\n=== Now recording!! Please speak into the microphone. ===\n" << std::endl;
     while( ( this->_err = Pa_IsStreamActive(this->_Stream) ) == 1)
     {
-    	std::cout << "index: " << this->_data.frameIndex << std::endl;
         Pa_Sleep(1000);
+    	std::cout << "index: " << this->_data.frameIndex << std::endl;
     }
     this->_err = Pa_CloseStream(this->_Stream);
+    if (this->_err != paNoError)
+    	std::cerr << this->getError() << std::endl;
     max = 0;
     average = 0.0;
 	for( i=0; i<numSamples; i++ )
 	{
 		val = this->_data.recordedSamples[i];
+		//std::cout << "val:" << val << std::endl;
 		if( val < 0 ) val = -val; /* ABS */
 		if( val > max )
 		{
-			max = val;
+			//std::cout << "max:" << max << std::endl;
 		}
 		average += val;
 	}
@@ -183,15 +200,15 @@ void	PortAudioManager::recordSound(void)
 int PortAudioManager::memberrecordCallback( const void *inputBuffer, void *outputBuffer,
                            unsigned long framesPerBuffer,
                            const PaStreamCallbackTimeInfo* timeInfo,
-                           PaStreamCallbackFlags statusFlags)
+                           PaStreamCallbackFlags statusFlags, void *userData)
 {
+	paTestData	*data = (paTestData*)userData;
 	const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
-	SAMPLE *wptr = &this->_data.recordedSamples[this->_data.frameIndex * NUM_CHANNELS];
+	SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
 	long framesToCalc;
 	long i;
 	int finished;
-	unsigned long framesLeft = &this->_data.maxFrameIndex - &this->_data.frameIndex;
-
+	unsigned long framesLeft = this->_data.maxFrameIndex - this->_data.frameIndex;
 	(void) outputBuffer; /* Prevent unused variable warnings. */
 	(void) timeInfo;
 	(void) statusFlags;
@@ -206,10 +223,12 @@ int PortAudioManager::memberrecordCallback( const void *inputBuffer, void *outpu
 		framesToCalc = framesPerBuffer;
 		finished = paContinue;
 	}
+	//std::cout  << framesToCalc << " framestocalc" <<  std::endl;
 
 	if( inputBuffer == NULL )
 	{
-		for( i=0; i<framesToCalc; i++ )
+
+		//for( i=0; i<framesToCalc; i++ )
 		{
 			*wptr++ = SAMPLE_SILENCE;  /* left */
 			if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
@@ -217,10 +236,15 @@ int PortAudioManager::memberrecordCallback( const void *inputBuffer, void *outpu
 	}
 	else
 	{
+		//std::cout << "inputbuffer NOT null" << std::endl;
 		for( i=0; i<framesToCalc; i++ )
 		{
 			*wptr++ = *rptr++;  /* left */
-			if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+//			std::cout << "readptr:" << *rptr << std::endl;
+//			std::cout << "recordedsamples:" << this->_data.recordedSamples[i] << std::endl;
+//			std::cout << "writeptr:" << *wptr << std::endl;
+			if( NUM_CHANNELS == 2 )
+				*wptr++ = *rptr++;  /* right */
 		}
 	}
 	this->_data.frameIndex += framesToCalc;
@@ -233,10 +257,14 @@ int PortAudioManager::recordCallback( const void *inputBuffer, void *outputBuffe
                            PaStreamCallbackFlags statusFlags,
                            void *userData)
 {
-	return ((PortAudioManager*)userData)->memberrecordCallback(inputBuffer, outputBuffer, framesPerBuffer, timeInfo, statusFlags);
+	return ((PortAudioManager*)userData)->memberrecordCallback(inputBuffer, outputBuffer,
+			framesPerBuffer, timeInfo, statusFlags, ((PortAudioManager*)userData)->getData());
 }
 
-
+paTestData			*PortAudioManager::getData()
+{
+	return &this->_data;
+}
 
 const std::string	&PortAudioManager::getError()
 {

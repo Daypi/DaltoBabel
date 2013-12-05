@@ -43,7 +43,7 @@ typedef struct
     int          frameIndex;
     int          maxFrameIndex;
     SAMPLE      *recordedSamples;
-}paTestData;
+}	paTestData;
 
 class	PortAudioManager
 {
@@ -55,7 +55,7 @@ private:
   paTestData			_data;
   std::string			_errorString;
 
-  int 					memberrecordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags);
+  int 					memberrecordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
   static int 			recordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
   int 					memberplayCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags);
   static int 			playCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
@@ -66,5 +66,6 @@ public:
   void			playSound(void);
   void			recordSound(void);
   const std::string	&getError();
+  paTestData	*getData();
   ~PortAudioManager();
 };
