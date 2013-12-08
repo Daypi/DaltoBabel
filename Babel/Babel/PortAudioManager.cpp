@@ -182,11 +182,10 @@ void	PortAudioManager::recordSound(void)
 	for( i=0; i<numSamples; i++ )
 	{
 		val = this->_data.recordedSamples[i];
-		//std::cout << "val:" << val << std::endl;
 		if( val < 0 ) val = -val; /* ABS */
 		if( val > max )
 		{
-			//std::cout << "max:" << max << std::endl;
+			max = val;
 		}
 		average += val;
 	}
