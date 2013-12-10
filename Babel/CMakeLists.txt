@@ -4,10 +4,15 @@ project(Babel)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_SOURCE_DIR}/bin)
 add_executable(BabelAudioTest
-	Babel/main.cpp
 	Babel/babel_common.h
-	Babel/PortAudioManager.hh
-	Babel/PortAudioManager.cpp)
+	Babel/IAudioIO.hh
+	Babel/ICompressor.hh
+	Babel/OpusCompressor.cpp
+	Babel/OpusCompressor.hh
+	Babel/Portaudio.h
+	Babel/PortaudioIO.cpp
+	Babel/PortaudioIO.hh
+	Babel/main.cpp)
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${MY_DIR})
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE ${MY_DIR})
