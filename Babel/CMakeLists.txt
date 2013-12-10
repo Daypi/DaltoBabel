@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
+
 project(Babel)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_SOURCE_DIR}/bin)
@@ -31,7 +32,14 @@ if(WIN32)
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/silk_fixed.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/silk_float.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/opus.lib)
-#else
+else(WIN32)
 #faire le linkage sur linux ici
-#target_link_libraries(BabelAudioTest)
+#	LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/libs/portaudio)
+	target_link_libraries(BabelAudioTest ${CMAKE_SOURCE_DIR}/libs/portaudio/libportaudio.a
+					rt
+					m
+					asound
+					jack
+					pthread
+					opus)
 endif(WIN32)
