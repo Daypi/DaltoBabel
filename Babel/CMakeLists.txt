@@ -10,8 +10,8 @@ add_executable(BabelAudioTest
 	Babel/OpusCompressor.cpp
 	Babel/OpusCompressor.hh
 	Babel/portaudio.h
-	Babel/PortaudioIO.cpp
-	Babel/PortaudioIO.hh
+	Babel/PortAudioIO.cpp
+	Babel/PortAudioIO.hh
 	Babel/main.cpp)
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${MY_DIR})
