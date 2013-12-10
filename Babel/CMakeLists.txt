@@ -9,7 +9,7 @@ add_executable(BabelAudioTest
 	Babel/ICompressor.hh
 	Babel/OpusCompressor.cpp
 	Babel/OpusCompressor.hh
-	Babel/Portaudio.h
+	Babel/portaudio.h
 	Babel/PortaudioIO.cpp
 	Babel/PortaudioIO.hh
 	Babel/main.cpp)
