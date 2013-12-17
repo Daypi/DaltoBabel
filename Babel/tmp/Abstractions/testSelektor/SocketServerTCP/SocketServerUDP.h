@@ -26,15 +26,15 @@ public:
 	SocketServerUDP();
 	virtual ~SocketServerUDP();
 
-	virtual	void			init(int, int);
-	void					init(int);
-	virtual	unsigned int	checkConnection();
-	virtual	std::vector<unsigned int>&	isReadable();
-	virtual	std::vector<unsigned int>&	isReadable(unsigned int);
-	virtual	std::vector<unsigned int>&	isWritable();
-	virtual	std::vector<unsigned int>&	isWritable(unsigned int);
-	virtual	std::vector<unsigned int>&	send(std::vector<unsigned int>& tab, const char *, int);
-	virtual	std::vector<unsigned int>&	send(unsigned int, const char *, int);
+	virtual	void								init(int, int);
+	void										init(int);
+	virtual	std::pair<unsigned int, char *>		*checkConnection();
+	virtual	std::vector<unsigned int>&			isReadable();
+	virtual	std::vector<unsigned int>&			isReadable(unsigned int);
+	virtual	std::vector<unsigned int>&			isWritable();
+	virtual	std::vector<unsigned int>&			isWritable(unsigned int);
+	virtual	std::vector<unsigned int>&			send(std::vector<unsigned int>& tab, const char *, int);
+	virtual	std::vector<unsigned int>&			send(unsigned int, const char *, int);
 	std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(int);
 	virtual	std::map<unsigned int, std::pair<const char *, int>>&	recv(std::vector<unsigned int>& tab, int);
 	virtual	std::map<unsigned int, std::pair<const char *, int>>&	recv(unsigned int, int);

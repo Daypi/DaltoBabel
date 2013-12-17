@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?PowerDesigner AppLocale="UTF16" ID="{7073FBDC-5A64-42A4-8549-C22BDAEA302D}" Label="" LastModificationDate="1386429268" Name="Client" Objects="70" Symbols="4" Target="C++" TargetLink="Reference" Type="{18112060-1A4B-11D1-83D9-444553540000}" signature="CLD_OBJECT_MODEL" version="15.1.0.2850"?>
+<?PowerDesigner AppLocale="UTF16" ID="{7073FBDC-5A64-42A4-8549-C22BDAEA302D}" Label="" LastModificationDate="1386537901" Name="Client" Objects="60" Symbols="3" Target="C++" TargetLink="Reference" Type="{18112060-1A4B-11D1-83D9-444553540000}" signature="CLD_OBJECT_MODEL" version="15.1.0.2850"?>
 <!-- Veuillez ne pas modifier ce fichier -->
 
 <Model xmlns:a="attribute" xmlns:c="collection" xmlns:o="object">
@@ -968,7 +968,7 @@ NameToCode=No</a:ModelOptionsText>
 <a:Code>Client</a:Code>
 <a:CreationDate>1386426225</a:CreationDate>
 <a:Creator>Crouzet Thomas</a:Creator>
-<a:ModificationDate>1386427798</a:ModificationDate>
+<a:ModificationDate>1386537901</a:ModificationDate>
 <a:Modifier>Crouzet Thomas</a:Modifier>
 <a:DisplayPreferences>[DisplayPreferences]
 
@@ -1383,7 +1383,7 @@ Shadow=0</a:DisplayPreferences>
 <o:AssociationSymbol Id="o5">
 <a:CreationDate>1386427798</a:CreationDate>
 <a:ModificationDate>1386428719</a:ModificationDate>
-<a:Rect>((-53714,-9474), (-50716,-238))</a:Rect>
+<a:Rect>((-53677,-9474), (-50753,-238))</a:Rect>
 <a:ListOfPoints>((-52590,-9474),(-52590,-238))</a:ListOfPoints>
 <a:CornerStyle>1</a:CornerStyle>
 <a:ArrowStyle>3336</a:ArrowStyle>
@@ -2168,7 +2168,7 @@ LABL 0 Arial,8,N</a:FontList>
 <a:Code>C++</a:Code>
 <a:CreationDate>1386426225</a:CreationDate>
 <a:Creator>Crouzet Thomas</a:Creator>
-<a:ModificationDate>1386426225</a:ModificationDate>
+<a:ModificationDate>1386536697</a:ModificationDate>
 <a:Modifier>Crouzet Thomas</a:Modifier>
 <a:TargetModelURL>file:///%_OBJLANG%/C++.xol</a:TargetModelURL>
 <a:TargetModelID>22FB523D-7E45-430F-8069-3A702CF3BE3C</a:TargetModelID>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?PowerDesigner AppLocale="UTF16" ID="{7073FBDC-5A64-42A4-8549-C22BDAEA302D}" Label="" LastModificationDate="1386537901" Name="Client" Objects="60" Symbols="3" Target="C++" TargetLink="Reference" Type="{18112060-1A4B-11D1-83D9-444553540000}" signature="CLD_OBJECT_MODEL" version="15.1.0.2850"?>
+<?PowerDesigner AppLocale="UTF16" ID="{7073FBDC-5A64-42A4-8549-C22BDAEA302D}" Label="" LastModificationDate="1386780514" Name="Client" Objects="60" Symbols="3" Target="C++" TargetLink="Reference" Type="{18112060-1A4B-11D1-83D9-444553540000}" signature="CLD_OBJECT_MODEL" version="15.1.0.2850"?>
 <!-- Veuillez ne pas modifier ce fichier -->
 
 <Model xmlns:a="attribute" xmlns:c="collection" xmlns:o="object">
@@ -1636,9 +1636,9 @@ LABL 0 Arial,8,N</a:FontList>
 <a:Code>status</a:Code>
 <a:CreationDate>1386427060</a:CreationDate>
 <a:Creator>Crouzet Thomas</a:Creator>
-<a:ModificationDate>1386427071</a:ModificationDate>
-<a:Modifier>Crouzet Thomas</a:Modifier>
-<a:Parameter.DataType>std::string</a:Parameter.DataType>
+<a:ModificationDate>1386780295</a:ModificationDate>
+<a:Modifier>mckevin83</a:Modifier>
+<a:Parameter.DataType>std::string&amp;</a:Parameter.DataType>
 <a:ParameterType>I</a:ParameterType>
 </o:Parameter>
 </c:Parameters>
@@ -1671,9 +1671,9 @@ LABL 0 Arial,8,N</a:FontList>
 <a:Code>name</a:Code>
 <a:CreationDate>1386427060</a:CreationDate>
 <a:Creator>Crouzet Thomas</a:Creator>
-<a:ModificationDate>1386427105</a:ModificationDate>
-<a:Modifier>Crouzet Thomas</a:Modifier>
-<a:Parameter.DataType>std::string</a:Parameter.DataType>
+<a:ModificationDate>1386780317</a:ModificationDate>
+<a:Modifier>mckevin83</a:Modifier>
+<a:Parameter.DataType>std::string&amp;</a:Parameter.DataType>
 <a:ParameterType>I</a:ParameterType>
 </o:Parameter>
 </c:Parameters>
@@ -1803,9 +1803,9 @@ LABL 0 Arial,8,N</a:FontList>
 <a:Code>chat</a:Code>
 <a:CreationDate>1386428472</a:CreationDate>
 <a:Creator>Crouzet Thomas</a:Creator>
-<a:ModificationDate>1386428494</a:ModificationDate>
-<a:Modifier>Crouzet Thomas</a:Modifier>
-<a:Parameter.DataType>vector&lt;std::string&gt;</a:Parameter.DataType>
+<a:ModificationDate>1386780514</a:ModificationDate>
+<a:Modifier>mckevin83</a:Modifier>
+<a:Parameter.DataType>vector&lt;std::string&gt;&amp;</a:Parameter.DataType>
 <a:ParameterType>I</a:ParameterType>
 </o:Parameter>
 </c:Parameters>

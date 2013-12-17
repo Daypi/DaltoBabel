@@ -38,7 +38,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 }
 
-unsigned int	SocketServerTCP::checkConnection()
+std::pair<unsigned int, char *>	*SocketServerTCP::checkConnection()
 {
 	ISocket		*tmp;
 	SocketAvd	*tmpCasted;
@@ -63,8 +63,9 @@ unsigned int	SocketServerTCP::checkConnection()
 	++this->_uid;
 	this->_tabSock[this->_uid] = tmpCasted;
 	this->_tabSock[this->_uid]->init(this->_th, &this->_socketPool); //TODO EXECPTION
+//	std::cout << "COUCOU = " << inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr) << std::endl;
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
-	return (this->_uid);
+	return (new std::pair<unsigned int, char *>(this->_uid, inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr)));
 }
 
 std::vector<unsigned int>&	SocketServerTCP::isReadable()
@@ -95,7 +96,9 @@ std::vector<unsigned int>&	SocketServerTCP::isReadable(unsigned int id)
 		return (this->_ids);
 	}
 	else if ((id <= this->_uid) && (id != 0) && (this->_tabSock.find(id) != this->_tabSock.end()) && (this->_tabSock[id]->isReadable()))
+	{
 		this->_ids.push_back(id);
+	}
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 	return (this->_ids);
 }
@@ -320,6 +323,19 @@ void	SocketServerTCP::deleteMap()
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		 delete (it->second.first);
 	this->_map.clear();
+}
+
+std::map<unsigned int, char *>	*SocketServerTCP::getIP()
+{
+	std::map<unsigned int, SocketAvd *>::iterator	it;
+	std::map<unsigned int, char *>					*mapIP = new std::map<unsigned int, char *>;
+
+	mapIP->clear();
+	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
+	{
+		(*mapIP)[(*it).first] = inet_ntoa((*it).second->getInfo().sin_addr);
+	}
+	return (mapIP);
 }
 
 char		*SocketServerTCP::getMyIpAddr()
