@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ContactWindow</class>
+ <widget class="QDialog" name="ContactWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>367</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>DaltoBabel</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="3">
+    <widget class="QListWidget" name="listContact"/>
+   </item>
+   <item row="4" column="1">
+    <widget class="QPushButton" name="chat">
+     <property name="text">
+      <string>CHAT</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QPushButton" name="block">
+     <property name="text">
+      <string>Block contact</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QPushButton" name="remove">
+     <property name="text">
+      <string>Remove contact</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="add">
+     <property name="text">
+      <string>Add contact</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QPushButton" name="call">
+     <property name="text">
+      <string>CALL</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2">
+    <widget class="QPushButton" name="wizz">
+     <property name="text">
+      <string>WIZZ</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>call</tabstop>
+  <tabstop>chat</tabstop>
+  <tabstop>wizz</tabstop>
+  <tabstop>add</tabstop>
+  <tabstop>remove</tabstop>
+  <tabstop>block</tabstop>
+  <tabstop>listContact</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
