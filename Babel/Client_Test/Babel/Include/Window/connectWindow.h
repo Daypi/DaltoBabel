@@ -3,25 +3,29 @@
 
 #include <QMainWindow>
 
+class MyConnectModel;
+
 namespace Ui {
-  class ConnectWindow;
+class ConnectWindow;
 }
 
 class ConnectWindow : public QMainWindow
 {
-  Q_OBJECT
-
+    Q_OBJECT
+    MyConnectModel  *_model;
 public:
-  explicit ConnectWindow(QWidget *parent = 0);
-  ~ConnectWindow();
+    explicit ConnectWindow(MyConnectModel *model, QWidget *parent = 0);
+    ~ConnectWindow();
 
-  void    centerWindow();
+    void    centerWindow();
 
 private slots:
-  void on_valider_clicked();
+    void on_valider_clicked();
 
 private:
-  Ui::ConnectWindow *ui;
+    Ui::ConnectWindow *ui;
 };
+
+#include "Include/Model/myConnectModel.h"
 
 #endif // CONNECTWINDOW_H

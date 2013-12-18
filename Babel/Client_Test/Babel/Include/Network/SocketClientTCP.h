@@ -14,8 +14,6 @@ class	SocketClientTCP : public ISocketClient
 	SeleKtor							_socketPool;
 	Thread<SeleKtor, void, void *>		*_th;
 
-	char								*getMyIpAddr();
-	void								connectAvd(const char *ipAddress, int port);
 public:
 	SocketClientTCP();
 	virtual ~SocketClientTCP();

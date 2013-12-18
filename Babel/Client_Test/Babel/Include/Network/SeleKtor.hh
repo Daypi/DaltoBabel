@@ -30,8 +30,8 @@ public:
 	void								delSocket(SocketAvd *socket);
 	void								routineNetwork(void *param);
 	MutexPool							*getMutex();
-	unsigned int						getNbSocket() const;
-	CondVar								&getCondVar() const;
+	unsigned int							getNbSocket();
+	CondVar								&getCondVar();
 	void								clearWrite(SocketAvd &sock);
 };
 

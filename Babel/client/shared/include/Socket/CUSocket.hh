@@ -22,7 +22,7 @@ protected:
 public:
 	CUSocket(ISocket::TypeSocket type = ISocket::TCP);
 	virtual				~CUSocket();
-	virtual void		bind(int port);
+	virtual void		bind(const char *ipAddress, int port);
 	virtual void		connect(const char *ipAddress, int port);
 	virtual void		listen(int nbConnexion);
 	virtual ISocket		*accept();
