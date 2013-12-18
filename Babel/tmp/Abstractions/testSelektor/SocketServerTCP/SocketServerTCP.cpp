@@ -26,7 +26,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 
 	try
 	{
-		this->bindAvd(port);
+		this->_sock->bind(port);
 		this->_sock->listen(nbListen);
 	}
 	catch (Exception &e)
@@ -63,7 +63,6 @@ std::pair<unsigned int, char *>	*SocketServerTCP::checkConnection()
 	++this->_uid;
 	this->_tabSock[this->_uid] = tmpCasted;
 	this->_tabSock[this->_uid]->init(this->_th, &this->_socketPool); //TODO EXECPTION
-//	std::cout << "COUCOU = " << inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr) << std::endl;
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 	return (new std::pair<unsigned int, char *>(this->_uid, inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr)));
 }
@@ -96,9 +95,7 @@ std::vector<unsigned int>&	SocketServerTCP::isReadable(unsigned int id)
 		return (this->_ids);
 	}
 	else if ((id <= this->_uid) && (id != 0) && (this->_tabSock.find(id) != this->_tabSock.end()) && (this->_tabSock[id]->isReadable()))
-	{
 		this->_ids.push_back(id);
-	}
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 	return (this->_ids);
 }
@@ -149,7 +146,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(std::vector<unsigned int>& tab,
 				this->_tabSock[*it]->send(message, size);
 				this->_tabSock[*it]->iSended();
 			}
-			catch (Exception &e)
+			catch (Exception)
 			{
 				this->closeClient(*it);
 				this->eraseClient(*it);
@@ -181,7 +178,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 				this->_tabSock[id]->send(message, size);
 				this->_tabSock[id]->iSended();
 			}
-			catch (Exception &e)
+			catch (Exception)
 			{
 				this->closeClient(id);
 				this->eraseClient(id);
@@ -220,7 +217,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std:
 			memcpy(tmp_receiv, buffer, tmp_read);
 			this->_map[*it] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 		}
-		catch (Exception &e)
+		catch (Exception)
 		{
 			this->closeClient(*it);
 			this->eraseClient(*it);
@@ -248,7 +245,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsi
 		memcpy(tmp_receiv, buffer, tmp_read);
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
-	catch (Exception &e)
+	catch (Exception)
 	{
 		this->closeClient(id);
 		this->eraseClient(id);
@@ -269,7 +266,7 @@ void	SocketServerTCP::closeServer()
 			{
 				it->second->closeSocketAvd();
 			}
-			catch (Exception &e)
+			catch (Exception)
 			{
 			}
 		}
@@ -336,40 +333,4 @@ std::map<unsigned int, char *>	*SocketServerTCP::getIP()
 		(*mapIP)[(*it).first] = inet_ntoa((*it).second->getInfo().sin_addr);
 	}
 	return (mapIP);
-}
-
-char		*SocketServerTCP::getMyIpAddr()
-{
-#ifdef _WIN32
-	char				ac[80];
-	struct hostent		*phe;
-	struct in_addr		addr;
-
-	if (gethostname(ac, sizeof(ac)) == -1) {
-		std::cerr << "ERROR: gethostname has failed." << std::endl;
-		return (NULL);
-	}
-	if ((phe = gethostbyname(ac)) == 0)
-	{
-		std::cerr << "ERROR: gethostbyname has failed." << std::endl;
-		return (NULL);
-	}
-
-	for (int i = 0; phe->h_addr_list[i] != 0; ++i)
-		memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
-	return (inet_ntoa(addr));
-#else
-	return (NULL);
-#endif // !WIN
-}
-
-void		SocketServerTCP::bindAvd(int port)
-{
-#ifdef _WIN32
-	char	*ipAddr_tmp;
-
-	this->_sock->bind((((ipAddr_tmp = this->getMyIpAddr()) != NULL) ? (ipAddr_tmp) : ("127.0.0.1")), port);
-#else
-	this->_sock->bind("127.0.0.1", port);
-#endif // !WIN	
 }

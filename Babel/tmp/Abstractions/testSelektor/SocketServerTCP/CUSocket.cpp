@@ -41,14 +41,14 @@ CUSocket::~CUSocket()
 
 }
 
-void		CUSocket::bind(const char *ipAddress, int port)
+void		CUSocket::bind(int port)
 {
 	sockaddr_in			service;
 
 	if (this->_func != ISocket::NONE)
 		throw Exception(((this->_func == ISocket::CLIENT) ? ("this socket is client socket.") : ("this socket is already bind to server.")));
 	service.sin_family = AF_INET;
-	service.sin_addr.s_addr = inet_addr(ipAddress);
+	service.sin_addr.s_addr = INADDR_ANY;
 	service.sin_port = htons(port);
 	this->_func = ISocket::SERVER;
 	if (::bind(this->_sock, (SOCKADDR *)&service, sizeof(service)) != 0)

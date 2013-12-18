@@ -20,7 +20,7 @@ protected:
 public:
 	CWSocket(ISocket::TypeSocket type = ISocket::TCP);
 	virtual				~CWSocket();
-	virtual void		bind(const char *ipAddress, int port);
+	virtual void		bind(int port);
 	virtual void		connect(const char *ipAddress, int port);
 	virtual void		listen(int nbConnexion);
 	virtual ISocket		*accept();

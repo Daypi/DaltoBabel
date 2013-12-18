@@ -20,14 +20,12 @@ class	SocketServerUDP : public ISocketServer
 	Thread<SeleKtor, void, void *>								*_th;
 	std::vector<unsigned int>									_sendRet;
 
-	char														*getMyIpAddr();
-	void														bindAvd(int port);
 public:
 	SocketServerUDP();
 	virtual ~SocketServerUDP();
 
-	virtual	void								init(int, int);
-	void										init(int);
+	virtual	void			init(int, int);
+	void					init(int);
 	virtual	std::pair<unsigned int, char *>		*checkConnection();
 	virtual	std::vector<unsigned int>&			isReadable();
 	virtual	std::vector<unsigned int>&			isReadable(unsigned int);
@@ -35,7 +33,7 @@ public:
 	virtual	std::vector<unsigned int>&			isWritable(unsigned int);
 	virtual	std::vector<unsigned int>&			send(std::vector<unsigned int>& tab, const char *, int);
 	virtual	std::vector<unsigned int>&			send(unsigned int, const char *, int);
-	std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(int);
+	std::map<unsigned int, std::pair<const char *, int>>&	recv(int);
 	virtual	std::map<unsigned int, std::pair<const char *, int>>&	recv(std::vector<unsigned int>& tab, int);
 	virtual	std::map<unsigned int, std::pair<const char *, int>>&	recv(unsigned int, int);
 	virtual void	closeClient(unsigned int id);

@@ -49,12 +49,12 @@ bool		SocketAvd::isWritable()
 	return (this->_isWritable);
 }
 
-bool		SocketAvd::isReadable() const
+bool		SocketAvd::isReadable()
 {
 	return (this->_isReadable);
 }
 
-bool		SocketAvd::isAllowWritable() const
+bool		SocketAvd::isAllowWritable()
 {
 	return (this->_allowWritable);
 }
@@ -80,7 +80,7 @@ void		SocketAvd::setSended(bool value)
 	this->_isSend = value;
 }
 
-bool		SocketAvd::isSended() const
+bool		SocketAvd::isSended()
 {
 	return (this->_isSend);
 }
@@ -93,7 +93,7 @@ void		SocketAvd::closeSocketAvd()
 		throw Exception("closesocket of sock has failed.");
 }
 
-bool				SocketAvd::isRead() const
+bool				SocketAvd::isRead()
 {
 	return (this->_isRead);
 }
@@ -103,7 +103,7 @@ void				SocketAvd::setRead(bool value)
 	this->_isRead = value;
 }
 
-bool				SocketAvd::getAskWritable() const
+bool				SocketAvd::getAskWritable()
 {
 	return (this->_askWritable);
 }

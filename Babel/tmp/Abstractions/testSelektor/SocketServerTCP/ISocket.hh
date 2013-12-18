@@ -19,7 +19,7 @@ public:
 		TCP
 	};
 	virtual				~ISocket() {}
-	virtual void		bind(const char *ipAddress, int port) = 0;
+	virtual void		bind(int port) = 0;
 	virtual void		connect(const char *ipAddress, int port) = 0;
 	virtual void		listen(int nbConnexion) = 0;
 	virtual ISocket		*accept() = 0;

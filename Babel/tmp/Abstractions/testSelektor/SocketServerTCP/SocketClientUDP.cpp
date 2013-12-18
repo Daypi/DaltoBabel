@@ -7,7 +7,10 @@ SocketClientUDP::SocketClientUDP()
 
 SocketClientUDP::~SocketClientUDP()
 {
-
+	this->_socketPool.getMutex()->lock("SELEKTOR");
+	delete this->_th;
+	delete this->_sock;
+	this->_socketPool.getMutex()->unLock("SELEKTOR");
 }
 
 void	SocketClientUDP::init(int port, const char *ipAddress)
@@ -26,7 +29,7 @@ void	SocketClientUDP::init(int port, const char *ipAddress)
 
 	try
 	{
-		this->connectAvd(ipAddress, port);
+	  this->_sock->connect(ipAddress, port);
 	}
 	catch (Exception &e)
 	{
@@ -117,43 +120,4 @@ void	SocketClientUDP::close()
 	{
 		throw e;
 	}
-}
-
-char		*SocketClientUDP::getMyIpAddr()
-{
-#ifdef _WIN32
-	char				ac[80];
-	struct hostent		*phe;
-	struct in_addr		addr;
-
-	if (gethostname(ac, sizeof(ac)) == -1) {
-		std::cerr << "ERROR: gethostname has failed." << std::endl;
-		return (NULL);
-	}
-	if ((phe = gethostbyname(ac)) == 0)
-	{
-		std::cerr << "ERROR: gethostbyname has failed." << std::endl;
-		return (NULL);
-	}
-
-	for (int i = 0; phe->h_addr_list[i] != 0; ++i)
-		memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
-	return (inet_ntoa(addr));
-#else
-	return (NULL);
-#endif // !WIN
-}
-
-void		SocketClientUDP::connectAvd(const char *ipAddress, int port)
-{
-#ifdef _WIN32
-	char	*ipAddr_tmp;
-
-	if ((!strcmp(ipAddress, "127.0.0.1")) && ((ipAddr_tmp = this->getMyIpAddr()) != NULL))
-		this->_sock->connect(ipAddr_tmp, port);
-	else
-		this->_sock->connect(ipAddress, port);
-#else
-	this->_sock->connect(ipAddress, port);
-#endif // !WIN	
 }

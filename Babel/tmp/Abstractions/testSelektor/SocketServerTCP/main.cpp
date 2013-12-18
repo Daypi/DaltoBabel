@@ -6,7 +6,7 @@
 
 int		main(void)
 {
-//	SocketClientUDP	sock;
+	//	SocketClientUDP	sock;
 	/*SocketClientTCP	sock;
 	char			buffer[4096];
 	int				bytesRec;
@@ -14,48 +14,48 @@ int		main(void)
 
 	try
 	{
-		sock.init(1337, "127.0.0.1");
-		std::cout << "INIT" << std::endl;
+	sock.init(1337, "127.0.0.1");
+	std::cout << "INIT" << std::endl;
 	}
 	catch (Exception &e)
 	{
-		std::cout << e.what() << std::endl;
+	std::cout << e.what() << std::endl;
 	}
 
 	while (42)
 	{
-		if (sock.isWritable())
-		{
-			char	toto[40];
-			++i;
-			std::cout << "sending : ";
-			sprintf(toto, "%d ", i);
-			try
-			{
-				sock.send(toto, strlen(toto));
-			}
-			catch (Exception &e)
-			{
-				std::cout << e.what() << std::endl;
-			}
-			std::cout << "sended: ";
-		}
-		if (sock.isReadable())
-		{
-			try
-			{
-				bytesRec = 0;
-				std::cout << "reeding : ";
-				sock.recv(buffer, 4098, &bytesRec);
-				std::cout << buffer << "| size readed = " << bytesRec << std::endl;
-			}
-			catch (Exception &e)
-			{
-				std::cout << "server disconnected." << std::endl;
-			}
-		}
-		std::cout << "loop : " << sock.isReadable() << std::endl;
-		Sleep(1000);
+	if (sock.isWritable())
+	{
+	char	toto[40];
+	++i;
+	std::cout << "sending : ";
+	sprintf(toto, "%d ", i);
+	try
+	{
+	sock.send(toto, strlen(toto));
+	}
+	catch (Exception &e)
+	{
+	std::cout << e.what() << std::endl;
+	}
+	std::cout << "sended: ";
+	}
+	if (sock.isReadable())
+	{
+	try
+	{
+	bytesRec = 0;
+	std::cout << "reeding : ";
+	sock.recv(buffer, 4098, &bytesRec);
+	std::cout << buffer << "| size readed = " << bytesRec << std::endl;
+	}
+	catch (Exception &e)
+	{
+	std::cout << "server disconnected." << std::endl;
+	}
+	}
+	std::cout << "loop : " << sock.isReadable() << std::endl;
+	Sleep(1000);
 	}
 	sock.close();
 	return (0);*/
@@ -64,7 +64,7 @@ int		main(void)
 
 
 
-//	SAMPLE USING SERVERTCP
+	//	SAMPLE USING SERVERTCP
 
 
 
@@ -83,43 +83,43 @@ int		main(void)
 	}
 	std::cout << "INIT" << std::endl;
 	while (42)
-	 {
-		 if (sock.isReadable(0).size() == 1)
-		 {
-			 std::cout << "Client is connecting" << std::endl;
-			 ipPair = sock.checkConnection();
-			 std::cout << "Ip = " << ipPair->second << std::endl;
-			 toto = true;
-			 ++uid_client;
-			 std::cout << "connected" << std::endl;
-		 }
-		 if ((toto) && (sock.isReadable(uid_client).size() == 1))
-		 {
-			 tmp = sock.recv(uid_client, 2048);
-			 if (tmp.size() != 1)
-			 {
-				 std::cout << "problem plus de client" << std::endl;
-				 toto = false;
-			 }
-			 else
-			 {
-				 std::cout << "recv = " << tmp[uid_client].first << std::endl;
-				 try
-				 {
-					 if (sock.isWritable(uid_client).size() == 1)
-						 sock.send(uid_client, "Hello World!!!", 14);
-					 std::cout << "send" << std::endl;
-				 }
-				 catch (Exception &ex)
-				 {
-					 std::cout << "send failed client disconnected. = " << ex.what() << std::endl;
+	{
+		if (sock.isReadable(0).size() == 1)
+		{
+			std::cout << "Client is connecting" << std::endl;
+			ipPair = sock.checkConnection();
+			std::cout << "Ip = " << ipPair->second << std::endl;
+			toto = true;
+			++uid_client;
+			std::cout << "connected" << std::endl;
+		}
+		if ((toto) && (sock.isReadable(uid_client).size() == 1))
+		{
+			tmp = sock.recv(uid_client, 2048);
+			if (tmp.size() != 1)
+			{
+				std::cout << "problem plus de client" << std::endl;
+				toto = false;
+			}
+			else
+			{
+				std::cout << "recv = " << tmp[uid_client].first << std::endl;
+				try
+				{
+					if (sock.isWritable(uid_client).size() == 1)
+						sock.send(uid_client, "Hello World!!!", 14);
+					std::cout << "send" << std::endl;
+				}
+				catch (Exception &ex)
+				{
+					std::cout << "send failed client disconnected. = " << ex.what() << std::endl;
 				}
 
-			 }
-		 }
-	 }
-	 sock.closeServer();
-	 return (0);
+			}
+		}
+	}
+	sock.closeServer();
+	return (0);
 
 
 	//SAMPLE USING SERVERUDP

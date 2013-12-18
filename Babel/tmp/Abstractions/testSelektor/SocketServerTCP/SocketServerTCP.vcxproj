@@ -97,7 +97,6 @@
     <ClInclude Include="SocketServerTCP.h" />
     <ClInclude Include="SocketServerUDP.h" />
     <ClInclude Include="Thread.hpp" />
-    <ClInclude Include="triple.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="CWSocket.hh" />

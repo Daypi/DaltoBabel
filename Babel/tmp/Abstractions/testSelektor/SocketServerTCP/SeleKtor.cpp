@@ -8,6 +8,7 @@ SeleKtor::SeleKtor()
 	this->_condVar = new CondVar(this->_mutex.getMutex("SELEKTOR"));
 	FD_ZERO(&this->_wfds);
 	FD_ZERO(&this->_rfds);
+	this->_sockets.clear();
 }
 
 SeleKtor::~SeleKtor()
@@ -105,13 +106,17 @@ void								SeleKtor::routineNetwork(void *param)
 		timeout.tv_usec = 1000;
 		this->_mutex.lock("SELEKTOR");
 		if (this->_sockets.size() <= 0)
+		{
+			this->_mutex.unLock("SELEKTOR");
 			return;
+		}
 		initFdSet(&max);
 		wfds_tmp = this->_wfds;
 		rfds_tmp = this->_rfds;
 		if (Socket::select(max + 1, &rfds_tmp, &wfds_tmp, NULL, &timeout) == -1)
 		{
 			std::cerr << "ERROR: select has failed. " << std::endl;
+			this->_mutex.unLock("SELEKTOR");
 			return;
 		}
 		checkFdSet(&rfds_tmp, &wfds_tmp);
@@ -125,12 +130,12 @@ MutexPool							*SeleKtor::getMutex()
 	return (&this->_mutex);
 }
 
-unsigned int							SeleKtor::getNbSocket() const
+unsigned int							SeleKtor::getNbSocket()
 {
 	return (this->_sockets.size());
 }
 
-CondVar								&SeleKtor::getCondVar() const
+CondVar								&SeleKtor::getCondVar()
 {
 	return (*this->_condVar);
 }

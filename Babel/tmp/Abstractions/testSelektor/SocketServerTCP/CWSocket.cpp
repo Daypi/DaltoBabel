@@ -1,6 +1,6 @@
 #include "CWSocket.hh"
 
-CWSocket::CWSocket(ISocket::TypeSocket type) 
+CWSocket::CWSocket(ISocket::TypeSocket type)
 : _type(type)
 {
 	WSADATA				wsaData;
@@ -49,14 +49,14 @@ CWSocket::~CWSocket()
 		std::cerr << "ERROR: WSACleanup has failed." << std::endl;
 }
 
-void		CWSocket::bind(const char *ipAddress, int port)
+void		CWSocket::bind(int port)
 {
 	sockaddr_in			service;
 
 	if (this->_func != ISocket::NONE)
 		throw Exception(((this->_func == ISocket::CLIENT) ? ("this socket is client socket.") : ("this socket is already bind to server.")));
 	service.sin_family = AF_INET;
-	service.sin_addr.s_addr = inet_addr(ipAddress);
+	service.sin_addr.s_addr = INADDR_ANY;
 	WSAHtons(this->_sock, port, &service.sin_port);
 	this->_func = ISocket::SERVER;
 	if (::bind(this->_sock, (SOCKADDR *)&service, sizeof(service)) != 0)

@@ -23,7 +23,7 @@ void	SocketServerUDP::init(int port)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::UDP);
 	}
-	catch (Exception e)
+	catch (Exception &e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -31,7 +31,7 @@ void	SocketServerUDP::init(int port)
 
 	try
 	{
-		this->bindAvd(port);
+		this->_sock->bind(port);
 	}
 	catch (Exception &e)
 	{
@@ -110,7 +110,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(std::vector<unsigned int>& tab,
 				this->_tabSock[*it]->send(message, size);
 				this->_sock->iSended();
 			}
-			catch (Exception &e)
+			catch (Exception)
 			{
 				this->eraseClient(*it);
 				this->_sendRet.push_back(*it);
@@ -139,7 +139,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(unsigned int id, const char *me
 				this->_tabSock[id]->send(message, size);
 				this->_sock->iSended();
 			}
-			catch (Exception &e)
+			catch (Exception)
 			{
 				this->eraseClient(id);
 				this->_sendRet.push_back(id);
@@ -280,40 +280,4 @@ void		SocketServerUDP::deleteMap()
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		delete (it->second.first);
 	this->_map.clear();
-}
-
-char		*SocketServerUDP::getMyIpAddr()
-{
-#ifdef _WIN32
-	char				ac[80];
-	struct hostent		*phe;
-	struct in_addr		addr;
-
-	if (gethostname(ac, sizeof(ac)) == -1) {
-		std::cerr << "ERROR: gethostname has failed." << std::endl;
-		return (NULL);
-	}
-	if ((phe = gethostbyname(ac)) == 0)
-	{
-		std::cerr << "ERROR: gethostbyname has failed." << std::endl;
-		return (NULL);
-	}
-
-	for (int i = 0; phe->h_addr_list[i] != 0; ++i)
-		memcpy(&addr, phe->h_addr_list[i], sizeof(struct in_addr));
-	return (inet_ntoa(addr));
-#else
-	return (NULL);
-#endif // !WIN
-}
-
-void		SocketServerUDP::bindAvd(int port)
-{
-#ifdef _WIN32
-	char	*ipAddr_tmp;
-
-	this->_sock->bind((((ipAddr_tmp = this->getMyIpAddr()) != NULL) ? (ipAddr_tmp) : ("127.0.0.1")), port);
-#else
-	this->_sock->bind("127.0.0.1", port);
-#endif // !WIN	
 }
