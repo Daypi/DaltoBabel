@@ -14,6 +14,8 @@ public:
   ~MyContactModel();
 
    void    setContacts(std::vector<std::string>& list);
+   void    addContact(const std::string &ip, const std::string &name, QWidget *parent);
+   void    rmContact(const std::string &name);
    std::vector<Contact *>& getContacts();
 };
 

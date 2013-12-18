@@ -23,6 +23,10 @@ public:
 private slots:
   void on_call_clicked();
   void on_chat_clicked();
+  void on_wizz_clicked();
+  void on_add_clicked();
+  void on_remove_clicked();
+  void on_block_clicked();
 
 private:
   Ui::ContactWindow *ui;

@@ -37,6 +37,33 @@ void    MyContactModel::setContacts(std::vector<std::string>& list)
     this->_w.setContacts(_contactList);
 }
 
+
+void    MyContactModel::addContact(const std::string &ip, const std::string &name, QWidget *parent)
+{
+    unsigned int    i;
+    unsigned int    j;
+    bool            find(false);
+
+    for (j = 0; j < _contactList.size(); ++j)
+        if (_contactList[j]->getName() == name)
+            find = true;
+    if (!find)
+        _contactList.push_back(new Contact(ip, name, _contactList.size() + 1, parent));
+    this->_w.setContacts(_contactList);
+}
+
+void    MyContactModel::rmContact(const std::string &name)
+{
+    for (std::vector<Contact *>::iterator i = _contactList.begin(); i != _contactList.end();)
+      {
+        if ((*i)->getName() == name)
+            _contactList.erase(i);
+        if (i != _contactList.end())
+            ++i;
+      }
+    this->_w.setContacts(_contactList);
+}
+
 std::vector<Contact *>  &MyContactModel::getContacts()
 {
     return(this->_contactList);

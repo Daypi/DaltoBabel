@@ -12,7 +12,7 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
     ui(new Ui::ConnectWindow)
 {
     QPalette pal;
-    pal.setBrush(QPalette::Background, QBrush(QPixmap("/home/mckevin/Projects/image.jpg")));
+    pal.setBrush(QPalette::Background, QBrush(QPixmap("Media/image.jpg")));
     this->setPalette(pal);
     ui->setupUi(this);
     centerWindow();
