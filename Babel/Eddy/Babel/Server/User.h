@@ -3,7 +3,6 @@
 #include						<string>
 #include						<vector>
 #include						"IUser.h"
-#include						"Contact.h"
 #include						"PacketFactory.h"
 #include						"TimeStamp.h"
 
@@ -13,7 +12,6 @@ class							User : public IUser
 	std::string					_ip;
 	std::string					_name;
 	bool						_connected;
-	std::vector<Contact *>		_contactList;
 	unsigned int				_sockId;
 	PacketFactory				_packetFactory;
 	TimeStamp					_timeStamp;

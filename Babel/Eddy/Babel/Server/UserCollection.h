@@ -8,12 +8,11 @@ class						UserCollection
 {
 	std::vector<User *>		_userList;
 
+	unsigned int			newId() const;
+
 public:
 	UserCollection();
 	virtual ~UserCollection();
-
-	void					save();
-	void					load();
 
 	bool					add(User *);
 	bool					add(unsigned int, const std::string& name = "", const std::string& ip = "");

@@ -6,6 +6,7 @@
 #include													"UserCollection.h"
 #include													"Contact.h"
 #include													"SocketServerTCP.h"
+#include													"AccountManager.h"
 
 class														Server
 {
@@ -13,14 +14,14 @@ class														Server
 	int														_nbListen;
 	bool													_started;
 	UserCollection											_userCollection;
-	User													*_currentUser;
+	AccountManager											_accountManager;
 
 	SocketServerTCP											_sockTCP;
 	std::queue<std::pair<Packet *, unsigned int> >			_toSendTCP;
 	std::map<unsigned int, std::pair<const char *, int> >	_received;
 	std::vector<unsigned int>								_clientList;
 
-	typedef void (Server::*instructionPtr)();
+	typedef void (Server::*instructionPtr)(User *, Packet *);
 
 	std::vector<Server::instructionPtr>						_instruction;
 
@@ -59,22 +60,22 @@ public:
 	void													sendTCP();
 
 	// Instruction methods
-	void													list();
-	void													call();
-	void													hangUp();
-	void													statusText();
-	void													status();
-	void													acceptCall();
-	void													rejectCall();
-	void													login();
-	void													createAccount();
-	void													addContact();
-	void													removeContact();
-	void													blockContact();
-	void													chat();
-	void													error();
-	void													handshake();
-	void													ping();
+	void													list(User *, Packet *);
+	void													call(User *, Packet *);
+	void													hangUp(User *, Packet *);
+	void													statusText(User *, Packet *);
+	void													status(User *, Packet *);
+	void													acceptCall(User *, Packet *);
+	void													rejectCall(User *, Packet *);
+	void													login(User *, Packet *);
+	void													createAccount(User *, Packet *);
+	void													addContact(User *, Packet *);
+	void													removeContact(User *, Packet *);
+	void													blockContact(User *, Packet *);
+	void													chat(User *, Packet *);
+	void													error(User *, Packet *);
+	void													handshake(User *, Packet *);
+	void													ping(User *, Packet *);
 
 	void													addContact(const User&, const Contact&);
 	void													rmContact(const User&, const Contact&);

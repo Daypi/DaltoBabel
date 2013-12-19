@@ -64,6 +64,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Account.cpp" />
+    <ClCompile Include="AccountManager.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="CondVar.cpp" />
     <ClCompile Include="Contact.cpp" />
@@ -86,6 +88,8 @@
     <ClCompile Include="UserCollection.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Account.h" />
+    <ClInclude Include="AccountManager.h" />
     <ClInclude Include="CircularBuffer.hpp" />
     <ClInclude Include="CondVar.hh" />
     <ClInclude Include="Contact.h" />

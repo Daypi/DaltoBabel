@@ -60,18 +60,18 @@ public:
 
 	void						show();
 
-	template<typename T, int byteSize = sizeof(T)>
+	template<typename T>
 	void						appendToData(short id, T data)
 	{
 		union					uConvert
 		{
 			T					data;
-			char				tab[byteSize];
+			char				tab[sizeof(T)];
 		}						convert;
 
 		convert.data = data;
 		memcpy(this->_data + this->_actualDataSize, &id, 2);
-		memcpy(this->_data + this->_actualDataSize + 2, convert.tab, byteSize);
+		memcpy(this->_data + this->_actualDataSize + 2, convert.tab, sizeof(T));
 		this->_actualDataSize += 2 + byteSize;
 	}
 };

@@ -38,8 +38,9 @@ void									Server::start()
 	unsigned int						i;
 	std::pair<unsigned int, char *>		ret;
 	Packet								*packet;
+	User								*user;
 
-	this->_userCollection.load();
+	this->_accountManager.load();
 	this->_started = true;
 	while (this->_started)
 	{
@@ -50,21 +51,22 @@ void									Server::start()
 			if (this->_clientList[i] == 0)
 			{
 				ret = this->_sockTCP.checkConnection();
+				std::cout << "Client " << ret.first << " is connecting : " << ret.second << std::endl;
 				if (this->_userCollection.add(ret.first, "", ret.second))
-					std::cout << "Client " << ret.first << " is connecting : " << ret.second << std::endl;
+					std::cout << "Client added" << std::endl;
 			}
 			else
 			{
-				this->_currentUser = this->_userCollection.getUserBySockId(this->_clientList[i]);
+				user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 				std::cout << "Client = " << this->_clientList[i] << std::endl;
-				packet = this->getPacket(this->_currentUser);
+				packet = this->getPacket(user);
 				if (packet && packet->getInstruction() < Server::ENUM_COUNT)
-					(this->*(this->_instruction[packet->getInstruction()]))();
+					(this->*(this->_instruction[packet->getInstruction()]))(user, packet);
 			}
 		}
 		this->sendTCP();
 	}
-	this->_userCollection.save();
+	this->_accountManager.save();
 }
 
 void			Server::stop()
@@ -81,9 +83,9 @@ Packet					*Server::getPacket(User *user)
 	this->_received = this->_sockTCP.recv(user->getSockId(), 1500);
 	if (this->_received.size() == 0)
 	{
+		//user->disconnect();
+		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on recv" << std::endl;
-		//this->_userCollection.removeUserById(user->getUID());
-		user->disconnect();
 	}
 	else
 	{
@@ -113,10 +115,10 @@ void									Server::sendTCP()
 					user = this->_userCollection.getUserById(this->_clientList[i]);
 					if (user)
 					{
-						user->disconnect();
+						//user->disconnect();
+						this->_userCollection.removeUserById(user->getUID());
 						std::cout << "Player Disconnected on send" << std::endl;
 					}
-					//this->removeUser(this->_clientList[i]);
 				}
 				delete packet.first;
 				this->_toSendTCP.pop();
@@ -129,66 +131,66 @@ void									Server::sendTCP()
 	}
 }
 
-void				Server::list()
+void				Server::list(User *user, Packet *packet)
 {
 }
 
-void				Server::call()
+void				Server::call(User *user, Packet *packet)
 {
 }
 
-void				Server::hangUp()
+void				Server::hangUp(User *user, Packet *packet)
 {
 }
 
-void				Server::statusText()
+void				Server::statusText(User *user, Packet *packet)
 {
 }
 
-void				Server::status()
+void				Server::status(User *user, Packet *packet)
 {
 }
 
-void				Server::acceptCall()
+void				Server::acceptCall(User *user, Packet *packet)
 {
 }
 
-void				Server::rejectCall()
+void				Server::rejectCall(User *user, Packet *packet)
 {
 }
 
-void				Server::login()
+void				Server::login(User *user, Packet *packet)
 {
 }
 
-void				Server::createAccount()
+void				Server::createAccount(User *user, Packet *packet)
 {
 }
 
-void				Server::addContact()
+void				Server::addContact(User *user, Packet *packet)
 {
 }
 
-void				Server::removeContact()
+void				Server::removeContact(User *user, Packet *packet)
 {
 }
 
-void				Server::blockContact()
+void				Server::blockContact(User *user, Packet *packet)
 {
 }
 
-void				Server::chat()
+void				Server::chat(User *user, Packet *packet)
 {
 }
 
-void				Server::error()
+void				Server::error(User *user, Packet *packet)
 {
 }
 
-void				Server::handshake()
+void				Server::handshake(User *user, Packet *packet)
 {
 }
 
-void				Server::ping()
+void				Server::ping(User *user, Packet *packet)
 {
 }

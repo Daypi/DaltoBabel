@@ -1,5 +1,3 @@
-#include		<fstream>
-#include		<iostream>
 #include		"UserCollection.h"
 
 UserCollection::UserCollection()
@@ -15,24 +13,6 @@ UserCollection::~UserCollection()
 	this->_userList.clear();
 }
 
-void				UserCollection::save()
-{
-	std::fstream	fs("ContactList.sav", std::ios::in | std::ios::out | std::ios::binary);
-
-	if (!fs)
-		std::cerr << "Could not open ContactList.sav" << std::endl;
-	fs.write(reinterpret_cast<const char *>(this), sizeof(UserCollection));
-}
-
-void				UserCollection::load()
-{
-	std::fstream	fs("ContactList.sav", std::ios::in | std::ios::out | std::ios::binary);
-
-	if (!fs)
-		std::cerr << "Could not open ContactList.sav" << std::endl;
-	fs.read(reinterpret_cast<char *>(this), sizeof(UserCollection));
-}
-
 bool			UserCollection::add(User *user)
 {
 	if (!user || this->getUserById(user->getUID()))
@@ -46,9 +26,9 @@ bool			UserCollection::add(unsigned int sockId, const std::string& name, const s
 	User		*user;
 
 	user = this->getUserByIp(ip);
-	if (user && user->connected())
+	if (user/* && user->connected()*/)
 		return (false);
-	user = new User(this->_userList.size(), name, ip);
+	user = new User(this->newId(), name, ip);
 	user->setSockId(sockId);
 	this->_userList.push_back(user);
 	return (true);
@@ -173,4 +153,16 @@ void								UserCollection::removeUserByName(const char *name)
 	}
 	if (found)
 		this->_userList.erase(tmp);
+}
+
+unsigned int		UserCollection::newId() const
+{
+	unsigned int	id = 0;
+
+	for (unsigned int i = 0; i < this->_userList.size(); ++i)
+	{
+		if (this->_userList[i]->getUID() > id)
+			id = this->_userList[i]->getUID();
+	}
+	return (id + 1);
 }
