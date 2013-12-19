@@ -41,11 +41,10 @@ void    MyContactModel::setContacts(std::vector<std::string>& list)
 void    MyContactModel::addContact(const std::string &ip, const std::string &name, QWidget *parent)
 {
     unsigned int    i;
-    unsigned int    j;
     bool            find(false);
 
-    for (j = 0; j < _contactList.size(); ++j)
-        if (_contactList[j]->getName() == name)
+    for (i = 0; i < _contactList.size(); ++i)
+        if (_contactList[i]->getName() == name)
             find = true;
     if (!find)
         _contactList.push_back(new Contact(ip, name, _contactList.size() + 1, parent));
