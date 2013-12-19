@@ -19,3 +19,8 @@ void    MyConnectModel::connect(const std::string &ip, int port)
         throw Exception(e);
     }
 }
+
+Network&    MyConnectModel::getNetwork()
+{
+    return (this->_net);
+}

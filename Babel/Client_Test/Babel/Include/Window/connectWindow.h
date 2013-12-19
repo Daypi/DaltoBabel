@@ -2,6 +2,7 @@
 #define CONNECTWINDOW_H
 
 #include <QMainWindow>
+#include <QMessageBox>
 
 class MyConnectModel;
 

@@ -1,7 +1,8 @@
 #include "Include/Model/myContactModel.h"
 
-MyContactModel::MyContactModel(QWidget *parent)
-  : _w(this, parent)
+MyContactModel::MyContactModel(Network *net, QWidget *parent)
+  : _net(net),
+    _w(this, parent)
 {
   std::vector<std::string> test;
 

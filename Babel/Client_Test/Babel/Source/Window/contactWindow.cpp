@@ -23,6 +23,7 @@ void    ContactWindow::setContacts(std::vector<Contact *>& list)
   unsigned int  i;
 
   size = list.size();
+  this->ui->listContact->clear();
   for (i = 0; i < size; ++i)
     {
       this->ui->listContact->addItem(list[i]->getName().c_str());

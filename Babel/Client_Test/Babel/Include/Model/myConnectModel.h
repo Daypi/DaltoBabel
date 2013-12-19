@@ -12,7 +12,8 @@ public:
     MyConnectModel(QWidget *parent = 0);
     ~MyConnectModel();
 
-    void    connect(const std::string &ip, int port);
+    void        connect(const std::string &ip, int port);
+    Network&    getNetwork();
 };
 
 #endif // MYCONNECTMODEL_H

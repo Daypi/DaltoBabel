@@ -2,15 +2,16 @@
 #define MYCONTACTW_H
 
 #include "Include/Model/contact.h"
+#include "Include/Network/network.h"
 #include "Include/Window/contactWindow.h"
 
 class MyContactModel
 {
   std::vector<Contact *>  _contactList;
+  Network                 *_net;
   ContactWindow           _w;
-
 public:
-  MyContactModel(QWidget *parent = 0);
+  MyContactModel(Network *net, QWidget *parent = 0);
   ~MyContactModel();
 
    void    setContacts(std::vector<std::string>& list);

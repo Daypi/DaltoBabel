@@ -33,17 +33,20 @@ void    ConnectWindow::centerWindow()
 
 void    ConnectWindow::on_valider_clicked()
 {
+    QMessageBox msgBox;
+
     if (ui->editLogin->text().size() > 0 && ui->editMdp->text().size() > 0)
     {
         try
         {
             this->_model->connect(ui->editLogin->text().toStdString(), ui->editMdp->text().toInt());
             this->close();
-            MyContactModel *w = new MyContactModel();
+            MyContactModel *w = new MyContactModel(&(this->_model->getNetwork()));
         }
         catch (Exception &e)
         {
-            std::cout << e.what() << std::endl;
+            msgBox.setText(e.what());
+            msgBox.exec();
         }
     }
 }

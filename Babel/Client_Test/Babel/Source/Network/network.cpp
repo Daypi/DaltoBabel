@@ -29,11 +29,10 @@ void	Network::connect(const std::string &ip, int port)
         }
         catch (Exception &e)
         {
-            std::cout << e.what() << std::endl;
             delete _sockUDP;
             _sockUDP = NULL;
             _init = false;
-            return;
+            throw Exception(e);
         }
         this->_sockTCP = new SocketClientTCP;
         try
@@ -42,11 +41,10 @@ void	Network::connect(const std::string &ip, int port)
         }
         catch (Exception &e)
         {
-            std::cout << e.what() << std::endl;
             delete _sockTCP;
             _sockTCP = NULL;
             _init = false;
-            return;
+            throw Exception(e);
         }
         _init = true;
     }
@@ -86,121 +84,116 @@ void	Network::connect(const std::string &ip, int port)
 //    }
 //}
 
-//void	Network::handleNetwork()
-//{
-//    if (_init)
-//    {
-//        handleNetworkUDP();
-//        handleNetworkTCP();
-//        handlePackets();
-//    }
-//}
+void	Network::handleNetwork()
+{
+    if (_init)
+    {
+        try
+        {
+            handleNetworkUDP();
+            handleNetworkTCP();
+        }
+        catch (Exception &e)
+        {
+            throw Exception(e);
+        }
+        //        handlePackets();
+    }
+}
 
-//void	Network::pushUDP(Packet *packet)
-//{
-//    this->_sendQueueUDP.push(packet);
-//}
+void	Network::pushUDP(Packet *packet)
+{
+    this->_sendQueueUDP.push(packet);
+}
 
-//void	Network::pushTCP(Packet *packet)
-//{
-//    this->_sendQueueTCP.push(packet);
-//}
+void	Network::pushTCP(Packet *packet)
+{
+    this->_sendQueueTCP.push(packet);
+}
 
-//int     Network::getUID()
-//{
-//    return _reqUID++;
-//}
+int     Network::getUID()
+{
+    return _reqUID++;
+}
 
 
-//void	Network::handleNetworkUDP()
-//{
-//	if (_sendQueueUDP.empty() == false && _sockUDP->isWritable())
-//	{
-//		Packet	*packet = this->_sendQueueUDP.front();
-//		this->_sendQueueUDP.pop();
-//		try
-//		{
-//			_sockUDP->send(packet->serialize(), packet->size());
-//		}
-//		catch (Exception &e)
-//		{
-//			std::cout << "erreur :" << e.what() << std::endl;
-//			delete _sockUDP;
-//			_sockUDP = NULL;
-//			this->_controller->display.setDisplay(RType::Controller::Display::MENU, true);
-//			this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
-//			_init = false;
-//			this->_controller->display.getWindow()->close();
-//		}
-//		delete packet;
-//	}
-//	if (_sockUDP->isReadable())
-//	{
-//		char buffer[4098];
-//		int rdSize;
+void	Network::handleNetworkUDP()
+{
+    if (_sendQueueUDP.empty() == false && _sockUDP->isWritable())
+    {
+        Packet	*packet = this->_sendQueueUDP.front();
+        this->_sendQueueUDP.pop();
+        try
+        {
+//            _sockUDP->send(packet->serialize(), packet->size());
+        }
+        catch (Exception &e)
+        {
+            delete _sockUDP;
+            _sockUDP = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        delete packet;
+    }
+    if (_sockUDP->isReadable())
+    {
+        char buffer[4098];
+        int rdSize;
 
-//		try
-//		{
-//			_sockUDP->recv(buffer, 4096, &rdSize);
-//		}
-//		catch (Exception &e)
-//		{
-//			std::cout << "erreur :" << e.what() << std::endl;
-//			delete _sockUDP;
-//			_sockUDP = NULL;
-//			this->_controller->display.setDisplay(RType::Controller::Display::MENU, true);
-//			this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
-//			_init = false;
-//			this->_controller->display.getWindow()->close();
-//		}
-//		_factory.feed(buffer, rdSize);
-//	}
-//}
+        try
+        {
+ //           _sockUDP->recv(buffer, 4096, &rdSize);
+        }
+        catch (Exception &e)
+        {
+            delete _sockUDP;
+            _sockUDP = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        _factory.feed(buffer, rdSize);
+    }
+}
 
-//void	Network::handleNetworkTCP()
-//{
-//	if (_sendQueueTCP.empty() == false && _sockTCP->isWritable())
-//	{
-//		Packet	*packet = this->_sendQueueTCP.front();
-//		this->_sendQueueTCP.pop();
-//		try
-//		{
-//			_sockTCP->send(packet->serialize(), packet->size());
-//		}
-//		catch (Exception &e)
-//		{
-//			std::cout << "erreur :" << e.what() << std::endl;
-//			delete _sockTCP;
-//			_sockTCP = NULL;
-//			this->_controller->display.setDisplay(RType::Controller::Display::MENU, true);
-//			this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
-//			_init = false;
-//			this->_controller->display.getWindow()->close();
-//		}
-//		delete packet;
-//	}
-//	if (_sockTCP->isReadable())
-//	{
-//		char buffer[4096];
-//		int rdSize;
+void	Network::handleNetworkTCP()
+{
+    if (_sendQueueTCP.empty() == false && _sockTCP->isWritable())
+    {
+        Packet	*packet = this->_sendQueueTCP.front();
+        this->_sendQueueTCP.pop();
+        try
+        {
+  //          _sockTCP->send(packet->serialize(), packet->size());
+        }
+        catch (Exception &e)
+        {
+            delete _sockTCP;
+            _sockTCP = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        delete packet;
+    }
+    if (_sockTCP->isReadable())
+    {
+        char buffer[4096];
+        int rdSize;
 
-//		try
-//		{
-//			_sockTCP->recv(buffer, 4096, &rdSize);
-//		}
-//		catch (Exception &e)
-//		{
-//			std::cout << "erreur :" << e.what() << std::endl;
-//			delete _sockTCP;
-//			_sockTCP = NULL;
-//			this->_controller->display.setDisplay(RType::Controller::Display::MENU, true);
-//			this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
-//			_init = false;
-//			this->_controller->display.getWindow()->close();
-//		}
-//		_factory.feed(buffer, rdSize);
-//	}
-//}
+        try
+        {
+  //          _sockTCP->recv(buffer, 4096, &rdSize);
+        }
+        catch (Exception &e)
+        {
+            delete _sockTCP;
+            _sockTCP = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        _factory.feed(buffer, rdSize);
+    }
+}
 
 //void	Network::getLogin(Packet *packet)
 //{
