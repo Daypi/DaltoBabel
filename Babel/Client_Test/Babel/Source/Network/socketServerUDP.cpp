@@ -1,4 +1,4 @@
-#include "SocketServerUDP.h"
+#include "Include/Network/SocketServerUDP.h"
 
 SocketServerUDP::SocketServerUDP()
 {
@@ -156,7 +156,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(unsigned int id, const char *me
 	return (this->_sendRet);
 }
 
-std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(int size)
 {
 	char						buffer[4096];
 	SocketAvd					*tmpCasted;
@@ -211,13 +211,13 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(int 
 	return (this->_map);
 }
 
-std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(std::vector<unsigned int>& tab, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(std::vector<unsigned int>& tab, int size)
 {
 	(void)tab;
 	return (this->recv(size));
 }
 
-std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(unsigned int id, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(unsigned int id, int size)
 {
 	(void)id;
 	return (this->recv(size));
@@ -276,7 +276,7 @@ bool			SocketServerUDP::checkClientUDP(sockaddr_in one, sockaddr_in two)
 
 void		SocketServerUDP::deleteMap()
 {
-	std::map<unsigned int, std::pair<const char *, int>>::iterator	it;
+    std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		delete (it->second.first);

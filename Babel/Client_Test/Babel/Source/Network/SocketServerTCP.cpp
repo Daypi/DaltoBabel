@@ -1,4 +1,4 @@
-#include "SocketServerTCP.h"
+#include "Include/Network/SocketServerTCP.h"
 
 SocketServerTCP::SocketServerTCP()
 {
@@ -196,7 +196,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 	return (this->_sendRet);
 }
 
-std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std::vector<unsigned int>& tab, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std::vector<unsigned int>& tab, int size)
 {
 	std::vector<unsigned int>::iterator	it;
 	char	buffer[4096];
@@ -228,7 +228,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std:
 	return (this->_map);
 }
 
-std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsigned int id, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(unsigned int id, int size)
 {
 	char	buffer[4096];
 	int		tmp_read = 0;
@@ -316,7 +316,7 @@ void	SocketServerTCP::eraseClient(unsigned int id)
 
 void	SocketServerTCP::deleteMap()
 {
-	std::map<unsigned int, std::pair<const char *, int>>::iterator	it;
+    std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		 delete (it->second.first);
