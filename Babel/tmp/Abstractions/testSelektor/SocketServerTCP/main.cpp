@@ -70,7 +70,7 @@ int		main(void)
 
 	SocketServerTCP	sock;
 	std::map<unsigned int, std::pair<const char *, int>> tmp;
-	std::pair<unsigned int, char *>						*ipPair;
+	std::pair<unsigned int, char *>						ipPair;
 	bool toto = false;
 	unsigned int uid_client = 0;
 	try
@@ -88,7 +88,7 @@ int		main(void)
 		{
 			std::cout << "Client is connecting" << std::endl;
 			ipPair = sock.checkConnection();
-			std::cout << "Ip = " << ipPair->second << std::endl;
+			std::cout << "Ip = " << ipPair.second << std::endl;
 			toto = true;
 			++uid_client;
 			std::cout << "connected" << std::endl;

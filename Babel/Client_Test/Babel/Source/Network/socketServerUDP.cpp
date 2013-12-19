@@ -42,9 +42,10 @@ void	SocketServerUDP::init(int port)
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 }
 
-std::pair<unsigned int, char *>	*SocketServerUDP::checkConnection()
+std::pair<unsigned int, char *>	&SocketServerUDP::checkConnection()
 {
-	return (new std::pair<unsigned int, char *>(0, "\0"));
+	this->_ipPair = std::pair<unsigned int, char *>(this->_uid, "127.0.0.1");
+	return (this->_ipPair);
 }
 
 bool	SocketServerUDP::isIAmReadable()

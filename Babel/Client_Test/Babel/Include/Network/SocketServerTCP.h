@@ -18,13 +18,14 @@ class	SocketServerTCP : public ISocketServer
 	SeleKtor													_socketPool;
 	Thread<SeleKtor, void, void *>								*_th;
 	std::vector<unsigned int>									_sendRet;
+	std::pair<unsigned int, char *>								_ipPair;
 
 public:
 	SocketServerTCP();
 	virtual ~SocketServerTCP();
 
 	virtual	void			init(int, int);
-	virtual	std::pair<unsigned int, char *>	*checkConnection();
+	virtual	std::pair<unsigned int, char *>	&checkConnection();
 	virtual	std::vector<unsigned int>&		isReadable();
 	virtual	std::vector<unsigned int>&		isReadable(unsigned int);
 	virtual	std::vector<unsigned int>&		isWritable();

@@ -38,7 +38,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 }
 
-std::pair<unsigned int, char *>	*SocketServerTCP::checkConnection()
+std::pair<unsigned int, char *>	&SocketServerTCP::checkConnection()
 {
 	ISocket		*tmp;
 	SocketAvd	*tmpCasted;
@@ -64,7 +64,8 @@ std::pair<unsigned int, char *>	*SocketServerTCP::checkConnection()
 	this->_tabSock[this->_uid] = tmpCasted;
 	this->_tabSock[this->_uid]->init(this->_th, &this->_socketPool); //TODO EXECPTION
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
-	return (new std::pair<unsigned int, char *>(this->_uid, inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr)));
+	this->_ipPair = std::pair<unsigned int, char *>(this->_uid, inet_ntoa(this->_tabSock[this->_uid]->getInfo().sin_addr));
+	return (this->_ipPair);
 }
 
 std::vector<unsigned int>&	SocketServerTCP::isReadable()
@@ -246,7 +247,7 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(uns
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
 	catch (Exception)
-    {
+	{
 		this->closeClient(id);
 		this->eraseClient(id);
 	}
