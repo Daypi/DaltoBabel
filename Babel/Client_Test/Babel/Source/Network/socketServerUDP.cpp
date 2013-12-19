@@ -1,4 +1,4 @@
-#include "Include/Network/SocketServerUDP.h"
+#include "SocketServerUDP.h"
 
 SocketServerUDP::SocketServerUDP()
 {
@@ -42,9 +42,10 @@ void	SocketServerUDP::init(int port)
 	this->_socketPool.getMutex()->unLock("SELEKTOR");
 }
 
-std::pair<unsigned int, char *>	*SocketServerUDP::checkConnection()
+std::pair<unsigned int, char *>	&SocketServerUDP::checkConnection()
 {
-	return (new std::pair<unsigned int, char *>(0, "\0"));
+	this->_ipPair = std::pair<unsigned int, char *>(this->_uid, "127.0.0.1");
+	return (this->_ipPair);
 }
 
 bool	SocketServerUDP::isIAmReadable()
@@ -155,7 +156,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(unsigned int id, const char *me
 	return (this->_sendRet);
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(int size)
+std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(int size)
 {
 	char						buffer[4096];
 	SocketAvd					*tmpCasted;
@@ -210,13 +211,13 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(int
 	return (this->_map);
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(std::vector<unsigned int>& tab, int size)
+std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(std::vector<unsigned int>& tab, int size)
 {
 	(void)tab;
 	return (this->recv(size));
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(unsigned int id, int size)
+std::map<unsigned int, std::pair<const char *, int>>&	SocketServerUDP::recv(unsigned int id, int size)
 {
 	(void)id;
 	return (this->recv(size));
@@ -275,7 +276,7 @@ bool			SocketServerUDP::checkClientUDP(sockaddr_in one, sockaddr_in two)
 
 void		SocketServerUDP::deleteMap()
 {
-    std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
+	std::map<unsigned int, std::pair<const char *, int>>::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		delete (it->second.first);

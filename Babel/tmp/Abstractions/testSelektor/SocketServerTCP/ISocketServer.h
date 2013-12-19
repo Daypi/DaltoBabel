@@ -11,8 +11,8 @@ class	ISocketServer
 public:
 	virtual ~ISocketServer() {}
 
-	virtual	void						init(int, int) = 0;
-	virtual	std::pair<unsigned int, char *>	*checkConnection() = 0;
+	virtual	void							init(int, int) = 0;
+	virtual	std::pair<unsigned int, char *>	&checkConnection() = 0;
 	virtual	std::vector<unsigned int>&		isReadable() = 0;
 	virtual	std::vector<unsigned int>&		isReadable(unsigned int) = 0;
 	virtual	std::vector<unsigned int>&		isWritable() = 0;
