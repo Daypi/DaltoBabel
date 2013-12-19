@@ -21,6 +21,12 @@ public:
 private slots:
   void on_close_clicked();
 
+  void on_send_clicked();
+
+  void on_wizz_clicked();
+
+  void on_call_clicked();
+
 private:
   Ui::ChatWindow *ui;
 };

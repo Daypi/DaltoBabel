@@ -34,6 +34,7 @@ public:
     int     getUID();
     void	handleNetworkUDP();
     void	handleNetworkTCP();
+    void	handlePackets();
 
     //    void	getLogin(Packet *packet);
     //    void	getRooms(Packet *packet);
