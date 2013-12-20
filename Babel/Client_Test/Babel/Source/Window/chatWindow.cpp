@@ -59,3 +59,18 @@ void          ChatWindow::on_close_clicked()
 {
     this->hide();
 }
+
+void ChatWindow::on_send_clicked()
+{
+
+}
+
+void ChatWindow::on_wizz_clicked()
+{
+    // TO DO
+}
+
+void ChatWindow::on_call_clicked()
+{
+    // TO DO
+}

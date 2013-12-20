@@ -50,12 +50,12 @@ void	Network::connect(const std::string &ip, int port)
     }
 }
 
-//void	Network::handlePackets()
-//{
-//    Packet *packet;
+void	Network::handlePackets()
+{
+    Packet *packet;
 
-//    while ((packet = this->_factory.getPacket()))
-//    {
+    while ((packet = this->_factory.getPacket()))
+    {
 //        if (packet->getGroup() == 0 && packet->getInstruction() == 0)
 //            this->getLogin(packet);
 //        else if (packet->getGroup() == 0 && packet->getInstruction() == 1)
@@ -78,11 +78,11 @@ void	Network::connect(const std::string &ip, int port)
 //            this->listLogins(packet);
 //        else
 //        {
-//            std::cout << "PACKET NON GERE" << std::endl;
-//            packet->show();
+            std::cout << "PACKET NON GERE" << std::endl;
+            packet->show();
 //        }
-//    }
-//}
+    }
+}
 
 void	Network::handleNetwork()
 {
@@ -92,12 +92,12 @@ void	Network::handleNetwork()
         {
             handleNetworkUDP();
             handleNetworkTCP();
+//            handlePackets();
         }
         catch (Exception &e)
         {
             throw Exception(e);
         }
-        //        handlePackets();
     }
 }
 
@@ -125,7 +125,7 @@ void	Network::handleNetworkUDP()
         this->_sendQueueUDP.pop();
         try
         {
-//            _sockUDP->send(packet->serialize(), packet->size());
+            _sockUDP->send(packet->serialize(), packet->size());
         }
         catch (Exception &e)
         {
@@ -143,7 +143,7 @@ void	Network::handleNetworkUDP()
 
         try
         {
- //           _sockUDP->recv(buffer, 4096, &rdSize);
+            _sockUDP->recv(buffer, 4096, &rdSize);
         }
         catch (Exception &e)
         {
@@ -164,7 +164,7 @@ void	Network::handleNetworkTCP()
         this->_sendQueueTCP.pop();
         try
         {
-  //          _sockTCP->send(packet->serialize(), packet->size());
+            _sockTCP->send(packet->serialize(), packet->size());
         }
         catch (Exception &e)
         {
@@ -182,7 +182,7 @@ void	Network::handleNetworkTCP()
 
         try
         {
-  //          _sockTCP->recv(buffer, 4096, &rdSize);
+            _sockTCP->recv(buffer, 4096, &rdSize);
         }
         catch (Exception &e)
         {
@@ -197,15 +197,15 @@ void	Network::handleNetworkTCP()
 
 //void	Network::getLogin(Packet *packet)
 //{
-//	this->_controller->model.lobby.setLogin(packet->getStringInDataCli(1));
-//	if (this->_controller->display.getVisibleDisplay() == RType::Controller::Display::LOGIN)
-//	{
-//		this->_controller->display.setDisplay(RType::Controller::Display::LOGIN, false);
-//		this->_controller->display.setDisplay(RType::Controller::Display::LOBBY, true);
-//		this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
-//	}
-//	else
-//		this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
+//    this->_controller->model.lobby.setLogin(packet->getStringInDataCli(1));
+//    if (this->_controller->display.getVisibleDisplay() == RType::Controller::Display::LOGIN)
+//    {
+//        this->_controller->display.setDisplay(RType::Controller::Display::LOGIN, false);
+//        this->_controller->display.setDisplay(RType::Controller::Display::LOBBY, true);
+//        this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
+//    }
+//    else
+//        this->_controller->display.getDisplay(this->_controller->display.getVisibleDisplay())->updateInterface(*this->_controller->display.getWindow());
 //}
 
 //void	Network::getRooms(Packet *packet)
