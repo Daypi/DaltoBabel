@@ -1,10 +1,10 @@
 #include <QApplication>
-#include "Include/Model/myConnectModel.h"
+#include "Include/Model/myContactModel.h"
 
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
-  MyConnectModel w;
+  MyContactModel w;
 
   return a.exec();
 }

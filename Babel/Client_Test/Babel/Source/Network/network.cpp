@@ -98,6 +98,10 @@ int     Network::getUID()
     return _reqUID++;
 }
 
+bool    Network::getInit()
+{
+    return this->_init;
+}
 
 void	Network::handleNetworkUDP()
 {

@@ -7,14 +7,12 @@
 #include "ui_connectWindow.h"
 
 ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
-    QMainWindow(parent),
+    QDialog(parent),
     _model(model),
     ui(new Ui::ConnectWindow)
 {
-    QPalette pal;
-    pal.setBrush(QPalette::Background, QBrush(QPixmap("Media/image.jpg")));
-    this->setPalette(pal);
     ui->setupUi(this);
+    setBackground();
     centerWindow();
     ui->editIP->setText("10.20.86.55");
     this->show();
@@ -22,7 +20,16 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
 
 ConnectWindow::~ConnectWindow()
 {
+    std::cout << "delete connect win" << std::endl;
     delete ui;
+}
+
+void    ConnectWindow::setBackground()
+{
+    QPalette pal;
+
+    pal.setBrush(QPalette::Background, QBrush(QPixmap("Media/image.jpg")));
+    this->setPalette(pal);
 }
 
 void    ConnectWindow::centerWindow()
@@ -30,6 +37,14 @@ void    ConnectWindow::centerWindow()
     QRect position = frameGeometry();
     position.moveCenter(QDesktopWidget().availableGeometry().center());
     move(position.topLeft());
+}
+
+void    ConnectWindow::Loop()
+{
+    while (this->isVisible())
+    {
+        QCoreApplication::processEvents();
+    }
 }
 
 void    ConnectWindow::on_valider_clicked()
@@ -41,8 +56,8 @@ void    ConnectWindow::on_valider_clicked()
         try
         {
             this->_model->connect(ui->editIP->text().toStdString(), 1337);
-            this->close();
-            MyContactModel *w = new MyContactModel(&(this->_model->getNetwork()));
+            this->_model->show();
+            this->hide();
         }
         catch (Exception &e)
         {
@@ -50,4 +65,10 @@ void    ConnectWindow::on_valider_clicked()
             msgBox.exec();
         }
     }
+}
+
+void    ConnectWindow::closeEvent(QCloseEvent *event)
+{
+    this->_model->close();
+    event->accept();
 }
