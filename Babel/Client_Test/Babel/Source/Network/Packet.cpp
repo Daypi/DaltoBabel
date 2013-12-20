@@ -1,6 +1,6 @@
 #include		<iostream>
 #include        <stdexcept>
-#include        <cstdio>
+#include        <stdio.h>
 #include		"Include/Network/Packet.h"
 
 Packet::Packet()
@@ -254,21 +254,21 @@ unsigned short		Packet::getListInData(unsigned int *pos) const
 	return (size);
 }
 
-char					Packet::getCharInData(unsigned int index) const
+char					Packet::getChar(unsigned int index) const
 {
 	unsigned int		pos = 0;
 
 	return (this->consumeFormat(&pos, index) ? this->_data[pos + 2] : 0);
 }
 
-std::string				Packet::getStringInData(unsigned int index) const
+std::string				Packet::getString(unsigned int index) const
 {
 	unsigned int		pos = 0;
 
 	return (this->consumeFormat(&pos, index) ? this->getStringInData(&pos) : "");
 }
 
-unsigned short			Packet::getListInData(unsigned int index, std::string& format) const
+unsigned short			Packet::getList(unsigned int index, std::string& format) const
 {
 	unsigned int		pos = 0;
 	unsigned short		size = 0;
@@ -279,7 +279,6 @@ unsigned short			Packet::getListInData(unsigned int index, std::string& format) 
 	return (size);
 }
 
-template<>
 void					Packet::appendToData(short id, const std::string& data)
 {
 	union				uConvert
@@ -295,7 +294,6 @@ void					Packet::appendToData(short id, const std::string& data)
 	this->_actualDataSize += 4 + data.size();
 }
 
-template<>
 void					Packet::appendToData(short id, const char *str)
 {
 	std::string			data;
@@ -334,21 +332,21 @@ void				Packet::show()
 	{
 		printf("id = %d : [", i);
 		if (this->_format[i] == 'c')
-			printf("%d]\n", this->getCharInData(i));
+			printf("%d]\n", this->getChar(i));
 		else if (this->_format[i] == 's')
-			printf("%s]\n", this->getStringInData(i).c_str());
+			printf("%s]\n", this->getString(i).c_str());
 		else if (this->_format[i] == 'l')
 		{
-			size = this->getListInData(i, format);
+			size = this->getList(i, format);
 			printf("%d]\nLIST\n", size);
 			++i;
 			for (unsigned int j = 0; j < size * format.size(); ++j)
 			{
 				printf("id = %d : [", j + i);
 				if (format[j % format.size()] == 'c')
-					printf("%d]\n", this->getCharInData(j + i));
+					printf("%d]\n", this->getChar(j + i));
 				else if (format[j % format.size()] == 's')
-					printf("%s]\n", this->getStringInData(j + i).c_str());
+					printf("%s]\n", this->getString(j + i).c_str());
 			}
 			printf("LIST END\n");
 			break;
