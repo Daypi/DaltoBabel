@@ -54,13 +54,14 @@ void									Server::start()
 				std::cout << "Client " << ret.first << " is connecting : " << ret.second << std::endl;
 				if (this->_userCollection.add(ret.first, "", ret.second))
 					std::cout << "Client added" << std::endl;
+				this->_toSendTCP.push(std::pair<Packet *, unsigned int>(new Packet(0, Packet::HANDSHAKE), ret.first));
 			}
 			else
 			{
 				user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 				std::cout << "Client = " << this->_clientList[i] << std::endl;
 				packet = this->getPacket(user);
-				if (packet &&  packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Server::ENUM_COUNT)
+				if (packet &&  packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Packet::ENUM_COUNT)
 					(this->*(this->_instruction[packet->getInstruction()]))(user, packet);
 			}
 		}
@@ -142,7 +143,7 @@ void						Server::list(User *user, Packet *packet)
 	accountList = this->_accountManager.getAccountList();
 	toSend = new Packet();
 	toSend->header(packet->serialize());
-	toSend->updateData(3 + 4 + (response.size() > 0 ? response.size() : this->_accountManager.listSize()));
+	toSend->updateData(3 + 4 + (!status ? response.size() : this->_accountManager.listSize()));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData<short>(1, this->_accountManager.size());
 	for (unsigned int i = 0; i < accountList.size(); ++i)
@@ -152,7 +153,7 @@ void						Server::list(User *user, Packet *packet)
 		toSend->appendToData<char>(id + 2, accountList[i]->getStatus());
 		id += 3;
 	}
-	if (response.size() > 0)
+	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
@@ -184,6 +185,26 @@ void				Server::statusText(User *user, Packet *packet)
 
 void				Server::status(User *user, Packet *packet)
 {
+	char			stat;
+	char			status = 1;
+	Packet			*toSend = 0;
+	std::string		response = "";
+
+	stat = packet->getChar(0);
+	if (stat < 0 || stat >= Account::ENUM_COUNT)
+	{
+		status = 0;
+		response = "Invalid status value.";
+	}
+	toSend = new Packet();
+	toSend->header(packet->serialize());
+	toSend->updateData(3 + 3);
+	toSend->appendToData<char>(0, status);
+	if (!status)
+		toSend->appendToData(1, response);
+	else
+		toSend->appendToData(1, stat);
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
 void				Server::acceptCall(User *user, Packet *packet)
@@ -241,7 +262,7 @@ void				Server::addContact(User *user, Packet *packet)
 	toSend->header(packet->serialize());
 	toSend->updateData(response.size() > 0 ? (3 + 4 + response.size()) : 3);
 	toSend->appendToData<char>(0, status);
-	if (response.size() > 0)
+	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }

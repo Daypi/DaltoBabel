@@ -26,30 +26,6 @@ class														Server
 	std::vector<Server::instructionPtr>						_instruction;
 
 public:
-
-	enum						eInstruction
-	{
-		// MANDATORY
-		LIST,
-		CALL,
-		HANGUP,
-		// FEATURES
-		STATUSTEXT,
-		STATUS,
-		ACCEPT_CALL,
-		REJECT_CALL,
-		LOGIN,
-		CREATE_ACCOUNT,
-		ADD_CONTACT,
-		REMOVE_CONTACT,
-		BLOCK_CONTACT,
-		CHAT,
-		ERROR_,
-		HANDSHAKE,
-		PING,
-		ENUM_COUNT
-	};
-
 	Server(int, int);
 	~Server();
 

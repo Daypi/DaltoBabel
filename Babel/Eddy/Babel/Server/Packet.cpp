@@ -1,11 +1,12 @@
-#include		"Packet.h"
 #include		<iostream>
+#include		<stdexcept>
+#include		"Packet.h"
 
-Packet::Packet()
+Packet::Packet(unsigned short requestUID, unsigned char instruction)
 {
 	this->_magicNumber = Packet::MAGIC_NUMBER;
-	this->_requestUID = 0;
-	this->_instruction = 0;
+	this->_requestUID = requestUID;
+	this->_instruction = instruction;
 	this->_dataSize = 0;
 	this->_format = "";
 	this->_data = 0;
@@ -23,7 +24,7 @@ Packet::~Packet()
 		delete[] this->_serialization;
 }
 
-void		Packet::setMagicNumber(unsigned short magicNumber)
+void		Packet::setMagicNumber(unsigned int magicNumber)
 {
 	this->_magicNumber = magicNumber;
 }

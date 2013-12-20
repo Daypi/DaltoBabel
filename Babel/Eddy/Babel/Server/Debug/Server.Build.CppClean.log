@@ -13,6 +13,7 @@ c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\mutexp
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\packet.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\packetfactory.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\selektor.obj
+c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\server.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\socket.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\socketavd.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\socketservertcp.obj
@@ -21,7 +22,6 @@ c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\user.o
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\usercollection.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\account.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\accountmanager.obj
-c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\server.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.ilk
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.exe
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.pdb

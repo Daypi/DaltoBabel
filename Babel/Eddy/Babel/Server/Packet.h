@@ -1,5 +1,6 @@
 #pragma once
 
+#include						<cstring>
 #include						<string>
 
 class							Packet
@@ -29,11 +30,34 @@ public:
 	static const unsigned int	HEADER_SIZE = 9;
 	static const unsigned int	MAGIC_NUMBER = 0xDA170;
 
-	Packet();
+	enum						eInstruction
+	{
+		// MANDATORY
+		LIST,
+		CALL,
+		HANGUP,
+		// FEATURES
+		STATUSTEXT,
+		STATUS,
+		ACCEPT_CALL,
+		REJECT_CALL,
+		LOGIN,
+		CREATE_ACCOUNT,
+		ADD_CONTACT,
+		REMOVE_CONTACT,
+		BLOCK_CONTACT,
+		CHAT,
+		ERROR_,
+		HANDSHAKE,
+		PING,
+		ENUM_COUNT
+	};
+
+	Packet(unsigned short requestUID = 0, unsigned char instrction = 0);
 	Packet(const Packet&);
 	virtual ~Packet();
 
-	void						setMagicNumber(unsigned short);
+	void						setMagicNumber(unsigned int);
 	void						setRequestUID(unsigned short);
 	void						setInstruction(unsigned char);
 	void						setDataSize(unsigned int);
