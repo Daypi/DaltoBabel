@@ -28,9 +28,9 @@ public:
 	virtual const std::string&	getIp() const;
 	virtual unsigned int		getUID() const;
 	virtual void				setName(const std::string&);
-	void						connect();
-	void						disconnect();
-	bool						connected() const;
+	virtual bool				connected() const;
+	virtual void				connect();
+	virtual void				disconnect();
 	unsigned int				getSockId() const;
 	void						setSockId(unsigned int);
 	Packet						*getPacket(const char *, unsigned int);

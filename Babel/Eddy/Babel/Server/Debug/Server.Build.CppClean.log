@@ -1,8 +1,8 @@
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\vc120.pdb
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\vc120.idb
+c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\accountmanager.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\circularbuffer.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\condvar.obj
-c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\contact.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\cwcondvar.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\cwmutex.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\cwsocket.obj
@@ -21,7 +21,6 @@ c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\timest
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\user.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\usercollection.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\account.obj
-c:\users\majined\documents\visual studio 2013\projects\babel\server\debug\accountmanager.obj
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.ilk
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.exe
 c:\users\majined\documents\visual studio 2013\projects\babel\debug\server.pdb

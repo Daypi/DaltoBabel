@@ -15,19 +15,6 @@ unsigned int		AccountManager::size() const
 	return (this->_accountList.size());
 }
 
-unsigned int		AccountManager::listSize() const
-{
-	unsigned int	nb = 0;
-
-	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
-	{
-		nb += 4 + this->_accountList[i]->getName().size();
-		nb += 4 + this->_accountList[i]->getStatusText().size();
-		nb += 3;
-	}
-	return (nb);
-}
-
 const std::vector<Account *>&		AccountManager::getAccountList() const
 {
 	return (this->_accountList);
@@ -102,7 +89,7 @@ Account				*AccountManager::getAccountByIp(const char *ip) const
 	return (0);
 }
 
-void									AccountManager::removeAccountById(unsigned int id)
+bool									AccountManager::removeAccountById(unsigned int id)
 {
 	std::vector<Account *>::iterator	tmp;
 	bool								found = false;
@@ -117,9 +104,10 @@ void									AccountManager::removeAccountById(unsigned int id)
 	}
 	if (found)
 		this->_accountList.erase(tmp);
+	return (found);
 }
 
-void									AccountManager::removeAccountByName(const std::string& name)
+bool									AccountManager::removeAccountByName(const std::string& name)
 {
 	std::vector<Account *>::iterator	tmp;
 	bool								found = false;
@@ -134,9 +122,10 @@ void									AccountManager::removeAccountByName(const std::string& name)
 	}
 	if (found)
 		this->_accountList.erase(tmp);
+	return (found);
 }
 
-void									AccountManager::removeAccountByName(const char *name)
+bool									AccountManager::removeAccountByName(const char *name)
 {
 	std::vector<Account *>::iterator	tmp;
 	bool								found = false;
@@ -152,9 +141,10 @@ void									AccountManager::removeAccountByName(const char *name)
 	}
 	if (found)
 		this->_accountList.erase(tmp);
+	return (found);
 }
 
-void									AccountManager::removeAccountByIp(const std::string& ip)
+bool									AccountManager::removeAccountByIp(const std::string& ip)
 {
 	std::vector<Account *>::iterator	tmp;
 	bool								found = false;
@@ -169,9 +159,10 @@ void									AccountManager::removeAccountByIp(const std::string& ip)
 	}
 	if (found)
 		this->_accountList.erase(tmp);
+	return (found);
 }
 
-void									AccountManager::removeAccountByIp(const char *ip)
+bool									AccountManager::removeAccountByIp(const char *ip)
 {
 	std::vector<Account *>::iterator	tmp;
 	bool								found = false;
@@ -187,6 +178,7 @@ void									AccountManager::removeAccountByIp(const char *ip)
 	}
 	if (found)
 		this->_accountList.erase(tmp);
+	return (found);
 }
 
 bool				AccountManager::accountExists(unsigned int id) const
@@ -211,7 +203,7 @@ bool				AccountManager::addContact(Account *account, const std::string& name)
 	other = this->getAccountByName(name);
 	if (!account || !other)
 		return (false);
-	account->addContact(other->getUID(), other->getIp(), other->getName());
+	account->addContact(other);
 	return (true);
 }
 
@@ -228,6 +220,58 @@ bool				AccountManager::addContact(const std::string& name, const std::string& n
 bool				AccountManager::addContact(const char *name, const std::string& nameToAdd)
 {
 	return (this->addContact(this->getAccountByName(name), nameToAdd));
+}
+
+bool				AccountManager::removeContact(Account *account, const std::string& name)
+{
+	Account			*other;
+
+	other = this->getAccountByName(name);
+	if (!account || !other)
+		return (false);
+	account->removeContact(name);
+	return (true);
+}
+
+bool				AccountManager::removeContact(unsigned int id, const std::string& name)
+{
+	return (this->removeContact(this->getAccountById(id), name));
+}
+
+bool				AccountManager::removeContact(const std::string& name, const std::string& nameToAdd)
+{
+	return (this->removeContact(this->getAccountByName(name), nameToAdd));
+}
+
+bool				AccountManager::removeContact(const char *name, const std::string& nameToAdd)
+{
+	return (this->removeContact(this->getAccountByName(name), nameToAdd));
+}
+
+bool				AccountManager::blockContact(Account *account, const std::string& name)
+{
+	Account			*other;
+
+	other = this->getAccountByName(name);
+	if (!account || !other)
+		return (false);
+	account->blockContact(other);
+	return (true);
+}
+
+bool				AccountManager::blockContact(unsigned int id, const std::string& name)
+{
+	return (this->removeContact(this->getAccountById(id), name));
+}
+
+bool				AccountManager::blockContact(const std::string& name, const std::string& nameToAdd)
+{
+	return (this->removeContact(this->getAccountByName(name), nameToAdd));
+}
+
+bool				AccountManager::blockContact(const char *name, const std::string& nameToAdd)
+{
+	return (this->removeContact(this->getAccountByName(name), nameToAdd));
 }
 
 void				AccountManager::save()

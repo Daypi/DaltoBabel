@@ -14,4 +14,7 @@ public:
 	virtual const std::string&	getIp() const = 0;
 	virtual unsigned int		getUID() const = 0;
 	virtual void				setName(const std::string&) = 0;
+	virtual bool				connected() const = 0;
+	virtual void				connect() = 0;
+	virtual void				disconnect() = 0;
 };

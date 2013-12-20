@@ -47,6 +47,11 @@ void			User::setName(const std::string& name)
 	this->_name = name;
 }
 
+bool			User::connected() const
+{
+	return (this->_connected);
+}
+
 void			User::connect()
 {
 	this->_connected = true;
@@ -55,11 +60,6 @@ void			User::connect()
 void			User::disconnect()
 {
 	this->_connected = false;
-}
-
-bool			User::connected() const
-{
-	return (this->_connected);
 }
 
 unsigned int	User::getSockId() const
