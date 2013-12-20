@@ -33,8 +33,6 @@ HEADERS += \
     Include/Network/CUMutex.h \
     Include/Network/CUCondVar.h \
     Include/Network/CondVar.hh \
-    Include/Network/PacketFactory.cpp \
-    Include/Network/Packet.cpp \
     Include/Network/CircularBuffer.hpp
 
 SOURCES += \
