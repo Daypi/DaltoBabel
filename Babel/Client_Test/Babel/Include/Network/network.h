@@ -36,15 +36,7 @@ public:
     void	handleNetworkTCP();
     void	handlePackets();
 
-    //    void	getLogin(Packet *packet);
-    //    void	getRooms(Packet *packet);
-    //    void	getMsgChat(Packet *packet);
-    //    void	getLevels(Packet *packet);
-    //    void	joinRoom(Packet *packet);
-    //    void	start(Packet *packet);
-    //    void	end(Packet *packet);
-    //    void	chatRoom(Packet *packet);
-    //    void	listLogins(Packet *packet);
+    void    sendHandshake();
 };
 
 #endif // NETWORK_H
