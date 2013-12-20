@@ -1,5 +1,6 @@
 #pragma once
 
+#include						<string>
 #include						"IUser.h"
 
 class							Contact : public IUser
@@ -10,6 +11,7 @@ class							Contact : public IUser
 
 public:
 	Contact();
+	Contact(unsigned int, const std::string&, const std::string&);
 	virtual ~Contact();
 
 	virtual bool				operator==(const IUser&);

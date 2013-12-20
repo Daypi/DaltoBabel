@@ -1,10 +1,6 @@
 #include		"Account.h"
 
-Account::Account()
-{
-}
-
-Account::Account(unsigned int uid, const std::string& ip, const std::string& name, const std::string& password) : _uid(uid), _ip(ip), _name(name), _password(password)
+Account::Account(unsigned int uid, const std::string& ip, const std::string& name, const std::string& password) : _uid(uid), _ip(ip), _name(name), _password(password), _status(Account::AVAILABLE), _statusText("")
 {
 }
 
@@ -45,4 +41,37 @@ unsigned int		Account::getUID() const
 void		Account::setName(const std::string& name)
 {
 	this->_name = name;
+}
+
+Account::eStatus		Account::getStatus() const
+{
+	return (this->_status);
+}
+
+const std::string&		Account::getStatusText() const
+{
+	return (this->_statusText);
+}
+
+void		Account::setStatus(Account::eStatus status)
+{
+	this->_status = status;
+}
+
+void		Account::setStatusText(const std::string& statusText)
+{
+	this->_statusText = statusText;
+}
+
+bool		Account::addContact(Contact *contact)
+{
+	if (!contact)
+		return (false);
+	this->_contactList.push_back(contact);
+	return (true);
+}
+
+bool		Account::addContact(unsigned int id, const std::string& ip, const std::string& name)
+{
+	return (this->addContact(new Contact(id, ip, name)));
 }

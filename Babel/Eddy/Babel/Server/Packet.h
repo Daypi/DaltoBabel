@@ -54,11 +54,14 @@ public:
 	unsigned int				size() const;
 	void						updateData(unsigned int);
 
-	char						getCharInData(unsigned int) const;
-	std::string					getStringInData(unsigned int) const;
-	unsigned short				getListInData(unsigned int, std::string&) const;
+	char						getChar(unsigned int) const;
+	std::string					getString(unsigned int) const;
+	unsigned short				getList(unsigned int, std::string&) const;
 
 	void						show();
+
+	void						appendToData(short, const std::string&);
+	void						appendToData(short, const char *);
 
 	template<typename T>
 	void						appendToData(short id, T data)
@@ -72,12 +75,6 @@ public:
 		convert.data = data;
 		memcpy(this->_data + this->_actualDataSize, &id, 2);
 		memcpy(this->_data + this->_actualDataSize + 2, convert.tab, sizeof(T));
-		this->_actualDataSize += 2 + byteSize;
+		this->_actualDataSize += 2 + sizeof(T);
 	}
 };
-
-template<>
-void					Packet::appendToData(short id, const std::string& data);
-
-template<>
-void					Packet::appendToData(short id, const char *data);

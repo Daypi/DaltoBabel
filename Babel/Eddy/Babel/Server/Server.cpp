@@ -60,7 +60,7 @@ void									Server::start()
 				user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 				std::cout << "Client = " << this->_clientList[i] << std::endl;
 				packet = this->getPacket(user);
-				if (packet && packet->getInstruction() < Server::ENUM_COUNT)
+				if (packet &&  packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Server::ENUM_COUNT)
 					(this->*(this->_instruction[packet->getInstruction()]))(user, packet);
 			}
 		}
@@ -131,8 +131,30 @@ void									Server::sendTCP()
 	}
 }
 
-void				Server::list(User *user, Packet *packet)
+void						Server::list(User *user, Packet *packet)
 {
+	char					status = 1;
+	Packet					*toSend = 0;
+	std::string				response = "";
+	std::vector<Account *>	accountList;
+	short					id = 2;
+
+	accountList = this->_accountManager.getAccountList();
+	toSend = new Packet();
+	toSend->header(packet->serialize());
+	toSend->updateData(3 + 4 + (response.size() > 0 ? response.size() : this->_accountManager.listSize()));
+	toSend->appendToData<char>(0, status);
+	toSend->appendToData<short>(1, this->_accountManager.size());
+	for (unsigned int i = 0; i < accountList.size(); ++i)
+	{
+		toSend->appendToData(id, accountList[i]->getName());
+		toSend->appendToData(id + 1, accountList[i]->getStatusText());
+		toSend->appendToData<char>(id + 2, accountList[i]->getStatus());
+		id += 3;
+	}
+	if (response.size() > 0)
+		toSend->appendToData(1, response);
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
 void				Server::call(User *user, Packet *packet)
@@ -145,6 +167,19 @@ void				Server::hangUp(User *user, Packet *packet)
 
 void				Server::statusText(User *user, Packet *packet)
 {
+	std::string		statusTextStr;
+	char			status = 1;
+	Packet			*toSend = 0;
+	std::string		response = "";
+
+	statusTextStr = packet->getString(0);
+	response = statusTextStr;
+	toSend = new Packet();
+	toSend->header(packet->serialize());
+	toSend->updateData(3 + 4 + response.size());
+	toSend->appendToData<char>(0, status);
+	toSend->appendToData(1, response);
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
 void				Server::status(User *user, Packet *packet)
@@ -165,10 +200,50 @@ void				Server::login(User *user, Packet *packet)
 
 void				Server::createAccount(User *user, Packet *packet)
 {
+	std::string		login;
+	std::string		password;
+	char			status = 1;
+	Packet			*toSend = 0;
+	std::string		response = "";
+
+	login = packet->getString(0);
+	password = packet->getString(1);
+	response = login;
+	if (!this->_accountManager.create(user->getIp(), login, password))
+	{
+		status = 0;
+		response = "Login already taken.";
+	}
+	else
+		user->setName(login);
+	toSend = new Packet();
+	toSend->header(packet->serialize());
+	toSend->updateData(3 + 4 + response.size());
+	toSend->appendToData<char>(0, status);
+	toSend->appendToData(1, response);
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
 void				Server::addContact(User *user, Packet *packet)
 {
+	std::string		login;
+	char			status = 1;
+	Packet			*toSend;
+	std::string		response = "";
+
+	login = packet->getString(0);
+	if (!this->_accountManager.addContact(user->getName(), login))
+	{
+		status = 0;
+		response = "Unknown user.";
+	}
+	toSend = new Packet();
+	toSend->header(packet->serialize());
+	toSend->updateData(response.size() > 0 ? (3 + 4 + response.size()) : 3);
+	toSend->appendToData<char>(0, status);
+	if (response.size() > 0)
+		toSend->appendToData(1, response);
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
 void				Server::removeContact(User *user, Packet *packet)

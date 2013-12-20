@@ -26,7 +26,7 @@ bool			UserCollection::add(unsigned int sockId, const std::string& name, const s
 	User		*user;
 
 	user = this->getUserByIp(ip);
-	if (user/* && user->connected()*/)
+	if (user)
 		return (false);
 	user = new User(this->newId(), name, ip);
 	user->setSockId(sockId);
@@ -165,4 +165,19 @@ unsigned int		UserCollection::newId() const
 			id = this->_userList[i]->getUID();
 	}
 	return (id + 1);
+}
+
+bool			UserCollection::userExists(unsigned int id) const
+{
+	return (this->getUserById(id) != 0);
+}
+
+bool			UserCollection::userExists(const std::string& name) const
+{
+	return (this->getUserByName(name) != 0);
+}
+
+bool			UserCollection::userExists(const char *name) const
+{
+	return (this->getUserByName(name) != 0);
 }

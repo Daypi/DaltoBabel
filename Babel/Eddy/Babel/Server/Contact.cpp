@@ -4,6 +4,10 @@ Contact::Contact()
 {
 }
 
+Contact::Contact(unsigned int uid, const std::string& ip, const std::string& name) :_uid(uid), _ip(ip), _name(name)
+{
+}
+
 Contact::~Contact()
 {
 }

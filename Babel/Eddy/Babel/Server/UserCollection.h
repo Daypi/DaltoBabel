@@ -28,4 +28,8 @@ public:
 	void					removeUserById(unsigned int);
 	void					removeUserByName(const std::string&);
 	void					removeUserByName(const char *);
+
+	bool					userExists(unsigned int) const;
+	bool					userExists(const std::string&) const;
+	bool					userExists(const char *) const;
 };
