@@ -148,12 +148,11 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
   data->frameIndex += framesToCalc;
   if (PLAYBACK)
     {
-      PortAudioBuffer *playbackBuffer = &_playBuffers[_playingBuffer];
-      SAMPLE *rptr = &playbackBuffer->recordedSamples[playbackBuffer->frameIndex * NUM_CHANNELS];
+      SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
       SAMPLE *wptr = (SAMPLE*)outputBuffer;
       unsigned int i2;
       int finished2;
-      unsigned int framesLeft2 = playbackBuffer->maxFrameIndex - playbackBuffer->frameIndex;
+      unsigned int framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
 
       if( framesLeft2 < framesPerBuffer )
 	{
