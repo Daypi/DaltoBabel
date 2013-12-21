@@ -35,15 +35,15 @@ private:
   PortAudioBuffer		_recordBuffers[2];
   PortAudioBuffer		_playBuffers[2];
   std::string			_errorString;
-  char			        _recordingBuffer;
-  char				_playingBuffer;
+  short			        _recordingBuffer;
+  short				_playingBuffer;
   int 					memberrecordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags);
   static int 			recordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
 public:
   PortAudioIO();
   bool					init(void);
   bool					cleanup(void);
-  void					pushBuffer(PortAudioBuffer &);
+  void					pushBuffer(PortAudioBuffer );
   void					startRecording(void);
   const std::string		&getError();
   PortAudioBuffer		*getData();
