@@ -99,7 +99,8 @@ void	PortAudioIO::startRecording(void)
       std::cerr << this->getError() << std::endl;
     this->pushBuffer(this->_recordBuffers[_recordingBuffer]);
     //    this->_playingBuffer = this->_recordingBuffer;
-    this->_recordingBuffer = _recordingBuffer == 1 ? 0 : 1;
+    _recordingBuffer = _recordingBuffer == 1 ? 0 : 1;
+    _playingBuffer = _playingBuffer == 1 ? 0 : 1;
   }
 }
 
@@ -148,6 +149,7 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
   data->frameIndex += framesToCalc;
   if (PLAYBACK)
     {
+      std::cout << _playingBuffer << std::endl;
       SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
       SAMPLE *wptr = (SAMPLE*)outputBuffer;
       unsigned int i2;
@@ -169,7 +171,6 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 	    }
 	  this->_recordBuffers[this->_playingBuffer].frameIndex += framesLeft;
 	  finished2 = paComplete;
-	  _playingBuffer = _playingBuffer == 1 ? 0 : 1;
 	}
       else
 	{
