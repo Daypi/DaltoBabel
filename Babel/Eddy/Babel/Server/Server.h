@@ -4,7 +4,6 @@
 #include													<vector>
 #include													"Packet.h"
 #include													"UserCollection.h"
-#include													"Contact.h"
 #include													"SocketServerTCP.h"
 #include													"AccountManager.h"
 
@@ -53,9 +52,8 @@ public:
 	void													handshake(User *, Packet *);
 	void													ping(User *, Packet *);
 
-	void													addContact(const User&, const Contact&);
-	void													rmContact(const User&, const Contact&);
-	void													sendMsg(const User&, const Contact&, const std::string&);
-	void													wizz(const User&, const Contact&);
-	void													changeStatus(const User&);
+	/*
+	void													sendMsg(const User&, const Account&, const std::string&);
+	void													wizz(const User&, const Account&);
+	void													changeStatus(const User&);*/
 };

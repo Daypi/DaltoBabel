@@ -68,7 +68,6 @@
     <ClCompile Include="AccountManager.cpp" />
     <ClCompile Include="CircularBuffer.cpp" />
     <ClCompile Include="CondVar.cpp" />
-    <ClCompile Include="Contact.cpp" />
     <ClCompile Include="CWCondVar.cpp" />
     <ClCompile Include="CWMutex.cpp" />
     <ClCompile Include="CWSocket.cpp" />
@@ -92,7 +91,6 @@
     <ClInclude Include="AccountManager.h" />
     <ClInclude Include="CircularBuffer.hpp" />
     <ClInclude Include="CondVar.hh" />
-    <ClInclude Include="Contact.h" />
     <ClInclude Include="CWCondVar.h" />
     <ClInclude Include="CWMutex.h" />
     <ClInclude Include="CWSocket.hh" />

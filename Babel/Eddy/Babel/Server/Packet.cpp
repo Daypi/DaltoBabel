@@ -1,5 +1,6 @@
 #include		<iostream>
 #include		<stdexcept>
+#include		<cstdio>
 #include		"Packet.h"
 
 Packet::Packet(unsigned short requestUID, unsigned char instruction)
@@ -107,16 +108,16 @@ void		Packet::updateData(unsigned int size)
 void			Packet::deserialize(char *packet)
 {
 	this->header(packet);
-	this->format(packet);
 	if (this->_data != 0)
 		delete[] this->_data;
 	this->_data = new char[this->_dataSize];
 	memcpy(this->_data, packet + Packet::HEADER_SIZE, this->_dataSize);
 }
 
-char			*Packet::serialize()
+char				*Packet::serialize()
 {
-	char	*tmp;
+	char			*tmp;
+	unsigned int	finalDataSize;
 
 	if (this->_serialization != 0)
 		delete[] this->_serialization;
@@ -130,7 +131,8 @@ char			*Packet::serialize()
 	this->_serialization[4] = tmp[1];
 	tmp = reinterpret_cast<char *>(&this->_instruction);
 	this->_serialization[5] = tmp[0];
-	tmp = reinterpret_cast<char *>(&this->_dataSize);
+	finalDataSize = this->_dataSize + this->_format.size();
+	tmp = reinterpret_cast<char *>(&finalDataSize);
 	this->_serialization[6] = tmp[0];
 	this->_serialization[7] = tmp[1];
 	this->_serialization[8] = tmp[2];
@@ -148,6 +150,7 @@ void					Packet::header(char *packet)
 		char			tab[3];
 	}					convert;
 
+	this->format(packet);
 	convert.size = 0;
 	convert.tab[0] = *reinterpret_cast<const char *>(packet + Packet::MAGIC_NUMBER_INDEX);
 	convert.tab[1] = *reinterpret_cast<const char *>(packet + Packet::MAGIC_NUMBER_INDEX + 1);
@@ -159,7 +162,7 @@ void					Packet::header(char *packet)
 	convert.tab[0] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX);
 	convert.tab[1] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 1);
 	convert.tab[2] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 2);
-	this->_dataSize = convert.size;
+	this->_dataSize = convert.size - this->_format.size();
 }
 
 void				Packet::format(char *packet)

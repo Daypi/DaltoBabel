@@ -37,5 +37,5 @@ unsigned long		TimeStamp::elapsedTime()
 {
 	this->_previousTime = this->_actualTime;
 	gettimeofday(&this->_actualTime, 0);
-	return (this->_actualTime.tv_usec - this->_previousTime.tv_usec);
+	return (this->_actualTime.tv_sec - this->_previousTime.tv_sec);
 }
