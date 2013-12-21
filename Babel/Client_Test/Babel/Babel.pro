@@ -65,8 +65,8 @@ SOURCES += \
 
 FORMS += \
     Source/Window/contactWindow.ui \
-    Source/Window/connectWindow.ui \
-    Source/Window/chatWindow.ui
+    Source/Window/chatWindow.ui \
+    Source/Window/connectWindow.ui
 
 release: DESTDIR = .
 debug:   DESTDIR = .

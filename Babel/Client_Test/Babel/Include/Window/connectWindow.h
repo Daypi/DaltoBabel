@@ -3,6 +3,8 @@
 
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QCloseEvent>
+
 
 class MyConnectModel;
 
@@ -10,7 +12,7 @@ namespace Ui {
 class ConnectWindow;
 }
 
-class ConnectWindow : public QMainWindow
+class ConnectWindow : public QDialog
 {
     Q_OBJECT
     MyConnectModel  *_model;
@@ -19,6 +21,9 @@ public:
     ~ConnectWindow();
 
     void    centerWindow();
+    void    setBackground();
+    void    refresh();
+    void    closeEvent(QCloseEvent *event);
 
 private slots:
     void on_valider_clicked();

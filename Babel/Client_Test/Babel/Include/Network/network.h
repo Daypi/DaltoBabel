@@ -32,6 +32,7 @@ public:
     void	pushUDP(Packet *packet);
     void	pushTCP(Packet *packet);
     int     getUID();
+    bool    getInit();
     void	handleNetworkUDP();
     void	handleNetworkTCP();
     void	handlePackets();

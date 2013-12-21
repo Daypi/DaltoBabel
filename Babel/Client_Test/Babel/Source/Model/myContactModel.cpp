@@ -1,17 +1,18 @@
+#include <QCoreApplication>
 #include "Include/Model/myContactModel.h"
 
-MyContactModel::MyContactModel(Network *net, QWidget *parent)
-  : _net(net),
-    _w(this, parent)
+MyContactModel::MyContactModel(QWidget *parent)
+    : _w(this, parent),
+      _connect(&_net, this, &_w)
 {
-  std::vector<std::string> test;
+    std::vector<std::string> test;
 
-  test.push_back("DaltoCon");
-  test.push_back("Zizi");
-  test.push_back("Daypi");
-  test.push_back("Collegue");
-  test.push_back("eddy le gay");
-  setContacts(test);
+    test.push_back("DaltoCon");
+    test.push_back("Zizi");
+    test.push_back("Daypi");
+    test.push_back("Collegue");
+    test.push_back("eddy le gay");
+    setContacts(test);
 }
 
 MyContactModel::~MyContactModel()
@@ -68,3 +69,20 @@ std::vector<Contact *>  &MyContactModel::getContacts()
 {
     return(this->_contactList);
 }
+
+void    MyContactModel::show()
+{
+    this->_w.show();
+}
+
+void    MyContactModel::close()
+{
+    this->_w.close();
+    exit(0);
+}
+
+bool    MyContactModel::isVisible()
+{
+    return (this->_w.isVisible());
+}
+

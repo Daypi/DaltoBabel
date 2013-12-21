@@ -4,16 +4,22 @@
 #include "Include/Network/network.h"
 #include "Include/Window/connectWindow.h"
 
+class MyContactModel;
+
 class MyConnectModel
 {
-    Network                 _net;
+    Network                 *_net;
     ConnectWindow           _w;
+    MyContactModel          *_contact;
 public:
-    MyConnectModel(QWidget *parent = 0);
+    MyConnectModel(Network *net, MyContactModel *contact, QWidget *parent);
     ~MyConnectModel();
 
     void        connect(const std::string &ip, int port);
-    Network&    getNetwork();
+    void        show();
+    void        close();
 };
+
+#include "Include/Model/myContactModel.h"
 
 #endif // MYCONNECTMODEL_H

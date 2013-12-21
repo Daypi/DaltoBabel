@@ -9,7 +9,7 @@ ContactWindow::ContactWindow(MyContactModel *model, QWidget *parent) :
   ui(new Ui::ContactWindow)
 {
     ui->setupUi(this);
-    this->show();
+    this->hide();
 }
 
 ContactWindow::~ContactWindow()
