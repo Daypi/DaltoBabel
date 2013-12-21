@@ -108,6 +108,8 @@ void		Packet::updateData(unsigned int size)
 void			Packet::deserialize(char *packet)
 {
 	this->header(packet);
+	this->format(packet);
+	this->_dataSize -= this->_format.size();
 	if (this->_data != 0)
 		delete[] this->_data;
 	this->_data = new char[this->_dataSize];
@@ -136,7 +138,14 @@ char				*Packet::serialize()
 	this->_serialization[6] = tmp[0];
 	this->_serialization[7] = tmp[1];
 	this->_serialization[8] = tmp[2];
-	memcpy(this->_serialization + Packet::HEADER_SIZE, this->_format.c_str(), this->_format.size());
+	if (this->_format.size() > 0)
+	{
+		finalDataSize = this->_format.size();
+		tmp = reinterpret_cast<char *>(&finalDataSize);
+		this->_serialization[9] = tmp[0];
+		this->_serialization[10] = tmp[1];
+		memcpy(this->_serialization + Packet::HEADER_SIZE, this->_format.c_str(), this->_format.size());
+	}
 	if (this->_data != 0)
 		memcpy(this->_serialization + Packet::HEADER_SIZE + this->_format.size(), this->_data, this->_dataSize);
 	return (this->_serialization);
@@ -162,11 +171,6 @@ void					Packet::header(char *packet)
 	convert.tab[1] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 1);
 	convert.tab[2] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 2);
 	this->_dataSize = convert.size;
-	if (this->_dataSize > 0)
-	{
-		this->format(packet);
-		this->_dataSize -= this->_format.size();
-	}
 }
 
 void				Packet::format(char *packet)
@@ -174,6 +178,9 @@ void				Packet::format(char *packet)
 	char			tmp;
 	unsigned short	size;
 	
+	if (this->_dataSize == 0)
+		return;
+	this->show();
 	size = *reinterpret_cast<const unsigned short *>(packet + Packet::DATA_SIZE_INDEX + 3);
 	tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
 	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
