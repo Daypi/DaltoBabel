@@ -150,7 +150,6 @@ void					Packet::header(char *packet)
 		char			tab[3];
 	}					convert;
 
-	this->format(packet);
 	convert.size = 0;
 	convert.tab[0] = *reinterpret_cast<const char *>(packet + Packet::MAGIC_NUMBER_INDEX);
 	convert.tab[1] = *reinterpret_cast<const char *>(packet + Packet::MAGIC_NUMBER_INDEX + 1);
@@ -162,7 +161,12 @@ void					Packet::header(char *packet)
 	convert.tab[0] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX);
 	convert.tab[1] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 1);
 	convert.tab[2] = *reinterpret_cast<const char *>(packet + Packet::DATA_SIZE_INDEX + 2);
-	this->_dataSize = convert.size - this->_format.size();
+	this->_dataSize = convert.size;
+	if (this->_dataSize > 0)
+	{
+		this->format(packet);
+		this->_dataSize -= this->_format.size();
+	}
 }
 
 void				Packet::format(char *packet)
