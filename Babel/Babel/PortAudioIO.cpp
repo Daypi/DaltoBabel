@@ -196,7 +196,7 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 	      *wptr++ = *rptr++;  /* left */
 	      if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
 	    }
-	  this->_recordBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
+	  this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
 	  finished2 = paContinue;
 	}
     }
