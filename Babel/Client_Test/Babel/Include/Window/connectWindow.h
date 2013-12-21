@@ -22,7 +22,7 @@ public:
 
     void    centerWindow();
     void    setBackground();
-    void    Loop();
+    void    refresh();
     void    closeEvent(QCloseEvent *event);
 
 private slots:

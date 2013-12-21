@@ -171,6 +171,13 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>editLogin</tabstop>
+  <tabstop>editMdp</tabstop>
+  <tabstop>editIP</tabstop>
+  <tabstop>valider</tabstop>
+  <tabstop>newUser</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

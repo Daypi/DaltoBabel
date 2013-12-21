@@ -14,7 +14,6 @@ ContactWindow::ContactWindow(MyContactModel *model, QWidget *parent) :
 
 ContactWindow::~ContactWindow()
 {
-    std::cout << "delete contact win" << std::endl;
     delete ui;
 }
 

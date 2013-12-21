@@ -56,6 +56,7 @@ void	Network::handlePackets()
 
     while ((packet = this->_factory.getPacket()))
     {
+        packet->show();
         if (packet->getInstruction() == Packet::HANDSHAKE)
             this->sendHandshake();
         else
@@ -183,7 +184,7 @@ void	Network::handleNetworkTCP()
 
 void    Network::sendHandshake()
 {
-    this->_sendQueueTCP.push(new Packet(0,Packet::HANDSHAKE));
+    this->_sendQueueTCP.push(new Packet(0, Packet::HANDSHAKE));
 }
 
 //void    Network::sendLogin()

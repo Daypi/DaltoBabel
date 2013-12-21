@@ -5,7 +5,11 @@ MyConnectModel::MyConnectModel(Network *net, MyContactModel *contact, QWidget *p
       _w(this, parent),
       _contact(contact)
 {
-    this->_w.Loop();
+    while (this->_w.isVisible())
+    {
+        this->_w.refresh();
+        this->_net->handleNetwork();
+    }
 }
 
 MyConnectModel::~MyConnectModel()

@@ -20,7 +20,6 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
 
 ConnectWindow::~ConnectWindow()
 {
-    std::cout << "delete connect win" << std::endl;
     delete ui;
 }
 
@@ -39,12 +38,9 @@ void    ConnectWindow::centerWindow()
     move(position.topLeft());
 }
 
-void    ConnectWindow::Loop()
+void    ConnectWindow::refresh()
 {
-    while (this->isVisible())
-    {
-        QCoreApplication::processEvents();
-    }
+    QCoreApplication::processEvents();
 }
 
 void    ConnectWindow::on_valider_clicked()
@@ -55,9 +51,9 @@ void    ConnectWindow::on_valider_clicked()
     {
         try
         {
-            this->_model->connect(ui->editIP->text().toStdString(), 1337);
-            this->_model->show();
-            this->hide();
+            this->_model->connect(ui->editIP->text().toStdString(), 11235);
+            //this->_model->show();
+            //this->hide();
         }
         catch (Exception &e)
         {
