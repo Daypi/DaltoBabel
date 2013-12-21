@@ -113,6 +113,7 @@
     <ClInclude Include="TimeStamp.h" />
     <ClInclude Include="User.h" />
     <ClInclude Include="UserCollection.h" />
+    <ClInclude Include="Util.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

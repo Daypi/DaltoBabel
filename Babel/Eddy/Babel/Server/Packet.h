@@ -53,7 +53,7 @@ public:
 		ENUM_COUNT
 	};
 
-	Packet(unsigned short requestUID = 0, unsigned char instrction = 0);
+	Packet(unsigned short requestUID = 0, unsigned char instruction = 0);
 	Packet(const Packet&);
 	virtual ~Packet();
 

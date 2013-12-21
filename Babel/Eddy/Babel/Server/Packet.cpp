@@ -1,7 +1,7 @@
 #include		<iostream>
 #include		<stdexcept>
-#include		<cstdio>
 #include		"Packet.h"
+#include		"Util.hpp"
 
 Packet::Packet(unsigned short requestUID, unsigned char instruction)
 {
@@ -145,9 +145,9 @@ char				*Packet::serialize()
 		this->_serialization[9] = tmp[0];
 		this->_serialization[10] = tmp[1];
 		memcpy(this->_serialization + Packet::HEADER_SIZE, this->_format.c_str(), this->_format.size());
+		if (this->_data != 0)
+			memcpy(this->_serialization + Packet::HEADER_SIZE + this->_format.size(), this->_data, this->_dataSize);
 	}
-	if (this->_data != 0)
-		memcpy(this->_serialization + Packet::HEADER_SIZE + this->_format.size(), this->_data, this->_dataSize);
 	return (this->_serialization);
 }
 
@@ -330,40 +330,40 @@ void				Packet::show()
 	std::string		format;
 	unsigned short	size;
 
-	printf("\n***PACKET***\n");
+	std::cout << std::endl << "***PACKET***" << std::endl;
 	str = (unsigned char *)this->serialize();
 	for (unsigned int i = 0; i < this->size(); ++i)
 	{
-		printf("%02X ", str[i]);
+		std::cout << Util::format<const std::string&>('0', 2, Util::toHex<int>(str[i])) << " ";
 	}
-	printf("\nMagic Number = 0x%X\n", this->_magicNumber);
-	printf("Request UID = %d\n", this->_requestUID);
-	printf("Instruction = %d\n", this->_instruction);
-	printf("Data Size = %d\n", this->_dataSize);
-	printf("Format = %s\n\n", this->_format.c_str());
+	std::cout << std::endl << "Magic Number = 0x" << Util::toHex(this->_magicNumber) << std::endl;
+	std::cout << "Request UID = " << this->_requestUID << std::endl;
+	std::cout << "Instruction = " << this->_instruction << std::endl;
+	std::cout << "Data Size = " << this->_dataSize << std::endl;
+	std::cout << "Format = " << this->_format.c_str() << std::endl << std::endl;
 	for (unsigned int i = 0; i < this->_format.size(); ++i)
 	{
-		printf("id = %d : [", i);
+		std::cout << "id = " << i << " : [";
 		if (this->_format[i] == 'c')
-			printf("%d]\n", this->getChar(i));
+			std::cout << (int)this->getChar(i) << "]" << std::endl;
 		else if (this->_format[i] == 's')
-			printf("%s]\n", this->getString(i).c_str());
+			std::cout << this->getString(i).c_str() << "]" << std::endl;
 		else if (this->_format[i] == 'l')
 		{
 			size = this->getList(i, format);
-			printf("%d]\nLIST\n", size);
+			std::cout << size << "]" << std::endl << "LIST" << std::endl;
 			++i;
 			for (unsigned int j = 0; j < size * format.size(); ++j)
 			{
-				printf("id = %d : [", j + i);
+				std::cout << "id = " << (j + i) << " : [";
 				if (format[j % format.size()] == 'c')
-					printf("%d]\n", this->getChar(j + i));
+					std::cout << (int)this->getChar(j + i) << "]" << std::endl;
 				else if (format[j % format.size()] == 's')
-					printf("%s]\n", this->getString(j + i).c_str());
+					std::cout << this->getString(j + i).c_str() << "]" << std::endl;
 			}
-			printf("LIST END\n");
+			std::cout << "LIST END" << std::endl;
 			break;
 		}
 	}
-	printf("***######***\n\n");
+	std::cout << "***######***" << std::endl << std::endl;
 }
