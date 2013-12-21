@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <list>
 #include <portaudio.h>
 #include "IAudioIO.hh"
 
@@ -18,32 +19,31 @@ typedef float SAMPLE;
 
 typedef struct
 {
-	bool		available;
-    int          frameIndex;
-    int          maxFrameIndex;
-    SAMPLE      *recordedSamples;
+  bool		available;
+  int		frameIndex;
+  int		maxFrameIndex;
+  SAMPLE	*recordedSamples;
 }	PortAudioBuffer;
 
 class	PortAudioIO : public IAudioIO
 {
 private:
-  PaStreamParameters	_inputParams;
-  PaStreamParameters	_outputParams;
-  PaStream				*_Stream;
-  PaError				_err;
-  PortAudioBuffer		_data[2];
+  PaStreamParameters		_inputParams;
+  PaStreamParameters		_outputParams;
+  PaStream			*_Stream;
+  PaError			_err;
+  PortAudioBuffer		_recordBuffers[2];
+  PortAudioBuffer		_playBuffers[2];
   std::string			_errorString;
-  short					_recordingBuffer;
-  short					_playingBuffer;
+  char			        _recordingBuffer;
+  char				_playingBuffer;
   int 					memberrecordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags);
   static int 			recordCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
-  int 					memberplayCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags);
-  static int 			playCallback( const void *, void *, unsigned long, const PaStreamCallbackTimeInfo*, PaStreamCallbackFlags, void *);
 public:
   PortAudioIO();
   bool					init(void);
   bool					cleanup(void);
-  void					playSound(void);
+  void					pushBuffer(PortAudioBuffer &);
   void					startRecording(void);
   const std::string		&getError();
   PortAudioBuffer		*getData();

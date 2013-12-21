@@ -13,7 +13,6 @@ class	IAudioIO {
 public:
 	virtual bool			init(void) = 0;
 	virtual bool			cleanup(void) = 0;
-	virtual void			playSound(void) = 0;
 	virtual void			startRecording(void) = 0;
 	virtual const std::string	&getError() = 0;
 	virtual	~IAudioIO() {};

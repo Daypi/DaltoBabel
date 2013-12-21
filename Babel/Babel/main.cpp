@@ -8,6 +8,5 @@ int	main(void)
   if (!audiomanager.init())
 	  std::cerr << "error initializing " << std::endl;
   audiomanager.startRecording();
-  audiomanager.playSound();
   audiomanager.cleanup();
 }
