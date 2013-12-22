@@ -168,6 +168,7 @@ void PortAudioIO::switchBuffer(eBuffType type)
 {
 	if (type == RECORD)
 	{
+			this->pushBuffer(this->_recordBuffers[this->_recordingBuffer]);
 		this->_recordingBuffer == this->_recordingBuffer == 1 ? 0 : 1;
 		this->_recordBuffers[_recordingBuffer].frameIndex = 0;
 		std::cout << "switch record" << std::endl;
