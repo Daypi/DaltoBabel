@@ -63,7 +63,7 @@ public:
 	void						setFormat(const std::string&);
 	void						setData(char *);
 
-	unsigned int				getMagicNumber() const;
+	unsigned short				getMagicNumber() const;
 	unsigned short				getRequestUID() const;
 	unsigned char				getInstruction() const;
 	unsigned int				getDataSize() const;

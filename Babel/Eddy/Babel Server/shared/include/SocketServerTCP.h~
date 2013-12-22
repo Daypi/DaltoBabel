@@ -13,7 +13,7 @@ class	SocketServerTCP : public ISocketServer
 	SocketAvd													*_sock;
 	std::map<unsigned int, SocketAvd *>							_tabSock;
 	std::vector<unsigned int>									_ids;
-	std::map<unsigned int, std::pair<const char *, int> >		_map;
+	std::map<unsigned int, std::pair<const char *, int>>		_map;
 	unsigned int												_uid;
 	SeleKtor													_socketPool;
 	Thread<SeleKtor, void, void *>								*_th;

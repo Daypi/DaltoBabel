@@ -9,8 +9,8 @@
 class							User : public IUser
 {
 	unsigned int				_uid;
-	std::string					_name;
 	std::string					_ip;
+	std::string					_name;
 	bool						_connected;
 	unsigned int				_sockId;
 	PacketFactory				_packetFactory;

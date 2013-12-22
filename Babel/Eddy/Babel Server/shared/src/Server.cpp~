@@ -515,11 +515,11 @@ void				Server::chat(User *user, Packet *packet)
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
-void				Server::error(User *, Packet *)
+void				Server::error(User *user, Packet *packet)
 {
 }
 
-void				Server::handshake(User *user, Packet *)
+void				Server::handshake(User *user, Packet *packet)
 {
 	if (user->timeout(10))
 	{
@@ -528,7 +528,7 @@ void				Server::handshake(User *user, Packet *)
 	}
 }
 
-void				Server::ping(User *user, Packet *)
+void				Server::ping(User *user, Packet *packet)
 {
 	if (user->timeout(1))
 	{

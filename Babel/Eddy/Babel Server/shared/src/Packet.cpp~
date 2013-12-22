@@ -51,7 +51,7 @@ void		Packet::setData(char *data)
 	this->_data = data;
 }
 
-unsigned int		Packet::getMagicNumber() const
+unsigned short		Packet::getMagicNumber() const
 {
 	return (this->_magicNumber);
 }
