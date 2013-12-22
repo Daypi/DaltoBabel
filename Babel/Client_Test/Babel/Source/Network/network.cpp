@@ -60,6 +60,7 @@ void	Network::handlePackets()
     while ((packet = this->_factory.getPacket()))
     {
         packet->show();
+        std::cout << "After show, before the good function" << std::endl;
         if (packet->getInstruction() == Packet::HANDSHAKE)
             this->sendHandshake();
         else if (packet->getInstruction() == Packet::LOGIN || packet->getInstruction() == Packet::CREATE_ACCOUNT)
@@ -68,11 +69,14 @@ void	Network::handlePackets()
             this->refreshStatusText(packet);
         else if (packet->getInstruction() == Packet::STATUS)
             this->refreshStatus(packet);
+        else if (packet->getInstruction() == Packet::LIST)
+            this->refreshList(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
             packet->show();
         }
+        std::cout << "After the good function" << std::endl;
     }
 }
 
@@ -177,10 +181,10 @@ void	Network::handleNetworkTCP()
             _init = false;
             throw Exception(e);
         }
-        std::cout << "Data packet factory" << std::endl;
+        std::cout << "Data packet factory = push buff in factory" << std::endl;
         for (unsigned int i = 0; i < rdSize; ++i)
         {
-            std::cout << Util::format('0', 2, Util::toHex<unsigned int>(buffer[i])) << " ";
+            std::cout << Util::format('0', 2, Util::toHex<unsigned int>((unsigned char)buffer[i])) << " ";
         }
         std::cout << std::endl;
         _factory.feed(buffer, rdSize);
@@ -221,8 +225,24 @@ void    Network::refreshStatus(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    this->_status = (eStatus)packet->getChar(0);
+    this->_status = (Contact::eStatus)packet->getChar(1);
     std::cout << "Status = " << this->_status << std::endl;
+}
+
+void    Network::refreshList(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+
+    std::string     format;
+    unsigned short  size = packet->getList(1, format);
+
+    for (unsigned int i = 0; i < size * format.size(); i += 3)
+    {
+    }
 }
 
 int     Network::getUID()
@@ -250,7 +270,7 @@ const std::string&  Network::getStatusText() const
     return (this->_statusText);
 }
 
-Network::eStatus             Network::getStatus() const
+Contact::eStatus             Network::getStatus() const
 {
     return (this->_status);
 }

@@ -8,9 +8,8 @@
 
 class MyContactModel
 {
-private:
     std::vector<Contact *>  _contactList;
-    Network::eStatus        _status;
+    Contact::eStatus        _status;
     std::string             _statusText;
     Network                 _net;
     ContactWindow           _w;
@@ -21,12 +20,13 @@ public:
     ~MyContactModel();
 
     void    setContacts(std::vector<std::string>& list);
-    void    addContact(const std::string &ip, const std::string &name, QWidget *parent);
+    void    addContact(const std::string &name, const std::string &statusText, Contact::eStatus status, QWidget *parent);
     void    rmContact(const std::string &name);
     std::vector<Contact *>& getContacts();
     void    show();
     void    close();
     bool    isVisible();
+    void    loop();
 };
 
 #endif // MYCONTACTW_H

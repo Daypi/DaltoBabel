@@ -6,19 +6,11 @@
 #include	"SocketClientTCP.h"
 #include	"SocketClientUDP.h"
 #include	"PacketFactory.h"
+#include    "Include/Model/contact.h"
 
 
 class		Network
 {
-public:
-    enum eStatus
-    {
-        AVAILABLE = 0,
-        BUSY,
-        AWAY,
-        INVISIBLE,
-        ENUM_COUNT
-    };
 private:
     std::queue<Packet *>	_sendQueueUDP;
     std::queue<Packet *>	_sendQueueTCP;
@@ -29,7 +21,7 @@ private:
     bool                    _handshake;
     bool                    _log;
     int                     _reqUID;
-    eStatus                 _status;
+    Contact::eStatus        _status;
     std::string             _statusText;
 
 private:
@@ -54,13 +46,14 @@ public:
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);
     void    refreshStatus(Packet *packet);
+    void    refreshList(Packet  *packet);
 
     int                 getUID();
     bool                getInit() const;
     bool                getHandshake() const;
     bool                getLog() const;
     const std::string&  getStatusText() const;
-    eStatus             getStatus() const;
+    Contact::eStatus             getStatus() const;
 };
 
 #endif // NETWORK_H

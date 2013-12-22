@@ -88,6 +88,7 @@ void		Packet::updateData(unsigned int size)
 	if (this->_data == 0)
 	{
 		this->_data = size == 0 ? 0 : new char[size];
+		size += this->_format.size() + 2;
 		this->_dataSize = size;
 		return;
 	}
@@ -96,6 +97,7 @@ void		Packet::updateData(unsigned int size)
 	{
 		LibC::memcpy(tmp, this->_data, this->_dataSize);
 		delete[] this->_data;
+		size += this->_format.size() + 2;
 	}
 	this->_data = tmp;
 	this->_dataSize = size;
@@ -107,7 +109,6 @@ void			Packet::deserialize(char *packet)
 	this->format(packet);
 	if (this->_dataSize > 0)
 	{
-		this->_dataSize -= this->_format.size();
 		if (this->_data != 0)
 			delete[] this->_data;
 		this->_data = new char[this->_dataSize];
@@ -118,7 +119,7 @@ void			Packet::deserialize(char *packet)
 char				*Packet::serialize()
 {
 	char			*tmp;
-	unsigned int	finalDataSize;
+	unsigned int	formatSize;
 
 	if (this->_serialization != 0)
 		delete[] this->_serialization;
@@ -132,15 +133,14 @@ char				*Packet::serialize()
 	this->_serialization[4] = tmp[1];
 	tmp = reinterpret_cast<char *>(&this->_instruction);
 	this->_serialization[5] = tmp[0];
-	finalDataSize = this->_dataSize + this->_format.size();
-	tmp = reinterpret_cast<char *>(&finalDataSize);
+	tmp = reinterpret_cast<char *>(&this->_dataSize);
 	this->_serialization[6] = tmp[0];
 	this->_serialization[7] = tmp[1];
 	this->_serialization[8] = tmp[2];
 	if (this->_dataSize > 0)
 	{
-		finalDataSize = this->_format.size();
-		tmp = reinterpret_cast<char *>(&finalDataSize);
+		formatSize = this->_format.size();
+		tmp = reinterpret_cast<char *>(&formatSize);
 		this->_serialization[9] = tmp[0];
 		this->_serialization[10] = tmp[1];
 		LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
@@ -188,7 +188,7 @@ void				Packet::format(char *packet)
 
 unsigned int	Packet::size() const
 {
-	return (Packet::HEADER_SIZE + (this->_dataSize > 0 ? 2 : 0) + this->_format.size() + this->_dataSize);
+	return (Packet::HEADER_SIZE + this->_dataSize);
 }
 
 bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
