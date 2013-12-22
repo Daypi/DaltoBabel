@@ -1,4 +1,4 @@
-#include	"PortAudioIO.hh"
+#include	"AudioManager.hh"
 #include	<iostream>
 
 int	main(void)
@@ -9,4 +9,6 @@ int	main(void)
 	  std::cerr << "error initializing " << std::endl;
   audiomanager.startRecording();
   audiomanager.cleanup();
+
+	//AudioManager	mgr;
 }
