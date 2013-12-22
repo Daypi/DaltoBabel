@@ -1,17 +1,15 @@
 #pragma once
 
-#ifdef					_WIN32
-#include				<Winsock2.h>
-#endif
+#include				<ctime>
 
 class					TimeStamp
 {
-	struct timeval		_previousTime;
-	struct timeval		_actualTime;
+	time_t				_previousTime;
+	time_t				_actualTime;
 
 public:
 	TimeStamp();
 	~TimeStamp();
 
-	unsigned long		elapsedTime();
+	time_t				elapsedTime();
 };

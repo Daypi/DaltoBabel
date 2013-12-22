@@ -152,6 +152,7 @@ void											Server::list(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "clssc" : "cs");
 	toSend->updateData(3 + 4 + (!status ? response.size() : nb));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData<short>(1, this->_accountManager.size());
@@ -192,6 +193,7 @@ void				Server::call(User *user, Packet *packet)
 		status = 1;
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "css" : "cs");
 	toSend->updateData(3 + 4 + response.size() + (status ? (4 + toCall->getIp().size()) : 0));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
@@ -225,21 +227,24 @@ void				Server::hangUp(User *user, Packet *packet)
 		status = 0;
 		response = "Unknown user " + login + ".";
 	}
+	fromCall = this->_accountManager.getAccountByName(user->getName());
+	toCall = fromCall->getCurrentCall();
 	toSend = new Packet();
 	toSend->header(packet->serialize());
-	toSend->updateData(3 + 4 + response.size());
+	toSend->setFormat(status ? "cs" : "css");
+	toSend->updateData(3 + 4 + response.size() + (status ? 0 : (4 + toCall->getName().size())));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
 	if (status)
 	{
-		fromCall = this->_accountManager.getAccountByName(user->getName());
-		toCall = fromCall->getCurrentCall();
 		fromCall->setCurrentCall(0);
 		toCall->setCurrentCall(0);
 		user = this->_userCollection.getUserByName(toCall->getName());
 		if (!user)
 			std::cerr << "ERROR ON USER" << std::endl;
 	}
+	else
+		toSend->appendToData(2, toCall->getName());
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
 
@@ -254,6 +259,7 @@ void				Server::statusText(User *user, Packet *packet)
 	response = statusTextStr;
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat("cs");
 	toSend->updateData(3 + 4 + response.size());
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
@@ -275,6 +281,7 @@ void				Server::status(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat("cs");
 	toSend->updateData(3 + 3);
 	toSend->appendToData<char>(0, status);
 	if (!status)
@@ -307,14 +314,15 @@ void				Server::acceptCall(User *user, Packet *packet)
 		status = 1;
 	toSend = new Packet();
 	toSend->header(packet->serialize());
-	toSend->updateData(3 + 4 + response.size() + (status ? (4 + toCall->getIp().size()) : 0));
+	toSend->setFormat("css");
+	toSend->updateData(3 + 4 + response.size() + 4 + (status ? toCall->getIp().size() : toCall->getName().size()));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
+	toSend->appendToData(2, status ? toCall->getIp() : toCall->getName());
 	if (status)
 	{
 		fromCall->callAccepted();
 		toCall->callAccepted();
-		toSend->appendToData(2, toCall->getIp());
 		user = this->_userCollection.getUserByName(toCall->getName());
 		if (!user)
 			std::cerr << "ERROR ON USER" << std::endl;
@@ -345,16 +353,17 @@ void				Server::rejectCall(User *user, Packet *packet)
 		status = 1;
 	toSend = new Packet();
 	toSend->header(packet->serialize());
-	toSend->updateData(3 + 4 + response.size() + (status ? (4 + toCall->getIp().size()) : 0));
+	toSend->setFormat("css");
+	toSend->updateData(3 + 4 + response.size() + 4 + (status ? toCall->getIp().size() : toCall->getName().size()));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
+	toSend->appendToData(2, status ? toCall->getIp() : toCall->getName());
 	if (status)
 	{
 		fromCall->setCurrentCall(0);
 		toCall->setCurrentCall(0);
 		fromCall->callAccepted();
 		toCall->callAccepted();
-		toSend->appendToData(2, toCall->getIp());
 		user = this->_userCollection.getUserByName(toCall->getName());
 		if (!user)
 			std::cerr << "ERROR ON USER" << std::endl;
@@ -385,6 +394,7 @@ void				Server::login(User *user, Packet *packet)
 		status = 1;
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat("cs");
 	toSend->updateData(3 + 3);
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
@@ -413,6 +423,7 @@ void				Server::createAccount(User *user, Packet *packet)
 		user->setName(login);
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat("cs");
 	toSend->updateData(3 + 4 + response.size());
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
@@ -434,6 +445,7 @@ void				Server::addContact(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "c" : "cs");
 	toSend->updateData(!status ? (3 + 4 + response.size()) : 3);
 	toSend->appendToData<char>(0, status);
 	if (!status)
@@ -456,6 +468,7 @@ void				Server::removeContact(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "c" : "cs");
 	toSend->updateData(!status ? (3 + 4 + response.size()) : 3);
 	toSend->appendToData<char>(0, status);
 	if (!status)
@@ -478,6 +491,7 @@ void				Server::blockContact(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "c" : "cs");
 	toSend->updateData(!status ? (3 + 4 + response.size()) : 3);
 	toSend->appendToData<char>(0, status);
 	if (!status)
@@ -505,6 +519,7 @@ void				Server::chat(User *user, Packet *packet)
 	}
 	toSend = new Packet();
 	toSend->header(packet->serialize());
+	toSend->setFormat(status ? "css" : "cs");
 	toSend->updateData(3 + 4 + response.size() + (status ? (4 + msg.size()) : 0));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
@@ -530,7 +545,7 @@ void				Server::handshake(User *user, Packet *)
 
 void				Server::ping(User *user, Packet *)
 {
-	if (user->timeout(1))
+	if (user->timeout(60))
 	{
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on ping" << std::endl;

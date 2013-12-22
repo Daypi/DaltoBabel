@@ -6,8 +6,6 @@
 
 class								PacketFactory
 {
-	static const unsigned int		BUFF_SIZE = 65025;
-
 	std::queue<Packet *>			_packet;
 	CircularBuffer					_buff;
 	Packet							*_current;

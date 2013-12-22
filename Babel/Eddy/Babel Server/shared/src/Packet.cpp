@@ -105,11 +105,14 @@ void			Packet::deserialize(char *packet)
 {
 	this->header(packet);
 	this->format(packet);
-	this->_dataSize -= this->_format.size();
-	if (this->_data != 0)
-		delete[] this->_data;
-	this->_data = new char[this->_dataSize];
-	memcpy(this->_data, packet + Packet::HEADER_SIZE, this->_dataSize);
+	if (this->_dataSize > 0)
+	{
+		this->_dataSize -= this->_format.size();
+		if (this->_data != 0)
+			delete[] this->_data;
+		this->_data = new char[this->_dataSize];
+		memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize);
+	}
 }
 
 char				*Packet::serialize()
@@ -134,7 +137,7 @@ char				*Packet::serialize()
 	this->_serialization[6] = tmp[0];
 	this->_serialization[7] = tmp[1];
 	this->_serialization[8] = tmp[2];
-	if (this->_format.size() > 0)
+	if (this->_dataSize > 0)
 	{
 		finalDataSize = this->_format.size();
 		tmp = reinterpret_cast<char *>(&finalDataSize);
@@ -185,7 +188,7 @@ void				Packet::format(char *packet)
 
 unsigned int	Packet::size() const
 {
-	return (Packet::HEADER_SIZE + this->_format.size() + this->_dataSize);
+	return (Packet::HEADER_SIZE + (this->_dataSize > 0 ? 2 : 0) + this->_format.size() + this->_dataSize);
 }
 
 bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
@@ -335,7 +338,8 @@ void				Packet::show()
 	std::cout << "Request UID = " << this->_requestUID << std::endl;
 	std::cout << "Instruction = " << (unsigned int)this->_instruction << std::endl;
 	std::cout << "Data Size = " << this->_dataSize << std::endl;
-	std::cout << "Format = " << this->_format.c_str() << std::endl << std::endl;
+	std::cout << "Format = " << this->_format.c_str() << std::endl;
+	std::cout << "Size = " << this->size() << std::endl << std::endl;
 	for (unsigned int i = 0; i < this->_format.size(); ++i)
 	{
 		std::cout << "id = " << i << " : [";

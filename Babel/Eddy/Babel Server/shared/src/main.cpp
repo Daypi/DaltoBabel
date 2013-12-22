@@ -1,5 +1,6 @@
 #include		<iostream>
 #include		"Server.h"
+#include		"Util.hpp"
 
 int				main()
 {
@@ -15,9 +16,12 @@ int				main()
 		std::cin.get();
 	}
 	/*Packet			packet;
+	PacketFactory	factory;
 	unsigned short	size;
 	std::string		format;
 	unsigned short	i;
+	Packet			*tmp;
+	unsigned char	*str;
 
 	packet.setRequestUID(42);
 	packet.setInstruction(42);
@@ -45,7 +49,20 @@ int				main()
 
 	packet.setFormat("sscscccsssclsc");
 
-	packet.show();
+	str = (unsigned char *)packet.serialize();
+	for (unsigned int i = 0; i < packet.size(); ++i)
+	{
+		std::cout << Util::format<const std::string&>('0', 2, Util::toHex<unsigned int>(str[i])) << " ";
+	}
+	std::cout << std::endl;
+	
+	factory.feed(packet.serialize(), packet.size());
+
+	tmp = factory.getPacket();
+	if (tmp)
+	{
+		tmp->show();
+	}
 	*/
 	std::cin.get();
 	return (0);
