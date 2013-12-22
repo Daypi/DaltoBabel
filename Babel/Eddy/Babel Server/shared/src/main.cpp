@@ -5,7 +5,7 @@ int				main()
 {
 	try
 	{
-		Server	server(1337, 5);
+		Server	server(11235, 5);
 
 		server.start();
 	}
@@ -21,7 +21,6 @@ int				main()
 
 	packet.setRequestUID(42);
 	packet.setInstruction(42);
-	packet.setDataSize(42);
 	packet.updateData(118);
 	packet.appendToData(0, "salut");
 	packet.appendToData(1, "coucou");

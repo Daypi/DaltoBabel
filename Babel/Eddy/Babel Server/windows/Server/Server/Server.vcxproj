@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{51209938-06D0-4992-A0D7-798715046050}</ProjectGuid>
+    <RootNamespace>Server</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)\..\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>$(SolutionDir)\..\..\shared\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\shared\include\Account.h" />
+    <ClInclude Include="..\..\..\shared\include\AccountManager.h" />
+    <ClInclude Include="..\..\..\shared\include\CircularBuffer.hpp" />
+    <ClInclude Include="..\..\..\shared\include\CondVar.hh" />
+    <ClInclude Include="..\..\..\shared\include\CWCondVar.h" />
+    <ClInclude Include="..\..\..\shared\include\CWMutex.h" />
+    <ClInclude Include="..\..\..\shared\include\CWSocket.hh" />
+    <ClInclude Include="..\..\..\shared\include\CWThread.hpp" />
+    <ClInclude Include="..\..\..\shared\include\Exception.h" />
+    <ClInclude Include="..\..\..\shared\include\ICondVar.h" />
+    <ClInclude Include="..\..\..\shared\include\IMutex.h" />
+    <ClInclude Include="..\..\..\shared\include\ISocket.hh" />
+    <ClInclude Include="..\..\..\shared\include\ISocketServer.h" />
+    <ClInclude Include="..\..\..\shared\include\IThread.h" />
+    <ClInclude Include="..\..\..\shared\include\IUser.h" />
+    <ClInclude Include="..\..\..\shared\include\Mutex.h" />
+    <ClInclude Include="..\..\..\shared\include\MutexPool.h" />
+    <ClInclude Include="..\..\..\shared\include\Packet.h" />
+    <ClInclude Include="..\..\..\shared\include\PacketFactory.h" />
+    <ClInclude Include="..\..\..\shared\include\SeleKtor.hh" />
+    <ClInclude Include="..\..\..\shared\include\Server.h" />
+    <ClInclude Include="..\..\..\shared\include\Socket.hh" />
+    <ClInclude Include="..\..\..\shared\include\SocketAvd.hh" />
+    <ClInclude Include="..\..\..\shared\include\SocketServerTCP.h" />
+    <ClInclude Include="..\..\..\shared\include\Thread.hpp" />
+    <ClInclude Include="..\..\..\shared\include\TimeStamp.h" />
+    <ClInclude Include="..\..\..\shared\include\User.h" />
+    <ClInclude Include="..\..\..\shared\include\UserCollection.h" />
+    <ClInclude Include="..\..\..\shared\include\Util.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\shared\src\Account.cpp" />
+    <ClCompile Include="..\..\..\shared\src\AccountManager.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CircularBuffer.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CondVar.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CWCondVar.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CWMutex.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CWSocket.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Exception.cpp" />
+    <ClCompile Include="..\..\..\shared\src\main.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Mutex.cpp" />
+    <ClCompile Include="..\..\..\shared\src\MutexPool.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Packet.cpp" />
+    <ClCompile Include="..\..\..\shared\src\PacketFactory.cpp" />
+    <ClCompile Include="..\..\..\shared\src\SeleKtor.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Server.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Socket.cpp" />
+    <ClCompile Include="..\..\..\shared\src\SocketAvd.cpp" />
+    <ClCompile Include="..\..\..\shared\src\SocketServerTCP.cpp" />
+    <ClCompile Include="..\..\..\shared\src\TimeStamp.cpp" />
+    <ClCompile Include="..\..\..\shared\src\User.cpp" />
+    <ClCompile Include="..\..\..\shared\src\UserCollection.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

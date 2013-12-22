@@ -144,9 +144,9 @@ char				*Packet::serialize()
 		tmp = reinterpret_cast<char *>(&finalDataSize);
 		this->_serialization[9] = tmp[0];
 		this->_serialization[10] = tmp[1];
-		memcpy(this->_serialization + Packet::HEADER_SIZE, this->_format.c_str(), this->_format.size());
+		memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
 		if (this->_data != 0)
-			memcpy(this->_serialization + Packet::HEADER_SIZE + this->_format.size(), this->_data, this->_dataSize);
+			memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize);
 	}
 	return (this->_serialization);
 }
@@ -180,7 +180,6 @@ void				Packet::format(char *packet)
 	
 	if (this->_dataSize == 0)
 		return;
-	this->show();
 	size = *reinterpret_cast<const unsigned short *>(packet + Packet::DATA_SIZE_INDEX + 3);
 	tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
 	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
@@ -334,18 +333,18 @@ void				Packet::show()
 	str = (unsigned char *)this->serialize();
 	for (unsigned int i = 0; i < this->size(); ++i)
 	{
-		std::cout << Util::format<const std::string&>('0', 2, Util::toHex<int>(str[i])) << " ";
+		std::cout << Util::format<const std::string&>('0', 2, Util::toHex<unsigned int>(str[i])) << " ";
 	}
 	std::cout << std::endl << "Magic Number = 0x" << Util::toHex(this->_magicNumber) << std::endl;
 	std::cout << "Request UID = " << this->_requestUID << std::endl;
-	std::cout << "Instruction = " << this->_instruction << std::endl;
+	std::cout << "Instruction = " << (unsigned int)this->_instruction << std::endl;
 	std::cout << "Data Size = " << this->_dataSize << std::endl;
 	std::cout << "Format = " << this->_format.c_str() << std::endl << std::endl;
 	for (unsigned int i = 0; i < this->_format.size(); ++i)
 	{
 		std::cout << "id = " << i << " : [";
 		if (this->_format[i] == 'c')
-			std::cout << (int)this->getChar(i) << "]" << std::endl;
+			std::cout << (unsigned int)this->getChar(i) << "]" << std::endl;
 		else if (this->_format[i] == 's')
 			std::cout << this->getString(i).c_str() << "]" << std::endl;
 		else if (this->_format[i] == 'l')
@@ -357,7 +356,7 @@ void				Packet::show()
 			{
 				std::cout << "id = " << (j + i) << " : [";
 				if (format[j % format.size()] == 'c')
-					std::cout << (int)this->getChar(j + i) << "]" << std::endl;
+					std::cout << (unsigned int)this->getChar(j + i) << "]" << std::endl;
 				else if (format[j % format.size()] == 's')
 					std::cout << this->getString(j + i).c_str() << "]" << std::endl;
 			}
