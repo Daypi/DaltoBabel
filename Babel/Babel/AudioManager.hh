@@ -13,8 +13,11 @@ public:
 	AudioManager();
 	~AudioManager();
 	void	mainLoop();
-
+	void	setIn();
+	void	setOut();
 private:
+	unsigned char*			_in;
+	unsigned char*			_out;
 	PortAudioIO		_paio;
 	//OpusCompressor	_opus;
 };

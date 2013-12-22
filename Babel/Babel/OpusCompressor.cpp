@@ -5,15 +5,14 @@
  *      Author: gambinn
  */
 
+#include <iostream>
 #include "OpusCompressor.hh"
 
-OpusCompressor::OpusCompressor(int sample_rate, int num_channels) {
-	this->_num_channels = num_channels;
-	this->_enc = opus_encoder_create(sample_rate, num_channels, OPUS_APPLICATION_VOIP, &this->_error);
-	this->_dec = opus_decoder_create(sample_rate, num_channels, &this->_error);
-
+OpusCompressor::OpusCompressor() {
+	this->_num_channels = NUM_CHANNELS;
+	this->_enc = opus_encoder_create(SAMPLE_RATE, NUM_CHANNELS, OPUS_APPLICATION_VOIP, &this->_error);
+	this->_dec = opus_decoder_create(SAMPLE_RATE, NUM_CHANNELS, &this->_error);
 	opus_int32 rate;
-
 	opus_encoder_ctl(this->_enc, OPUS_GET_BANDWIDTH(&rate));
 	this->_encoded_data_size = rate;
 }

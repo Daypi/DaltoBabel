@@ -4,17 +4,16 @@
 #include <string>
 #include <list>
 #include <portaudio.h>
+#include "babel_common.h"
 #include "IAudioIO.hh"
 
-#define SAMPLE_RATE  (44100)
-#define FRAMES_PER_BUFFER (512)
-#define NUM_SECONDS     (2)
-#define NUM_CHANNELS    (2)
+//#define SAMPLE_RATE  (44100)
+//#define FRAMES_PER_BUFFER (512)
+//#define NUM_SECONDS     (2)
+//#define NUM_CHANNELS    (2)
 #define PA_SAMPLE_TYPE  paFloat32
 typedef float SAMPLE;
 #define SAMPLE_SILENCE  (0.0f)
-
-
 #define	PLAYBACK	(1)
 
 typedef struct
@@ -44,9 +43,10 @@ public:
   bool					init(void);
   bool					cleanup(void);
   void					pushBuffer(PortAudioBuffer );
-  void					startRecording(void);
+  bool					startRecording(void);
   const std::string		&getError();
   PortAudioBuffer		*getData();
   void					initRecording(void);
+  float					*paLoop(float *in);
   virtual ~PortAudioIO();
 };
