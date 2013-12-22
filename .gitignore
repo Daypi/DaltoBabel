@@ -4,6 +4,7 @@ CMakeFiles
 Makefile
 cmake_install.cmake
 VSproj/
+bin/
 
 # Compiled Object files
 *.gch
@@ -11,6 +12,8 @@ VSproj/
 *.lo
 *.o
 *.tlog
+*.exp
+
 
 # Compiled Dynamic libraries
 *.so

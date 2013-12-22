@@ -125,82 +125,78 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 				       const PaStreamCallbackTimeInfo* timeInfo,
 				       PaStreamCallbackFlags statusFlags)
 {
-  PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
-  const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
-  SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
-  long framesToCalc;
-  long i;
-  int finished;
-  unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-  (void) timeInfo;
-  (void) statusFlags;
+	PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
+	const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
+	SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
+	long framesToCalc;
+	long i;
+	int finished;
+	unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
 
-  // std::cout << _recordingBuffer << "recordin"  << std::endl;
-  if(framesLeft < framesPerBuffer)
-    {
-      framesToCalc = framesLeft;
-      finished = paComplete;
-    }
-  else
-    {
-      framesToCalc = framesPerBuffer;
-      finished = paContinue;
-    }
-  if( inputBuffer == NULL )
-    {
-      for( i=0; i<framesToCalc; i++ )
+	if(framesLeft < framesPerBuffer)
 	{
-	  *wptr++ = SAMPLE_SILENCE;  /* left */
-	  if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
+		framesToCalc = framesLeft;
+		finished = paComplete;
 	}
-    }
-  else
-    {
-      for( i=0; i<framesToCalc; i++ )
+	else
 	{
-	  *wptr++ = *rptr++;  /* left */
-	  if(NUM_CHANNELS == 2)
-	    *wptr++ = *rptr++;  /* right */
+		framesToCalc = framesPerBuffer;
+		finished = paContinue;
 	}
-    }
-  data->frameIndex += framesToCalc;
-  if (PLAYBACK)
-    {
-      // std::cout << _playingBuffer << std::endl;
-      SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
-      SAMPLE *wptr = (SAMPLE*)outputBuffer;
-      unsigned int i2;
-      int finished2;
-      unsigned int framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
+	if( inputBuffer == NULL )
+	{
+		for( i=0; i<framesToCalc; i++ )
+		{
+			*wptr++ = SAMPLE_SILENCE;  /* left */
+			if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
+		}
+	}
+	else
+	{
+		for( i=0; i<framesToCalc; i++ )
+		{
+			*wptr++ = *rptr++;  /* left */
+			if(NUM_CHANNELS == 2)
+				*wptr++ = *rptr++;  /* right */
+		}
+	}
+	data->frameIndex += framesToCalc;
+	if (PLAYBACK)
+	{
+		SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
+		SAMPLE *wptr = (SAMPLE*)outputBuffer;
+		unsigned int i2;
+		int finished2;
+		unsigned int framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
 
-      if( framesLeft2 < framesPerBuffer )
-	{
-	  /* final buffer... */
-	  for( i2=0; i2<framesLeft2; i2++ )
-	    {
-	      *wptr++ = *rptr++;  /* left */
-	      if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
-	    }
-	  for( ; i2<framesPerBuffer; i2++ )
-	    {
-	      *wptr++ = 0;  /* left */
-	      if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
-	    }
-	  this->_playBuffers[this->_playingBuffer].frameIndex += framesLeft;
-	  finished2 = paComplete;
+		if( framesLeft2 < framesPerBuffer )
+		{
+			/* final buffer... */
+			for( i2=0; i2<framesLeft2; i2++ )
+			{
+				*wptr++ = *rptr++;  /* left */
+				if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+			}
+			for( ; i2<framesPerBuffer; i2++ )
+			{
+				*wptr++ = 0;  /* left */
+				if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
+			}
+			this->_playBuffers[this->_playingBuffer].frameIndex += framesLeft;
+			finished2 = paComplete;
+		}
+		else
+		{
+			for( i2=0; i2<framesPerBuffer; i2++ )
+			{
+				*wptr++ = *rptr++;  /* left */
+				if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+			}
+			this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
+			finished2 = paContinue;
+		}
 	}
-      else
-	{
-	  for( i2=0; i2<framesPerBuffer; i2++ )
-	    {
-	      *wptr++ = *rptr++;  /* left */
-	      if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
-	    }
-	  this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
-	  finished2 = paContinue;
-	}
-    }
-  return finished;
+	return finished;
 }
 
 int PortAudioIO::recordCallback( const void *inputBuffer, void *outputBuffer,

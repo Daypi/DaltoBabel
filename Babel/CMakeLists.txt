@@ -13,6 +13,8 @@ add_executable(BabelAudioTest
 	Babel/portaudio.h
 	Babel/PortAudioIO.cpp
 	Babel/PortAudioIO.hh
+	Babel/AudioManager.hh
+	Babel/AudioManager.cpp
 	Babel/main.cpp)
 
 #set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${MY_DIR})
@@ -22,16 +24,17 @@ INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/libs/portaudio/includes ${PROJECT_SOUR
 
 if(WIN32)
 	find_package(Boost 1.55)
-	INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
-	LINK_DIRECTORIES(${Boost_LIBRARY_DIRS}
+	#INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
+	LINK_DIRECTORIES(#${Boost_LIBRARY_DIRS}
 					${PROJECT_SOURCE_DIR}/libs/portaudio/lib64 ${PROJECT_SOURCE_DIR}/libs/opus/lib64)
-	target_link_libraries(BabelAudioTest ${Boost_LIBRARIES}
-					${PROJECT_SOURCE_DIR}/libs/portaudio/lib64/portaudio_x64.lib
+	target_link_libraries(BabelAudioTest ${PROJECT_SOURCE_DIR}/libs/portaudio/lib64/portaudio_x64.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/celt.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/silk_common.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/silk_fixed.lib
 					${PROJECT_SOURCE_DIR}/libs/opus/lib64/silk_float.lib
-					${PROJECT_SOURCE_DIR}/libs/opus/lib64/opus.lib)
+					${PROJECT_SOURCE_DIR}/libs/opus/lib64/opus.lib
+					)
+					#${Boost_LIBRARIES}
 else(WIN32)
 #faire le linkage sur linux ici
 #	LINK_DIRECTORIES(${PROJECT_SOURCE_DIR}/libs/portaudio)
