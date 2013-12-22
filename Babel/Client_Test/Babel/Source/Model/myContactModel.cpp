@@ -2,7 +2,8 @@
 #include "Include/Model/myContactModel.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
-    : _w(this, parent),
+    : _status(Network::AVAILABLE),
+      _w(this, parent),
       _connect(&_net, this, &_w)
 {
     std::vector<std::string> test;

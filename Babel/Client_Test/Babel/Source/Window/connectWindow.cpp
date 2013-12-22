@@ -16,6 +16,7 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
     setBackground();
     centerWindow();
     ui->editIP->setText("10.20.86.147");
+    ui->editPort->setText("11235");
     this->show();
 }
 
@@ -48,13 +49,11 @@ void    ConnectWindow::on_valider_clicked()
 {
     QMessageBox msgBox;
 
-    if (ui->editLogin->text().size() > 0 && ui->editMdp->text().size() > 0 && ui->editIP->text().size() > 0)
+    if (!ui->editLogin->text().isEmpty() && !ui->editMdp->text().isEmpty() && !ui->editIP->text().isEmpty() && !ui->editPort->text().isEmpty())
     {
         try
         {
-            this->_model->connect(ui->editIP->text().toStdString(), 11235);
-            //this->_model->show();
-            //this->hide();
+            this->_model->connect(ui->editIP->text().toStdString(), ui->editPort->text().toInt());
         }
         catch (Exception &e)
         {

@@ -28,6 +28,9 @@
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
     <layout class="QGridLayout" name="gridLayout_2">
+     <item row="5" column="3">
+      <widget class="QLineEdit" name="editPort"/>
+     </item>
      <item row="1" column="0">
       <widget class="QLabel" name="login">
        <property name="font">
@@ -44,37 +47,6 @@
         <set>Qt::AlignCenter</set>
        </property>
       </widget>
-     </item>
-     <item row="3" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QCheckBox" name="newUser">
-         <property name="text">
-          <string>New User ?</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer name="horizontalSpacer">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item>
-        <widget class="QPushButton" name="valider">
-         <property name="text">
-          <string>valider</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
      </item>
      <item row="0" column="1">
       <spacer name="verticalSpacer">
@@ -102,23 +74,6 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QLineEdit" name="editLogin">
-       <property name="maxLength">
-        <number>32</number>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="QLineEdit" name="editMdp">
-       <property name="maxLength">
-        <number>32</number>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
        </property>
       </widget>
      </item>
@@ -151,6 +106,67 @@
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" colspan="3">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QCheckBox" name="newUser">
+         <property name="text">
+          <string>New User ?</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="valider">
+         <property name="text">
+          <string>valider</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="5" column="2">
+      <widget class="QLabel" name="PORT">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>PORT</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="3">
+      <widget class="QLineEdit" name="editLogin">
+       <property name="maxLength">
+        <number>32</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" colspan="3">
+      <widget class="QLineEdit" name="editMdp">
+       <property name="maxLength">
+        <number>32</number>
+       </property>
+       <property name="echoMode">
+        <enum>QLineEdit::Password</enum>
        </property>
       </widget>
      </item>

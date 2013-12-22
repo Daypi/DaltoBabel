@@ -64,6 +64,10 @@ void	Network::handlePackets()
             this->sendHandshake();
         else if (packet->getInstruction() == Packet::LOGIN || packet->getInstruction() == Packet::CREATE_ACCOUNT)
             this->checkLogin(packet);
+        else if (packet->getInstruction() == Packet::STATUSTEXT)
+            this->refreshStatusText(packet);
+        else if (packet->getInstruction() == Packet::STATUS)
+            this->refreshStatus(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
@@ -199,6 +203,28 @@ void    Network::checkLogin(Packet *packet)
     this->_log = true;
 }
 
+void    Network::refreshStatusText(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    this->_statusText = packet->getString(1);
+    std::cout << "Status text = " << this->_statusText << std::endl;
+}
+
+void    Network::refreshStatus(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    this->_status = (eStatus)packet->getChar(0);
+    std::cout << "Status = " << this->_status << std::endl;
+}
+
 int     Network::getUID()
 {
     return _reqUID++;
@@ -217,6 +243,16 @@ bool    Network::getHandshake() const
 bool    Network::getLog() const
 {
     return (this->_log);
+}
+
+const std::string&  Network::getStatusText() const
+{
+    return (this->_statusText);
+}
+
+Network::eStatus             Network::getStatus() const
+{
+    return (this->_status);
 }
 
 void    Network::sendLogin(bool isNewUser, const std::string &login, const std::string &mdp)
