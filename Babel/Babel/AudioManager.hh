@@ -16,8 +16,9 @@ public:
 	void	setIn();
 	void	setOut();
 private:
+	bool					_isRecording;
 	unsigned char*			_in;
 	unsigned char*			_out;
 	PortAudioIO		_paio;
-	//OpusCompressor	_opus;
+	OpusCompressor	_opus;
 };

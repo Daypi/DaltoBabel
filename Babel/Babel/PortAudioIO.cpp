@@ -147,7 +147,7 @@ float *PortAudioIO::paLoop(float *in)
 
     while( ( this->_err = Pa_IsStreamActive(this->_Stream) ) == 1)
       {
-		Pa_Sleep(100);
+	//	Pa_Sleep(1);
       }
     this->_err = Pa_CloseStream(this->_Stream);
     if (this->_err != paNoError)

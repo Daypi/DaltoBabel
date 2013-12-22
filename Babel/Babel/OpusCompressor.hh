@@ -14,6 +14,8 @@
 #include <cstdlib>
 #include "babel_common.h"
 
+#define		MAX_SIZE 100
+
 class OpusCompressor {
 private:
 	int				_num_channels;
@@ -21,7 +23,7 @@ private:
 	OpusEncoder		*_enc;
 	OpusDecoder		*_dec;
 	size_t			_encoded_data_size;
-
+	size_t			_maxSize;
 public:
 	OpusCompressor();
 	unsigned char	*encodeFrame(const float *, int);
