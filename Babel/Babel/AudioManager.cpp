@@ -18,26 +18,30 @@ void AudioManager::mainLoop()
 	this->_in = NULL;
 	this->_out = NULL;
 	temp = NULL;
-	while (this->_isRecording)
+	this->_paio.paLoop(temp);
+		while( ( this->_paio._err = Pa_IsStreamActive(this->_paio._Stream) ) == 1)
 	{
-		if (temp != NULL)
+//		std::cout << "1" << std::endl;
+		if (this->_paio.getRecord() != NULL)
 		{
-			std::cout << "NARMOL" << std::endl;
-			temp = _opus.decodeFrame(const_cast<const unsigned char *>(_in), frameSize);
-//		this->_paio.paLoop(&temp);
-		std::cout << "decoded" << std::endl;
-		this->_out =_opus.encodeFrame(this->_paio.paLoop(temp), frameSize);
-		this->_in = this->_out;
-		}
-		else
-		{
-			std::cout << "INIET" << std::endl;
-			temp = new float[100];
-			this->_out =_opus.encodeFrame(this->_paio.paLoop(temp), frameSize);
-			this->_in = this->_out;
-			delete temp;
+			if (temp != NULL)
+			{
+				temp = _opus.decodeFrame(const_cast<const unsigned char *>(_in), frameSize);
+				this->_out =_opus.encodeFrame(this->_paio.getRecord(), frameSize);
+				std::cout << "KOUK" << std::endl;
+				this->_paio.setPlay(temp, 480);
+				this->_in = this->_out;
+			}
+			else
+			{
+				temp = new float[100];
+				this->_out =_opus.encodeFrame(this->_paio.getRecord(), frameSize);
+				this->_in = this->_out;
+				std::cout << "Jouge" << std::endl; 
+			}
 		}
 	}
+	delete temp;
 }
 
 void AudioManager::setIn()
