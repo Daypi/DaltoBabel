@@ -12,6 +12,7 @@
 #include <opus_defines.h>
 #include <opus.h>
 #include <cstdlib>
+#include "babel_common.h"
 
 class OpusCompressor {
 private:
@@ -22,7 +23,7 @@ private:
 	size_t			_encoded_data_size;
 
 public:
-	OpusCompressor(int, int);
+	OpusCompressor();
 	unsigned char	*encodeFrame(const float *, int);
 	float			*decodeFrame(const unsigned char*, int);
 	virtual ~OpusCompressor();
