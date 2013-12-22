@@ -16,6 +16,12 @@ typedef float SAMPLE;
 #define SAMPLE_SILENCE  (0.0f)
 #define	PLAYBACK	(1)
 
+enum eBuffType
+{
+	RECORD,
+	PLAY
+};
+
 typedef struct
 {
   bool		available;
@@ -45,8 +51,8 @@ public:
   void					pushBuffer(PortAudioBuffer );
   bool					startRecording(void);
   const std::string		&getError();
-  PortAudioBuffer		*getData();
   void					initRecording(void);
   float					*paLoop(float *in);
+  void					switchBuffer(eBuffType);
   virtual ~PortAudioIO();
 };
