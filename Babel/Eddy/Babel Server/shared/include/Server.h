@@ -2,6 +2,7 @@
 
 #include				<string>
 #include													<vector>
+#include													<map>
 #include													"Packet.h"
 #include													"UserCollection.h"
 #include													"SocketServerTCP.h"
@@ -22,7 +23,7 @@ class														Server
 
 	typedef void (Server::*instructionPtr)(User *, Packet *);
 
-	std::vector<Server::instructionPtr>						_instruction;
+	std::map<Packet::eInstruction, Server::instructionPtr>	_instruction;
 
 public:
 	Server(int, int);
@@ -51,6 +52,11 @@ public:
 	void													error(User *, Packet *);
 	void													handshake(User *, Packet *);
 	void													ping(User *, Packet *);
+
+	void													list(User *, unsigned short);
+	void													statusText(User *, unsigned short, char, const std::string&);
+	void													status(User *, unsigned short, char, char, const std::string&);
+	void													login(User *, unsigned short, char, const std::string&, Account *);
 
 	/*
 	void													sendMsg(const User&, const Account&, const std::string&);

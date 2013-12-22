@@ -4,7 +4,7 @@
 
 int				main()
 {
-	try
+	/*try
 	{
 		Server	server(11235, 5);
 
@@ -14,8 +14,10 @@ int				main()
 	{
 		std::cout << e.what();
 		std::cin.get();
-	}
-	/*Packet			packet;
+	}*/
+	Packet			packet;
+	Packet			packet2;
+	Packet			packet3;
 	PacketFactory	factory;
 	unsigned short	size;
 	std::string		format;
@@ -23,7 +25,7 @@ int				main()
 	Packet			*tmp;
 	unsigned char	*str;
 
-	packet.setRequestUID(42);
+	/*packet.setRequestUID(42);
 	packet.setInstruction(42);
 	packet.updateData(118);
 	packet.appendToData(0, "salut");
@@ -56,14 +58,47 @@ int				main()
 	}
 	std::cout << std::endl;
 	
-	factory.feed(packet.serialize(), packet.size());
+	packet2.setRequestUID(21);
+	packet2.setInstruction(84);
+	packet2.updateData(13);
+	packet2.appendToData<char>(0, '*');
+	packet2.appendToData(1, "coucou");
 
-	tmp = factory.getPacket();
-	if (tmp)
+	packet2.setFormat("cs");*/
+
+	packet.setRequestUID(0);
+	packet.setInstruction(3);
+	packet.setFormat("cs");
+	packet.updateData(7);
+	packet.appendToData<char>(0, 1);
+	packet.appendToData(1, "");
+
+	packet2.setRequestUID(0);
+	packet2.setInstruction(4);
+	packet2.setFormat("cc");
+	packet2.updateData(6);
+	packet2.appendToData<char>(0, 1);
+	packet2.appendToData<char>(1, 0);
+
+	packet3.setRequestUID(0);
+	packet3.setInstruction(0);
+	packet3.setFormat("clssc");
+	packet3.updateData(7);
+	packet3.appendToData<char>(0, 1);
+	packet3.appendToData<short>(1, 0);
+
+	char		*tab = new char[packet.size() + packet2.size() + packet3.size()];
+
+	LibC::memcpy(tab, packet.serialize(), packet.size());
+	LibC::memcpy(tab + packet.size(), packet2.serialize(), packet2.size());
+	LibC::memcpy(tab + packet.size() + packet2.size(), packet3.serialize(), packet3.size());
+	factory.feed(tab, packet.size() + packet2.size() + packet3.size());
+
+	while ((tmp = factory.getPacket()))
 	{
 		tmp->show();
 	}
-	*/
+	delete[] tab;
 	std::cin.get();
 	return (0);
 }
