@@ -53,8 +53,7 @@ public:
 		ENUM_COUNT
 	};
 
-	Packet(unsigned short requestUID = 0, unsigned char instrction = 0);
-	Packet(const Packet&);
+	Packet(unsigned short requestUID = 0, unsigned char instruction = 0);
 	virtual ~Packet();
 
 	void						setMagicNumber(unsigned int);
@@ -64,7 +63,7 @@ public:
 	void						setFormat(const std::string&);
 	void						setData(char *);
 
-	unsigned short				getMagicNumber() const;
+	unsigned int				getMagicNumber() const;
 	unsigned short				getRequestUID() const;
 	unsigned char				getInstruction() const;
 	unsigned int				getDataSize() const;

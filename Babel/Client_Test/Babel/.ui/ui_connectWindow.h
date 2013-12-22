@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'connectWindow.ui'
 **
-** Created: Fri Dec 20 23:05:19 2013
+** Created: Sat Dec 21 16:01:34 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
@@ -136,6 +136,10 @@ public:
 
         gridLayout->addItem(horizontalSpacer_2, 0, 1, 1, 1);
 
+        QWidget::setTabOrder(editLogin, editMdp);
+        QWidget::setTabOrder(editMdp, editIP);
+        QWidget::setTabOrder(editIP, valider);
+        QWidget::setTabOrder(valider, newUser);
 
         retranslateUi(ConnectWindow);
 

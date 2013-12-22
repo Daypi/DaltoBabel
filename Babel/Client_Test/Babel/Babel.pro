@@ -33,7 +33,8 @@ HEADERS += \
     Include/Network/CUMutex.h \
     Include/Network/CUCondVar.h \
     Include/Network/CondVar.hh \
-    Include/Network/CircularBuffer.hpp
+    Include/Network/CircularBuffer.hpp \
+    Include/Network/Util.hpp
 
 SOURCES += \
     Source/main.cpp \

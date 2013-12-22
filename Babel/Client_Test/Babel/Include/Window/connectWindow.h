@@ -23,6 +23,10 @@ public:
     void    centerWindow();
     void    setBackground();
     void    refresh();
+
+    bool                getNewUser();
+    const std::string   getLogin();
+    const std::string   getMdp();
     void    closeEvent(QCloseEvent *event);
 
 private slots:

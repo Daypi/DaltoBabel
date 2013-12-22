@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'contactWindow.ui'
 **
-** Created: Fri Dec 20 21:54:17 2013
+** Created: Sat Dec 21 16:01:34 2013
 **      by: Qt User Interface Compiler version 4.8.1
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!

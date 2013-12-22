@@ -16,6 +16,8 @@ class		Network
     SocketClientTCP         *_sockTCP;
     PacketFactory           _factory;
     bool                    _init;
+    bool                    _handshake;
+    bool                    _log;
     int                     _reqUID;
 
 private:
@@ -31,13 +33,18 @@ public:
     void	handleNetwork();
     void	pushUDP(Packet *packet);
     void	pushTCP(Packet *packet);
-    int     getUID();
-    bool    getInit();
     void	handleNetworkUDP();
     void	handleNetworkTCP();
     void	handlePackets();
 
     void    sendHandshake();
+    void    sendLogin(bool isNewUser, const std::string &login, const std::string &mdp);
+    void    checkLogin(Packet *packet);
+
+    int     getUID();
+    bool    getInit() const;
+    bool    getHandshake() const;
+    bool    getLog() const;
 };
 
 #endif // NETWORK_H

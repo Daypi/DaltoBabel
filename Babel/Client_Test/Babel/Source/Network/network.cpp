@@ -1,10 +1,13 @@
 #include "Include/Network/network.h"
+#include "Include/Network/Util.hpp"
 
 Network::Network()
 {
     _sockUDP = NULL;
     _sockTCP = NULL;
     _init = false;
+    _handshake = false;
+    _log = false;
     _reqUID = 0;
 }
 
@@ -52,13 +55,15 @@ void	Network::connect(const std::string &ip, int port)
 
 void	Network::handlePackets()
 {
-    Packet *packet;
+    Packet  *packet;
 
     while ((packet = this->_factory.getPacket()))
     {
         packet->show();
         if (packet->getInstruction() == Packet::HANDSHAKE)
             this->sendHandshake();
+        else if (packet->getInstruction() == Packet::LOGIN || packet->getInstruction() == Packet::CREATE_ACCOUNT)
+            this->checkLogin(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
@@ -92,16 +97,6 @@ void	Network::pushUDP(Packet *packet)
 void	Network::pushTCP(Packet *packet)
 {
     this->_sendQueueTCP.push(packet);
-}
-
-int     Network::getUID()
-{
-    return _reqUID++;
-}
-
-bool    Network::getInit()
-{
-    return this->_init;
 }
 
 void	Network::handleNetworkUDP()
@@ -178,16 +173,61 @@ void	Network::handleNetworkTCP()
             _init = false;
             throw Exception(e);
         }
+        std::cout << "Data packet factory" << std::endl;
+        for (unsigned int i = 0; i < rdSize; ++i)
+        {
+            std::cout << Util::format('0', 2, Util::toHex<unsigned int>(buffer[i])) << " ";
+        }
+        std::cout << std::endl;
         _factory.feed(buffer, rdSize);
     }
 }
 
 void    Network::sendHandshake()
 {
-    this->_sendQueueTCP.push(new Packet(0, Packet::HANDSHAKE));
+    this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::HANDSHAKE));
+    this->_handshake = true;
 }
 
-//void    Network::sendLogin()
-//{
-//    this->_sendQueueTCP.push(new Packet(0,Packet::LOGIN));
-//}
+void    Network::checkLogin(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    this->_log = true;
+}
+
+int     Network::getUID()
+{
+    return _reqUID++;
+}
+
+bool    Network::getInit() const
+{
+    return this->_init;
+}
+
+bool    Network::getHandshake() const
+{
+    return (this->_handshake);
+}
+
+bool    Network::getLog() const
+{
+    return (this->_log);
+}
+
+void    Network::sendLogin(bool isNewUser, const std::string &login, const std::string &mdp)
+{
+    Packet  *pack = new Packet(this->getUID(), isNewUser == true ? Packet::CREATE_ACCOUNT : Packet::LOGIN);
+
+    std::cout << "Le mot de passe = " << mdp << std::endl;
+    pack->setFormat("ss");
+    pack->updateData(4 + login.size() + 4 + mdp.size());
+    pack->appendToData(0, login);
+    pack->appendToData(1, mdp);
+    this->_sendQueueTCP.push(pack);
+    this->_handshake = false;
+}

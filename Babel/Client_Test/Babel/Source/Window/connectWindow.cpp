@@ -2,6 +2,7 @@
 #include <QDesktopWidget>
 #include <QPixmap>
 #include <QLabel>
+#include <QCryptographicHash>
 #include "Include/Window/connectWindow.h"
 #include "Include/Model/myContactModel.h"
 #include "ui_connectWindow.h"
@@ -14,7 +15,7 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
     ui->setupUi(this);
     setBackground();
     centerWindow();
-    ui->editIP->setText("10.20.86.55");
+    ui->editIP->setText("10.20.86.147");
     this->show();
 }
 
@@ -61,6 +62,23 @@ void    ConnectWindow::on_valider_clicked()
             msgBox.exec();
         }
     }
+}
+
+bool    ConnectWindow::getNewUser()
+{
+    return (this->ui->newUser->isChecked());
+}
+
+const std::string   ConnectWindow::getLogin()
+{
+    return (this->ui->editLogin->text().toStdString());
+}
+
+const std::string   ConnectWindow::getMdp()
+{
+    QString tmp = QCryptographicHash::hash((this->ui->editMdp->text().toAscii()),QCryptographicHash::Md5).toHex();
+//    return (this->ui->editMdp->text().toStdString());
+    return (tmp.toStdString());
 }
 
 void    ConnectWindow::closeEvent(QCloseEvent *event)

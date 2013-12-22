@@ -9,6 +9,13 @@ MyConnectModel::MyConnectModel(Network *net, MyContactModel *contact, QWidget *p
     {
         this->_w.refresh();
         this->_net->handleNetwork();
+        if (this->_net->getHandshake())
+            this->_net->sendLogin(this->_w.getNewUser(), this->_w.getLogin(), this->_w.getMdp());
+        if (this->_net->getLog())
+        {
+            this->show();
+            this->_w.hide();
+        }
     }
 }
 
