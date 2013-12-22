@@ -10,7 +10,8 @@
 
 NAME=	server
 
-SRC=	../shared/src/Account.cpp \
+SRC=	../shared/src/LibC.cpp \
+	../shared/src/Account.cpp \
 	../shared/src/AccountManager.cpp \
 	../shared/src/CircularBuffer.cpp \
 	../shared/src/CondVar.cpp \

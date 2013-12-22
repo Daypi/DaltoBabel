@@ -2,6 +2,7 @@
 
 #include						<cstring>
 #include						<string>
+#include						"LibC.h"
 
 class							Packet
 {
@@ -96,8 +97,8 @@ public:
 		}						convert;
 
 		convert.data = data;
-		memcpy(this->_data + this->_actualDataSize, &id, 2);
-		memcpy(this->_data + this->_actualDataSize + 2, convert.tab, sizeof(T));
+		LibC::memcpy(this->_data + this->_actualDataSize, &id, 2);
+		LibC::memcpy(this->_data + this->_actualDataSize + 2, convert.tab, sizeof(T));
 		this->_actualDataSize += 2 + sizeof(T);
 	}
 };

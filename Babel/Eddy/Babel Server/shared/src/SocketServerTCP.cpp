@@ -1,4 +1,5 @@
-#include "SocketServerTCP.h"
+#include	"SocketServerTCP.h"
+#include	"LibC.h"
 
 SocketServerTCP::SocketServerTCP()
 {
@@ -207,15 +208,15 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std
 	this->_socketPool.getMutex()->lock("SELEKTOR");
 	for(it = tab.begin(); it != tab.end(); ++it)
 	{
-		memset(buffer, 0, 4096);
+		LibC::memset(buffer, 0, 4096);
 		tmp_read = 0;
 		try
 		{
 			this->_tabSock[*it]->receiv(buffer, size, &tmp_read);
 			this->_tabSock[*it]->iReaded();
 			tmp_receiv = new char[tmp_read + 1];
-			memset(tmp_receiv, 0, tmp_read + 1);
-			memcpy(tmp_receiv, buffer, tmp_read);
+			LibC::memset(tmp_receiv, 0, tmp_read + 1);
+			LibC::memcpy(tmp_receiv, buffer, tmp_read);
 			this->_map[*it] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 		}
 		catch (Exception)
@@ -235,15 +236,15 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(uns
 	char	*tmp_receiv;
 
 	this->_socketPool.getMutex()->lock("SELEKTOR");
-	memset(buffer, 0, 4096);
+	LibC::memset(buffer, 0, 4096);
 	this->deleteMap();
 	try
 	{
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
 		this->_tabSock[id]->iReaded();
 		tmp_receiv = new char[tmp_read + 1];
-		memset(tmp_receiv, 0, tmp_read + 1);
-		memcpy(tmp_receiv, buffer, tmp_read);
+		LibC::memset(tmp_receiv, 0, tmp_read + 1);
+		LibC::memcpy(tmp_receiv, buffer, tmp_read);
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
 	catch (Exception)

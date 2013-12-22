@@ -81,7 +81,7 @@ Packet			*User::getPacket(const char *data, unsigned int size)
 	return (packet);
 }
 
-bool			User::timeout(unsigned long time)
+bool			User::timeout(time_t time)
 {
 	return (this->_timeStamp.elapsedTime() >= time);
 }

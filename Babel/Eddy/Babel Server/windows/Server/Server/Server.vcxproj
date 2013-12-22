@@ -82,6 +82,7 @@
     <ClInclude Include="..\..\..\shared\include\ISocketServer.h" />
     <ClInclude Include="..\..\..\shared\include\IThread.h" />
     <ClInclude Include="..\..\..\shared\include\IUser.h" />
+    <ClInclude Include="..\..\..\shared\include\LibC.h" />
     <ClInclude Include="..\..\..\shared\include\Mutex.h" />
     <ClInclude Include="..\..\..\shared\include\MutexPool.h" />
     <ClInclude Include="..\..\..\shared\include\Packet.h" />
@@ -106,6 +107,7 @@
     <ClCompile Include="..\..\..\shared\src\CWMutex.cpp" />
     <ClCompile Include="..\..\..\shared\src\CWSocket.cpp" />
     <ClCompile Include="..\..\..\shared\src\Exception.cpp" />
+    <ClCompile Include="..\..\..\shared\src\LibC.cpp" />
     <ClCompile Include="..\..\..\shared\src\main.cpp" />
     <ClCompile Include="..\..\..\shared\src\Mutex.cpp" />
     <ClCompile Include="..\..\..\shared\src\MutexPool.cpp" />

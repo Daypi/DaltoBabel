@@ -1,6 +1,7 @@
 #pragma once
 
 #include						<string>
+#include						<ctime>
 #include						<vector>
 #include						"IUser.h"
 #include						"PacketFactory.h"
@@ -34,5 +35,5 @@ public:
 	unsigned int				getSockId() const;
 	void						setSockId(unsigned int);
 	Packet						*getPacket(const char *, unsigned int);
-	bool						timeout(unsigned long);
+	bool						timeout(time_t);
 };

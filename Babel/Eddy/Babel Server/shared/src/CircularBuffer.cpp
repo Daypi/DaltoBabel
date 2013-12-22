@@ -1,4 +1,5 @@
 #include	"CircularBuffer.hpp"
+#include	"LibC.h"
 
 CircularBuffer::CircularBuffer(int size)
 : _size(size), _start(0), _end(0), _buff(new char[size])
@@ -8,7 +9,7 @@ CircularBuffer::CircularBuffer(const CircularBuffer& other)
 : _size(other._size), _start(other._start), _end(other._end),
 _buff(new char[_size])
 {
-	memcpy(_buff, other._buff, sizeof(char)* _size);
+	LibC::memcpy(_buff, other._buff, sizeof(char)* _size);
 }
 
 CircularBuffer& CircularBuffer::operator=(const CircularBuffer& other)
@@ -20,7 +21,7 @@ CircularBuffer& CircularBuffer::operator=(const CircularBuffer& other)
 		_start = other._start;
 		_end = other._end;
 		_buff = new char[_size];
-		memcpy(_buff, other._buff, sizeof(char)* _size);
+		LibC::memcpy(_buff, other._buff, sizeof(char)* _size);
 	}
 	return (*this);
 }

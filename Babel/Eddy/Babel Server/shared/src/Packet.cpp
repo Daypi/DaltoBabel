@@ -94,7 +94,7 @@ void		Packet::updateData(unsigned int size)
 	tmp = size == 0 ? 0 : new char[size];
 	if (size != 0)
 	{
-		memcpy(tmp, this->_data, this->_dataSize);
+		LibC::memcpy(tmp, this->_data, this->_dataSize);
 		delete[] this->_data;
 	}
 	this->_data = tmp;
@@ -111,7 +111,7 @@ void			Packet::deserialize(char *packet)
 		if (this->_data != 0)
 			delete[] this->_data;
 		this->_data = new char[this->_dataSize];
-		memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize);
+		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize);
 	}
 }
 
@@ -143,9 +143,9 @@ char				*Packet::serialize()
 		tmp = reinterpret_cast<char *>(&finalDataSize);
 		this->_serialization[9] = tmp[0];
 		this->_serialization[10] = tmp[1];
-		memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
+		LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
 		if (this->_data != 0)
-			memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize);
+			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize);
 	}
 	return (this->_serialization);
 }
@@ -299,9 +299,9 @@ void					Packet::appendToData(short id, const std::string& data)
 	}					convert;
 
 	convert.data = data.size();
-	memcpy(this->_data + this->_actualDataSize, &id, 2);
-	memcpy(this->_data + this->_actualDataSize + 2, convert.tab, 2);
-	memcpy(this->_data + this->_actualDataSize + 4, data.c_str(), data.size());
+	LibC::memcpy(this->_data + this->_actualDataSize, &id, 2);
+	LibC::memcpy(this->_data + this->_actualDataSize + 2, convert.tab, 2);
+	LibC::memcpy(this->_data + this->_actualDataSize + 4, data.c_str(), data.size());
 	this->_actualDataSize += 4 + data.size();
 }
 
@@ -316,9 +316,9 @@ void					Packet::appendToData(short id, const char *str)
 
 	data = std::string(str);
 	convert.data = data.size();
-	memcpy(this->_data + this->_actualDataSize, &id, 2);
-	memcpy(this->_data + this->_actualDataSize + 2, convert.tab, 2);
-	memcpy(this->_data + this->_actualDataSize + 4, data.c_str(), data.size());
+	LibC::memcpy(this->_data + this->_actualDataSize, &id, 2);
+	LibC::memcpy(this->_data + this->_actualDataSize + 2, convert.tab, 2);
+	LibC::memcpy(this->_data + this->_actualDataSize + 4, data.c_str(), data.size());
 	this->_actualDataSize += 4 + data.size();
 }
 
