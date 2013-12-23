@@ -21,7 +21,6 @@ public:
 
     void  setContacts(std::vector<Contact *> &list);
     void  refresh();
-    void    showEvent(QShowEvent *event);
     void    closeEvent(QCloseEvent *event);
 
 private slots:
@@ -31,6 +30,10 @@ private slots:
     void on_add_clicked();
     void on_remove_clicked();
     void on_block_clicked();
+
+    void on_status_currentIndexChanged(int index);
+
+    void on_editStatusText_editingFinished();
 
 private:
     Ui::ContactWindow *ui;

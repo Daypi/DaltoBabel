@@ -191,6 +191,7 @@
   <tabstop>editLogin</tabstop>
   <tabstop>editMdp</tabstop>
   <tabstop>editIP</tabstop>
+  <tabstop>editPort</tabstop>
   <tabstop>valider</tabstop>
   <tabstop>newUser</tabstop>
  </tabstops>

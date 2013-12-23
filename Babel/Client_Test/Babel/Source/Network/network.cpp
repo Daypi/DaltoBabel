@@ -1,7 +1,8 @@
 #include "Include/Network/network.h"
 #include "Include/Network/Util.hpp"
 
-Network::Network()
+Network::Network(MyContactModel *model)
+    :   _model(model)
 {
     _sockUDP = NULL;
     _sockTCP = NULL;
@@ -71,6 +72,12 @@ void	Network::handlePackets()
             this->refreshStatus(packet);
         else if (packet->getInstruction() == Packet::LIST)
             this->refreshList(packet);
+        else if (packet->getInstruction() == Packet::ADD_CONTACT)
+            this->refreshAdd(packet);
+        else if (packet->getInstruction() == Packet::REMOVE_CONTACT)
+            this->refreshRm(packet);
+        else if (packet->getInstruction() == Packet::BLOCK_CONTACT)
+            this->refreshBlock(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
@@ -197,6 +204,78 @@ void    Network::sendHandshake()
     this->_handshake = true;
 }
 
+
+void    Network::sendLogin(bool isNewUser, const std::string &login, const std::string &mdp)
+{
+    Packet  *pack = new Packet(this->getUID(), isNewUser == true ? Packet::CREATE_ACCOUNT : Packet::LOGIN);
+
+    std::cout << "Le mot de passe = " << mdp << std::endl;
+    pack->setFormat("ss");
+    pack->updateData(4 + login.size() + 4 + mdp.size());
+    pack->appendToData(0, login);
+    pack->appendToData(1, mdp);
+    this->_sendQueueTCP.push(pack);
+    this->_handshake = false;
+}
+
+void    Network::sendStatusText(const std::string& newStat)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::STATUSTEXT);
+
+    pack->setFormat("s");
+    pack->updateData(4 + newStat.size());
+    pack->appendToData(0, newStat);
+    this->_sendQueueTCP.push(pack);
+}
+
+void    Network::sendStatus(Contact::eStatus status)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::STATUS);
+
+    pack->setFormat("c");
+    pack->updateData(3);
+    pack->appendToData(0, status);
+    this->_sendQueueTCP.push(pack);
+}
+
+void    Network::addContact(const std::string& name)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::ADD_CONTACT);
+
+    pack->setFormat("s");
+    pack->updateData(4 + name.size());
+    pack->appendToData(0, name);
+    this->_sendQueueTCP.push(pack);
+    this->sendList();
+}
+
+void    Network::rmContact(const std::string& name)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::REMOVE_CONTACT);
+
+    pack->setFormat("s");
+    pack->updateData(4 + name.size());
+    pack->appendToData(0, name);
+    this->_sendQueueTCP.push(pack);
+    this->sendList();
+}
+
+void    Network::blockContact(const std::string& name)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::BLOCK_CONTACT);
+
+    pack->setFormat("s");
+    pack->updateData(4 + name.size());
+    pack->appendToData(0, name);
+    this->_sendQueueTCP.push(pack);
+    this->sendList();
+}
+
+void    Network::sendList()
+{
+    this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::LIST));
+}
+
 void    Network::checkLogin(Packet *packet)
 {
     if (packet->getChar(0) != 1)
@@ -214,8 +293,7 @@ void    Network::refreshStatusText(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    this->_statusText = packet->getString(1);
-    std::cout << "Status text = " << this->_statusText << std::endl;
+    this->_model->setStatusText(packet->getString(1));
 }
 
 void    Network::refreshStatus(Packet *packet)
@@ -225,8 +303,7 @@ void    Network::refreshStatus(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    this->_status = (Contact::eStatus)packet->getChar(1);
-    std::cout << "Status = " << this->_status << std::endl;
+    this->_model->setStatus((Contact::eStatus)packet->getChar(1));
 }
 
 void    Network::refreshList(Packet *packet)
@@ -236,15 +313,41 @@ void    Network::refreshList(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-
     std::string     format;
     unsigned short  size = packet->getList(1, format);
 
-    for (unsigned int i = 0; i < size * format.size(); i += 3)
+    this->_model->clearContact();
+    for (unsigned int i = 0; i < size * format.size(); i += format.size())
+        this->_model->addContact(packet->getString(i + 2), packet->getString(i + 3), (Contact::eStatus)packet->getChar(i + 4));
+}
+
+void    Network::refreshAdd(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
     {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    this->sendList();
+}
+
+void    Network::refreshRm(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
     }
 }
 
+void    Network::refreshBlock(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+}
 int     Network::getUID()
 {
     return _reqUID++;
@@ -263,27 +366,4 @@ bool    Network::getHandshake() const
 bool    Network::getLog() const
 {
     return (this->_log);
-}
-
-const std::string&  Network::getStatusText() const
-{
-    return (this->_statusText);
-}
-
-Contact::eStatus             Network::getStatus() const
-{
-    return (this->_status);
-}
-
-void    Network::sendLogin(bool isNewUser, const std::string &login, const std::string &mdp)
-{
-    Packet  *pack = new Packet(this->getUID(), isNewUser == true ? Packet::CREATE_ACCOUNT : Packet::LOGIN);
-
-    std::cout << "Le mot de passe = " << mdp << std::endl;
-    pack->setFormat("ss");
-    pack->updateData(4 + login.size() + 4 + mdp.size());
-    pack->appendToData(0, login);
-    pack->appendToData(1, mdp);
-    this->_sendQueueTCP.push(pack);
-    this->_handshake = false;
 }
