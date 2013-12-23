@@ -31,6 +31,7 @@ public:
 
 	void													start();
 	void													stop();
+	void													timeout();
 	
 	Packet													*getPacket(User *);
 	void													sendTCP();

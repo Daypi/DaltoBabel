@@ -1,5 +1,6 @@
 #include		<iostream>
 #include		"Server.h"
+#include		"Util.hpp"
 
 Server::Server(int port, int nbListen) : _port(port), _nbListen(nbListen), _started(false)
 {
@@ -40,6 +41,7 @@ void									Server::start()
 	std::pair<unsigned int, char *>		ret;
 	Packet								*packet;
 	User								*user;
+	unsigned int						deco = 0;
 
 	this->_accountManager.load();
 	this->_started = true;
@@ -62,11 +64,42 @@ void									Server::start()
 				user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 				std::cout << "Client = " << this->_clientList[i] << std::endl;
 				packet = this->getPacket(user);
-				if (packet &&  packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Packet::ENUM_COUNT)
-					(this->*(this->_instruction[(Packet::eInstruction)packet->getInstruction()]))(user, packet);
+				if (packet)
+				{
+					deco = 0;
+					if (packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Packet::ENUM_COUNT)
+						(this->*(this->_instruction[(Packet::eInstruction)packet->getInstruction()]))(user, packet);
+				}
+				if (deco > 5)
+				{
+					std::cout << "User disconnected on deco > 5" << std::endl;
+					this->_userCollection.show();
+					if (!user)
+					{
+						user = this->_userCollection.getUserBySockId(this->_clientList[i]);
+						std::cout << "User not found !!!" << std::endl;
+					}
+					if (user)
+					{
+						std::cout << "User found ???" << std::endl;
+						this->_received = this->_sockTCP.recv(user->getSockId(), 1500);
+						if (this->_received.size() == 0)
+						{
+							//user->disconnect();
+							this->_userCollection.removeUserById(user->getUID());
+							std::cout << "User disconnected on recv on deco > 5" << std::endl;
+							std::cin.get();
+						}
+						//this->_userCollection.removeUserById(user->getUID());
+					}
+					std::cin.get();
+					deco = 0;
+				}
 			}
+			++deco;
 		}
 		this->sendTCP();
+		this->timeout();
 	}
 	this->_accountManager.save();
 }
@@ -76,21 +109,46 @@ void			Server::stop()
 	this->_started = false;
 }
 
+void						Server::timeout()
+{
+	std::vector<User *>		userList;
+
+	userList = this->_userCollection.getUserList();
+	for (unsigned int i = 0; i < userList.size(); ++i)
+	{
+		if (userList[i]->timeout(60, false))
+		{
+			// Disconnect the user
+		}
+	}
+}
+
 Packet					*Server::getPacket(User *user)
 {
 	Packet				*packet = 0;
 
 	if (!user)
+	{
+		std::cout << "User NULL on getPacket" << std::endl;
 		return (0);
+	}
 	this->_received = this->_sockTCP.recv(user->getSockId(), 1500);
 	if (this->_received.size() == 0)
 	{
 		//user->disconnect();
 		this->_userCollection.removeUserById(user->getUID());
-		std::cout << "Player Disconnected on recv" << std::endl;
+		std::cout << "User disconnected on recv" << std::endl;
+		std::cin.get();
 	}
 	else
 	{
+		unsigned char *str = (unsigned char *)this->_received[0].first;
+		std::cout << "received size = " << this->_received.size() << ", size read = " << this->_received[0].second << std::endl;
+		for (unsigned int i = 0; i < (unsigned int)this->_received[0].second; ++i)
+		{
+			std::cout << Util::format<const std::string&>('0', 2, Util::toHex<unsigned int>(str[i])) << " ";
+		}
+		std::cout << std::endl;
 		packet = user->getPacket(this->_received[user->getSockId()].first, this->_received[user->getSockId()].second);
 	}
 	return (packet);
@@ -119,7 +177,8 @@ void									Server::sendTCP()
 					{
 						//user->disconnect();
 						this->_userCollection.removeUserById(user->getUID());
-						std::cout << "Player Disconnected on send" << std::endl;
+						std::cout << "User disconnected on send" << std::endl;
+						std::cin.get();
 					}
 				}
 				delete packet.first;
@@ -159,9 +218,10 @@ void											Server::list(User *user, unsigned short req)
 	}
 	toSend = new Packet(req, Packet::LIST);
 	toSend->setFormat(status ? "clssc" : "cs");
-	toSend->updateData(3 + 4 + (!status ? response.size() : nb));
+	toSend->updateData(3 + 4 + (status ? nb : response.size()));
 	toSend->appendToData<char>(0, status);
-	toSend->appendToData<short>(1, this->_accountManager.size());
+	if (status)
+		toSend->appendToData<short>(1, contactList.size());
 	for (unsigned int i = 0; i < contactList.size(); ++i)
 	{
 		toSend->appendToData(id, contactList[i].first->getName());
@@ -425,9 +485,12 @@ void				Server::login(User *user, unsigned short req, char status, const std::st
 	if (status)
 		account->connect();
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	this->statusText(user, 0, 1, account->getStatusText());
-	this->status(user, 0, 1, account->getStatus(), "");
-	this->list(user, (unsigned short)0);
+	if (status)
+	{
+		this->statusText(user, 0, 1, account->getStatusText());
+		this->status(user, 0, 1, account->getStatus(), "");
+		this->list(user, (unsigned short)0);
+	}
 }
 
 void				Server::createAccount(User *user, Packet *packet)
@@ -458,6 +521,7 @@ void				Server::createAccount(User *user, Packet *packet)
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 	account = this->_accountManager.getAccountByName(login);
 	this->login(user, 0, status, response, account);
+	this->_accountManager.save();
 }
 
 void				Server::addContact(User *user, Packet *packet)
@@ -570,8 +634,10 @@ void				Server::handshake(User *user, Packet *packet)
 	std::cout << "HANDSHAKE" << std::endl;
 	if (user->timeout(10))
 	{
+		// Disconnect the user
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on handshake" << std::endl;
+		std::cin.get();
 	}
 }
 
@@ -580,7 +646,9 @@ void				Server::ping(User *user, Packet *)
 	std::cout << "PING" << std::endl;
 	if (user->timeout(60))
 	{
+		// Disconnect the user
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on ping" << std::endl;
+		std::cin.get();
 	}
 }

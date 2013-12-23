@@ -1,3 +1,4 @@
+#include		<iostream>
 #include		"UserCollection.h"
 
 UserCollection::UserCollection()
@@ -47,6 +48,24 @@ User			*UserCollection::getUserById(unsigned int id) const
 			return (this->_userList[i]);
 	}
 	return (0);
+}
+
+void			UserCollection::show() const
+{
+	std::cout << "### User Collection Start ###" << std::endl;
+	for (unsigned int i = 0; i < this->_userList.size(); ++i)
+	{
+		std::cout << std::endl << "UID = " << this->_userList[i]->getUID() << std::endl;
+		std::cout << "Name = " << this->_userList[i]->getName() << std::endl;
+		std::cout << "Ip = " << this->_userList[i]->getIp() << std::endl;
+		std::cout << "SockId = " << this->_userList[i]->getSockId() << std::endl;
+	}
+	std::cout << std::endl << "### User Collection End ###" << std::endl;
+}
+
+const std::vector<User *>&	UserCollection::getUserList() const
+{
+	return (this->_userList);
 }
 
 User			*UserCollection::getUserByName(const std::string& name) const
