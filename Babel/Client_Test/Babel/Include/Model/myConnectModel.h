@@ -3,6 +3,7 @@
 
 #include "Include/Network/network.h"
 #include "Include/Window/connectWindow.h"
+#include "Include/Model/myContactModel.h"
 
 class MyContactModel;
 

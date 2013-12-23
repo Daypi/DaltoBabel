@@ -4,9 +4,9 @@
 #include "ui_contactWindow.h"
 
 ContactWindow::ContactWindow(MyContactModel *model, QWidget *parent) :
-  QDialog(parent),
-  _model(model),
-  ui(new Ui::ContactWindow)
+    QDialog(parent),
+    _model(model),
+    ui(new Ui::ContactWindow)
 {
     ui->setupUi(this);
     this->hide();
@@ -19,55 +19,73 @@ ContactWindow::~ContactWindow()
 
 void    ContactWindow::setContacts(std::vector<Contact *>& list)
 {
-  unsigned int  size;
-  unsigned int  i;
+    unsigned int  size;
+    unsigned int  i;
+    std::vector<QString> tab;
 
-  size = list.size();
-  this->ui->listContact->clear();
-  for (i = 0; i < size; ++i)
+    tab.push_back("Available");
+    tab.push_back("Busy");
+    tab.push_back("Away");
+    tab.push_back("Invisible");
+    size = list.size();
+    this->ui->listContact->clear();
+    for (i = 0; i < size; ++i)
     {
-      this->ui->listContact->addItem(list[i]->getName().c_str());
+        std::cout << "prout prout" << i << std::endl;
+        QString tmp;
+        tmp = list[i]->getName().c_str();
+        tmp += " - ";
+        tmp += list[i]->getStatusText().c_str();
+        tmp += " (";
+        tmp += tab[list[i]->getStatus()];
+        tmp += ")";
+        this->ui->listContact->addItem(tmp);
     }
+}
+
+void    ContactWindow::refresh()
+{
+    QCoreApplication::processEvents();
 }
 
 void    ContactWindow::on_call_clicked()
 {
-  std::string   tmp;
-  unsigned int  i;
-  unsigned int  size;
-  std::vector<Contact *> _contactList(_model->getContacts());
+    std::string   tmp;
+    unsigned int  i;
+    unsigned int  size;
+    std::vector<Contact *> _contactList(_model->getContacts());
 
-  if (this->ui->listContact->selectedItems().isEmpty())
-    return;
-  tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
-  size = _contactList.size();
-  for (i = 0; i < size; ++i)
+    if (this->ui->listContact->selectedItems().isEmpty())
+        return;
+    tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
+    size = _contactList.size();
+    for (i = 0; i < size; ++i)
     {
-      if (tmp == _contactList[i]->getName())
+        if (tmp == _contactList[i]->getName())
         {
-          _contactList[i]->myShow();
-          _contactList[i]->setCalling(true);
+            _contactList[i]->myShow();
+            _contactList[i]->setCalling(true);
         }
     }
 }
 
 void ContactWindow::on_chat_clicked()
 {
-  std::string   tmp;
-  unsigned int  i;
-  unsigned int  size;
-  std::vector<Contact *> _contactList(_model->getContacts());
+    std::string   tmp;
+    unsigned int  i;
+    unsigned int  size;
+    std::vector<Contact *> _contactList(_model->getContacts());
 
-  if (this->ui->listContact->selectedItems().isEmpty())
-    return;
-  tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
-  size = _contactList.size();
-  for (i = 0; i < size; ++i)
+    if (this->ui->listContact->selectedItems().isEmpty())
+        return;
+    tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
+    size = _contactList.size();
+    for (i = 0; i < size; ++i)
     {
-      if (tmp == _contactList[i]->getName())
+        if (tmp == _contactList[i]->getName())
         {
-          _contactList[i]->myShow();
-          _contactList[i]->setCalling(false);
+            _contactList[i]->myShow();
+            _contactList[i]->setCalling(false);
         }
     }
 }
@@ -86,7 +104,7 @@ void    ContactWindow::on_add_clicked()
     QString text = QInputDialog::getText(this, "Add contact",
                                          "User name:", QLineEdit::Normal, "Name", &ok);
     if (ok && !text.isEmpty())
-        this->_model->addContact("127.0.0.1", text.toStdString(), this);
+        this->_model->sendAdd(text.toStdString());
 }
 
 void ContactWindow::on_remove_clicked()
@@ -95,15 +113,46 @@ void ContactWindow::on_remove_clicked()
     int         ret;
 
     if (this->ui->listContact->selectedItems().isEmpty())
-      return;
-    msgBox.setText("Are you sure you want to remove : " + this->ui->listContact->selectedItems().front()->text());
+        return;
+    QString     tmp(this->ui->listContact->selectedItems().front()->text());
+
+    tmp = tmp.split(" ")[0];
+    msgBox.setText("Are you sure you want to remove : " + tmp);
     msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
     ret = msgBox.exec();
     if (ret == QMessageBox::Yes)
-        this->_model->rmContact(this->ui->listContact->selectedItems().front()->text().toStdString());
+        this->_model->sendRm(tmp.toStdString());
 }
 
 void ContactWindow::on_block_clicked()
 {
-    //To do
+    QMessageBox msgBox;
+    int         ret;
+
+    if (this->ui->listContact->selectedItems().isEmpty())
+        return;
+    QString     tmp(this->ui->listContact->selectedItems().front()->text());
+
+    tmp = tmp.split(" ")[0];
+    msgBox.setText("Are you sure you want to block : " + tmp);
+    msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+    ret = msgBox.exec();
+    if (ret == QMessageBox::Yes)
+        this->_model->sendBlock(tmp.toStdString());
+}
+
+void    ContactWindow::closeEvent(QCloseEvent *event)
+{
+    event->accept();
+    exit(0);
+}
+
+void ContactWindow::on_status_currentIndexChanged(int index)
+{
+    this->_model->changeStatus((Contact::eStatus)index);
+}
+
+void ContactWindow::on_editStatusText_editingFinished()
+{
+    this->_model->changeStatusText(this->ui->editStatusText->text().toStdString());
 }

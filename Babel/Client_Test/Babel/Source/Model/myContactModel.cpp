@@ -2,18 +2,11 @@
 #include "Include/Model/myContactModel.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
-    : _status(Network::AVAILABLE),
-      _w(this, parent),
-      _connect(&_net, this, &_w)
+    : _status(Contact::AVAILABLE),
+      _net(new Network(this)),
+      _w(new ContactWindow(this, parent)),
+      _connect(new MyConnectModel(_net, this, _w))
 {
-    std::vector<std::string> test;
-
-    test.push_back("DaltoCon");
-    test.push_back("Zizi");
-    test.push_back("Daypi");
-    test.push_back("Collegue");
-    test.push_back("eddy le gay");
-    setContacts(test);
 }
 
 MyContactModel::~MyContactModel()
@@ -35,13 +28,22 @@ void    MyContactModel::setContacts(std::vector<std::string>& list)
             if (_contactList[j]->getName() == list[i])
                 find = true;
         if (!find)
-            _contactList.push_back(new Contact("127.0.0.1", list[i], _contactList.size() + 1, &_w));
+            _contactList.push_back(new Contact(list[i], _contactList.size() + 1, "Online", Contact::AVAILABLE, _w));
     }
-    this->_w.setContacts(_contactList);
+    this->_w->setContacts(_contactList);
 }
 
+void    MyContactModel::setStatusText(const std::string& newStat)
+{
+    this->_statusText = newStat;
+}
 
-void    MyContactModel::addContact(const std::string &ip, const std::string &name, QWidget *parent)
+void    MyContactModel::setStatus(Contact::eStatus status)
+{
+    this->_status = status;
+}
+
+void    MyContactModel::addContact(const std::string &name, const std::string &statusText, Contact::eStatus status)
 {
     unsigned int    i;
     bool            find(false);
@@ -50,20 +52,40 @@ void    MyContactModel::addContact(const std::string &ip, const std::string &nam
         if (_contactList[i]->getName() == name)
             find = true;
     if (!find)
-        _contactList.push_back(new Contact(ip, name, _contactList.size() + 1, parent));
-    this->_w.setContacts(_contactList);
+        _contactList.push_back(new Contact(name, _contactList.size() + 1, statusText, status, _w));
+    this->_w->setContacts(_contactList);
 }
 
-void    MyContactModel::rmContact(const std::string &name)
+void    MyContactModel::clearContact()
 {
-    for (std::vector<Contact *>::iterator i = _contactList.begin(); i != _contactList.end();)
-      {
-        if ((*i)->getName() == name)
-            _contactList.erase(i);
-        if (i != _contactList.end())
-            ++i;
-      }
-    this->_w.setContacts(_contactList);
+    for (unsigned int i = 0; i < this->_contactList.size(); ++i)
+        delete this->_contactList[i];
+    this->_contactList.clear();
+}
+
+void    MyContactModel::sendAdd(const std::string& name)
+{
+    this->_net->addContact(name);
+}
+
+void    MyContactModel::sendRm(const std::string& name)
+{
+    this->_net->rmContact(name);
+}
+
+void    MyContactModel::sendBlock(const std::string& name)
+{
+    this->_net->blockContact(name);
+}
+
+void    MyContactModel::changeStatusText(const std::string& newStat)
+{
+    this->_net->sendStatusText(newStat);
+}
+
+void    MyContactModel::changeStatus(Contact::eStatus status)
+{
+    this->_net->sendStatus(status);
 }
 
 std::vector<Contact *>  &MyContactModel::getContacts()
@@ -73,17 +95,35 @@ std::vector<Contact *>  &MyContactModel::getContacts()
 
 void    MyContactModel::show()
 {
-    this->_w.show();
+    this->_w->show();
+    this->loop();
+}
+
+void    MyContactModel::loop()
+{
+    while (this->_w->isVisible())
+    {
+        this->_w->refresh();
+        try
+        {
+            this->_net->handleNetwork();
+        }
+        catch (Exception &e)
+        {
+            throw Exception(e);
+        }
+    }
 }
 
 void    MyContactModel::close()
 {
-    this->_w.close();
-    exit(0);
+    this->_w->close();
 }
 
 bool    MyContactModel::isVisible()
 {
-    return (this->_w.isVisible());
+    return (this->_w->isVisible());
 }
+
+
 

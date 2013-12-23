@@ -5,7 +5,6 @@
 #include <QMessageBox>
 #include <QCloseEvent>
 
-
 class MyConnectModel;
 
 namespace Ui {

@@ -18,13 +18,11 @@ public:
   void    myShow();
   void    setChat(std::vector<std::string> &hist);
   void    setCalling(bool b);
+
 private slots:
   void on_close_clicked();
-
   void on_send_clicked();
-
   void on_wizz_clicked();
-
   void on_call_clicked();
 
 private:
