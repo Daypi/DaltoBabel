@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include "babel_common.h"
 
-#define		MAX_SIZE 100
+#define		MAX_SIZE 1000
 
 class OpusCompressor {
 private:
@@ -26,8 +26,8 @@ private:
 	size_t			_maxSize;
 public:
 	OpusCompressor();
-	unsigned char	*encodeFrame(const float *, int);
-	float			*decodeFrame(const unsigned char*, int);
+	unsigned char	*encodeFrame(const float *, unsigned char*);
+	float			*decodeFrame(const unsigned char*, float *);
 	virtual ~OpusCompressor();
 };
 

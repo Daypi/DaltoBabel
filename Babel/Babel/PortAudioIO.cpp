@@ -75,46 +75,6 @@ bool	PortAudioIO::startRecording(void)
 		if( this->_playBuffers[j].recordedSamples == NULL )
 			return false;
 	}
-	/*  while (42) {
-	std::cout << std::endl << std::endl;
-	std::cout << "playing in " << _playingBuffer << std::endl;
-	std::cout << "recording in" << _recordingBuffer << std::endl;
-	this->_recordBuffers[_recordingBuffer].maxFrameIndex = totalFrames;
-	this->_recordBuffers[_recordingBuffer].frameIndex = 0;
-	this->_playBuffers[_playingBuffer].frameIndex = 0;
-	for( i=0; i< totalFrames; i++ ) {
-	this->_recordBuffers[_recordingBuffer].recordedSamples[i] = 0;
-	}
-	this->_err = Pa_OpenStream(
-	&this->_Stream,
-	&this->_inputParams,
-	&this->_outputParams,
-	SAMPLE_RATE,
-	FRAMES_PER_BUFFER,
-	paClipOff,
-	&PortAudioIO::recordCallback,
-	this);
-	if (this->_err != paNoError)
-	std::cerr << this->getError() << std::endl;
-	this->_err = Pa_StartStream( this->_Stream );
-	if (this->_err != paNoError)
-	std::cerr << this->getError() << std::endl;
-
-	while( ( this->_err = Pa_IsStreamActive(this->_Stream) ) == 1)
-	{
-	Pa_Sleep(100);
-	}
-	this->_err = Pa_CloseStream(this->_Stream);
-	if (this->_err != paNoError)
-	std::cerr << this->getError() << std::endl;
-	std::cout << "maxframeindex:" << this->_recordBuffers[_recordingBuffer].maxFrameIndex << std::endl;
-	this->pushBuffer(this->_recordBuffers[_recordingBuffer]);
-	_recordingBuffer = _recordingBuffer == 1 ? 0 : 1;
-	for( i=0; i< totalFrames; i++ ) {
-	this->_playBuffers[_playingBuffer].recordedSamples[i] = 0;
-	}
-	_playingBuffer = _playingBuffer == 1 ? 0 : 1;
-	}*/
 	return true;
 }
 
@@ -128,8 +88,13 @@ float *PortAudioIO::paLoop(float *in)
 	std::cout << "playing in " << _playingBuffer << std::endl;
 	std::cout << "recording in" << _recordingBuffer << std::endl;
 	this->_recordBuffers[_recordingBuffer].maxFrameIndex = totalFrames;
-	this->_recordBuffers[_recordingBuffer].frameIndex = 0;
-	this->_playBuffers[_playingBuffer].frameIndex = 0;
+	this->_recordBuffers[0].frameIndex = 0;
+	this->_playBuffers[0].frameIndex = 0;
+	this->_recordBuffers[1].frameIndex = 0;
+	this->_playBuffers[1].frameIndex = 0;
+
+	this->_recordBuffers[0].available = false;
+	this->_recordBuffers[1].available = false;
 	for( i=0; i< totalFrames; i++ ) {
 		this->_recordBuffers[_recordingBuffer].recordedSamples[i] = 0;
 	}
@@ -165,14 +130,12 @@ void PortAudioIO::switchBuffer(eBuffType type)
 {
 	if (type == RECORD)
 	{
-//			this->pushBuffer(this->_recordBuffers[this->_recordingBuffer]);
-		this->_recordingBuffer == this->_recordingBuffer == 1 ? 0 : 1;
+//		this->pushBuffer(this->_recordBuffers[this->_recordingBuffer]);
+		this->_recordingBuffer = this->_recordingBuffer == 1 ? 0 : 1;
 		this->_recordBuffers[_recordingBuffer].frameIndex = 0;
-	//	std::cout << "switch record" << std::endl;
 	}
 	else
 	{
-//		std::cout << "switch play" << std::endl;
 		this->_playingBuffer = this->_playingBuffer == 1 ? 0 : 1;
 		this->_playBuffers[_playingBuffer].frameIndex = 0;
 	}
@@ -190,16 +153,14 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 	long i;
 	bool endbuffer = false;
 	unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-//	std::cout << framesLeft << " <- framesleft" << std::endl;
 	if(framesLeft < framesPerBuffer)
 	{
 		framesToCalc = framesLeft;
 		endbuffer = true;
+		this->_recordBuffers[this->_recordingBuffer].available = true;
 	}
 	else
-	{
 		framesToCalc = framesPerBuffer;
-	}
 	if( inputBuffer == NULL )
 	{
 		for( i=0; i<framesToCalc; i++ )
@@ -227,12 +188,8 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 		unsigned int i2;
 		unsigned long framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
 		bool endbuffer2 = false;
-	/*	std::cout <<"maxframeindex" <<  _playBuffers[_playingBuffer].maxFrameIndex << std::endl;
-		std::cout << framesLeft2 << " <- framesleft2" << std::endl;
-		std::cout << framesPerBuffer << " <- framesperBuffer" << std::endl;*/
 		if( framesLeft2 < framesPerBuffer )
 		{
-//			std::cout << "koukou" << std::endl;
 			/* final buffer... */
 			endbuffer2 = true;
 			for( i2=0; i2<framesLeft2; i2++ )
@@ -250,7 +207,6 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
 		}
 		else
 		{
-	//		std::cout << "narmol" << std::endl;
 			for( i2=0; i2<framesPerBuffer; i2++ )
 			{
 				*wptr++ = *rptr++;  /* left */
@@ -280,15 +236,24 @@ const std::string	&PortAudioIO::getError()
 	return this->_errorString;
 }
 
-float *PortAudioIO::getRecord()
+const float *PortAudioIO::getRecord()
 {
+	int i = 0;
+	int tmp = this->_recordingBuffer;
 //	std::cout << this->_lastGetRecord << " / " <<  this->_recordingBuffer << std::endl;
-	if (this->_lastGetRecord != this->_recordingBuffer)
+	if (this->_lastGetRecord != tmp && this->_recordBuffers[tmp].available == true)
 	{
-		std::cout << "coucou" << std::endl;
-
-		this->_lastGetRecord = this->_recordingBuffer;
-		return(this->_recordBuffers[this->_recordingBuffer].recordedSamples);
+		std::cout << "start" << std::endl;
+		float *ret = new float[NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE];
+		while (i <  (NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE))
+		{
+			ret[i] = this->_recordBuffers[tmp].recordedSamples[i];
+			i++;
+		}
+		this->_lastGetRecord = tmp;
+		std::cout << "end" << std::endl;
+				printf("record: %f\n", ret[0]);
+		return(const_cast<const float *>(ret));
 	}
 	return NULL;
 }
@@ -298,16 +263,8 @@ void PortAudioIO::setPlay(float *buff, int buffsize)
 	int i = 0;
 	int setbuff;
 	this->_playingBuffer == 0 ? setbuff = 1 : setbuff = 0;
-	//buff.frameIndex = 0;
-//	std::cout << "pushing in " << idBuffer << std::endl;
 	this->_playBuffers[setbuff].recordedSamples = buff;
 	this->_playBuffers[setbuff].frameIndex = 0;
-
-/*	while (i < buffsize)
-		{
-			this->_playBuffers[setbuff].recordedSamples[i] = buff[i];
-			i ++;
-	}*/
 }
 
 PortAudioIO::~PortAudioIO()

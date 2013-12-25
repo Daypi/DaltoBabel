@@ -55,7 +55,7 @@ public:
   void					initRecording(void);
   float					*paLoop(float *in);
   void					switchBuffer(eBuffType);
-  float					*getRecord();
+  const float					*getRecord();
   void					setPlay(float *, int);
   virtual ~PortAudioIO();
 };

@@ -8,40 +8,46 @@ AudioManager::AudioManager()
 		std::cout << "Portaudio init failed !" << std::endl;
 	else
 		std::cout << "Portaudio Initialised" << std::endl;
+	this->_in = new unsigned char[NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE];
+	this->_out = new unsigned char[NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE];
+
 }
 
 void AudioManager::mainLoop()
 {
-	float *temp;
-	int frameSize = 100;//NUM_SECONDS * SAMPLE_RATE;
+	const float *temp2;
+	int frameSize = NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS;
 	this->_isRecording = true;
-	this->_in = NULL;
-	this->_out = NULL;
-	temp = NULL;
-	this->_paio.paLoop(temp);
+	unsigned char *encode = new unsigned char[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
+	float *decode = new float[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
+	decode = NULL;
+	this->_paio.paLoop(decode);
+	std::cout << "___________START LOOP___________" << std::endl;
 		while( ( this->_paio._err = Pa_IsStreamActive(this->_paio._Stream) ) == 1)
 	{
-//		std::cout << "1" << std::endl;
-		if (this->_paio.getRecord() != NULL)
+		if ((temp2 = this->_paio.getRecord()) != NULL)
 		{
-			if (temp != NULL)
+/*			std::cout << "coucou" << std::endl;
+			if (decode != NULL)
 			{
-				temp = _opus.decodeFrame(const_cast<const unsigned char *>(_in), frameSize);
-				this->_out =_opus.encodeFrame(this->_paio.getRecord(), frameSize);
-				std::cout << "KOUK" << std::endl;
-				this->_paio.setPlay(temp, 480);
+				printf("N AM: %f\n", temp2[0]);
+				this->_out = this->_opus.encodeFrame(temp2, encode);
 				this->_in = this->_out;
-			}
+				_opus.decodeFrame(const_cast<const unsigned char *>(_in), decode);*/
+				this->_paio.setPlay(const_cast<float *>(temp2), 480);
+/*			}
 			else
 			{
-				temp = new float[100];
-				this->_out =_opus.encodeFrame(this->_paio.getRecord(), frameSize);
+				printf("F AM: %f\n", temp2[0]);
+				this->_out = this->_opus.encodeFrame(temp2, encode);
+				//std::cout << this->_out << std::endl;
 				this->_in = this->_out;
-				std::cout << "Jouge" << std::endl; 
-			}
+				_opus.decodeFrame(const_cast<const unsigned char *>(_in), decode);
+			}*/
 		}
 	}
-	delete temp;
+	delete decode;
+	delete encode;
 }
 
 void AudioManager::setIn()
