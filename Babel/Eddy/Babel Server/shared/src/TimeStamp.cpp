@@ -12,9 +12,10 @@ TimeStamp::~TimeStamp()
 {
 }
 
-time_t		TimeStamp::elapsedTime()
+time_t		TimeStamp::elapsedTime(bool change)
 {
-	this->_previousTime = this->_actualTime;
+	if (change)
+		this->_previousTime = this->_actualTime;
 	this->_actualTime = LibC::time(0);
 	return (this->_actualTime - this->_previousTime);
 }

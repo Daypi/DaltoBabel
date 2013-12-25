@@ -19,7 +19,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::TCP);
 	}
-	catch (Exception e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -30,7 +30,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 		this->_sock->bind(port);
 		this->_sock->listen(nbListen);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->closeServer();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -49,7 +49,7 @@ std::pair<unsigned int, char *>	&SocketServerTCP::checkConnection()
 	{
 		tmp = this->_sock->accept();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -148,7 +148,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(std::vector<unsigned int>& tab,
 				this->_tabSock[*it]->send(message, size);
 				this->_tabSock[*it]->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 				this->closeClient(*it);
 				this->eraseClient(*it);
@@ -180,8 +180,9 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 				this->_tabSock[id]->send(message, size);
 				this->_tabSock[id]->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
+				std::cout << "ZIZIPROUT send" << std::endl;
 				this->closeClient(id);
 				this->eraseClient(id);
 				this->_sendRet.push_back(id);
@@ -219,7 +220,7 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std
 			LibC::memcpy(tmp_receiv, buffer, tmp_read);
 			this->_map[*it] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 		}
-		catch (Exception)
+		catch (const Exception&)
 		{
 			this->closeClient(*it);
 			this->eraseClient(*it);
@@ -240,15 +241,18 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(uns
 	this->deleteMap();
 	try
 	{
+		std::cout << "ZIZIPROUT = " << id << std::endl;
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
+		std::cout << "tmp_read = " << tmp_read << std::endl;
 		this->_tabSock[id]->iReaded();
 		tmp_receiv = new char[tmp_read + 1];
 		LibC::memset(tmp_receiv, 0, tmp_read + 1);
 		LibC::memcpy(tmp_receiv, buffer, tmp_read);
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
-	catch (Exception)
+	catch (const Exception&)
 	{
+		std::cout << "ERROR" << std::endl;
 		this->closeClient(id);
 		this->eraseClient(id);
 	}
@@ -268,7 +272,7 @@ void	SocketServerTCP::closeServer()
 			{
 				it->second->closeSocketAvd();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 			}
 		}
@@ -277,7 +281,7 @@ void	SocketServerTCP::closeServer()
 	{
 		this->_sock->closeSocket();
 	}
-	catch (Exception &e)
+	catch (const Exception &e)
 	{
 		throw e;
 	}
@@ -291,7 +295,7 @@ void	SocketServerTCP::closeClient(unsigned int id)
 		{
 			this->_tabSock[id]->closeSocketAvd();
 		}
-		catch (Exception &e)
+		catch (const Exception &e)
 		{
 			throw e;
 		}

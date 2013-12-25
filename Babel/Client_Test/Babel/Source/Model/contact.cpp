@@ -1,14 +1,14 @@
 #include "Include/Window/contactWindow.h"
 #include "Include/Model/contact.h"
 
-Contact::Contact(const std::string& ip, const std::string& name, unsigned int uid, QWidget *parent)
-  :  _uid(uid), _ip(ip), _name(name)
+Contact::Contact(const std::string& name, unsigned int uid, const std::string& statusText, Contact::eStatus status, QWidget *parent)
+    :  _uid(uid), _name(name), _statusText(statusText), _status(status)
 {
-  _c = new MyChatModel(name, parent);
+    _c = new MyChatModel(name, parent);
 }
 
 Contact::Contact(const Contact& oldContact)
-  :  _uid(oldContact._uid), _ip(oldContact._ip), _name(oldContact._name), _c(oldContact._c)
+    :  _uid(oldContact._uid), _ip(oldContact._ip), _name(oldContact._name), _statusText(oldContact._statusText), _status(oldContact._status), _c(oldContact._c)
 {
 }
 
@@ -18,79 +18,94 @@ Contact::~Contact()
 
 bool                    Contact::operator==(const std::string& name)
 {
-  return (this->_name == name);
+    return (this->_name == name);
 }
 
 bool                    Contact::operator==(const Contact& contact)
 {
-  return (this->_name == contact.getName());
+    return (this->_name == contact.getName());
 }
 
 void                    Contact::clearChat()
 {
-  this->_chat.clear();
-  this->_c->setChat(_chat);
+    this->_chat.clear();
+    this->_c->setChat(_chat);
 }
 
 void                    Contact::setMsg(const std::string& msg)
 {
-  this->_chat.push_back(msg);
-  this->_c->setChat(_chat);
+    this->_chat.push_back(msg);
+    this->_c->setChat(_chat);
 }
 
-void                    Contact::setChat(std::vector<std::string>& chat)
+void                    Contact::setChat(const std::vector<std::string>& chat)
 {
-  this->_chat.clear();
-  this->_chat = chat;
-  this->_c->setChat(_chat);
+    this->_chat.clear();
+    this->_chat = chat;
+    this->_c->setChat(_chat);
 }
 
-void                    Contact::setStatus(std::string& status)
+void                    Contact::setStatusText(const std::string& status)
 {
-  this->_status = status;
+    this->_statusText = status;
 }
 
-void                    Contact::setName(std::string& name)
+void                    Contact::setStatus(Contact::eStatus status)
 {
-  this->_name = name;
+    this->_status = status;
 }
 
-const std::string&      Contact::getStatus() const
+void                    Contact::setName(const std::string& name)
 {
-  return (this->_status);
+    this->_name = name;
+}
+
+void                    Contact::setIp(const std::string& ip)
+{
+    this->_ip = ip;
+}
+
+const std::string&      Contact::getStatusText() const
+{
+    return (this->_statusText);
+}
+
+Contact::eStatus      Contact::getStatus() const
+{
+    return (this->_status);
 }
 
 const std::string&      Contact::getName() const
 {
-  return (this->_name);
+    return (this->_name);
 }
 
 const std::string&      Contact::getIp() const
 {
-  return (this->_ip);
+    return (this->_ip);
 }
 
 unsigned int            Contact::getId() const
 {
-  return (this->_uid);
+    return (this->_uid);
 }
 
 std::vector<std::string>&    Contact::getChat()
 {
-  return (this->_chat);
+    return (this->_chat);
 }
 
 void                    Contact::myShow()
 {
-  _c->myShow();
+    _c->myShow();
 }
 
 void                    Contact::setCalling(bool b)
 {
-  this->_c->setCalling(b);
+    this->_c->setCalling(b);
 }
 
 bool                    Contact::isCalling() const
 {
-  return (this->_c->isCalling());
+    return (this->_c->isCalling());
 }

@@ -11,5 +11,5 @@ public:
 	TimeStamp();
 	~TimeStamp();
 
-	time_t				elapsedTime();
+	time_t				elapsedTime(bool change = true);
 };

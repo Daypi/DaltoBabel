@@ -2,7 +2,7 @@
 #include "ui_chatWindow.h"
 
 ChatWindow::ChatWindow(const std::string &name, QWidget *parent) :
-  QDialog(parent),
+  QDialog(),
   ui(new Ui::ChatWindow)
 {
   ui->setupUi(this);

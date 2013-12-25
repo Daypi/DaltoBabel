@@ -14,56 +14,83 @@
    <string>DaltoBabel</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="3">
-    <widget class="QListWidget" name="listContact"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="QPushButton" name="chat">
-     <property name="text">
-      <string>CHAT</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QPushButton" name="block">
-     <property name="text">
-      <string>Block contact</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
+   <item row="2" column="1">
     <widget class="QPushButton" name="remove">
      <property name="text">
       <string>Remove contact</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="2" column="2">
+    <widget class="QPushButton" name="block">
+     <property name="text">
+      <string>Block contact</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
     <widget class="QPushButton" name="add">
      <property name="text">
       <string>Add contact</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="1" column="0" colspan="3">
+    <widget class="QListWidget" name="listContact"/>
+   </item>
+   <item row="5" column="0">
     <widget class="QPushButton" name="call">
      <property name="text">
       <string>CALL</string>
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
+   <item row="3" column="0" colspan="3">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="2">
     <widget class="QPushButton" name="wizz">
      <property name="text">
       <string>WIZZ</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="3">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="5" column="1">
+    <widget class="QPushButton" name="chat">
+     <property name="text">
+      <string>CHAT</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLineEdit" name="editStatusText"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QComboBox" name="status">
+     <item>
+      <property name="text">
+       <string>Available</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Busy</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Away</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Invisible</string>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>

@@ -35,5 +35,5 @@ public:
 	unsigned int				getSockId() const;
 	void						setSockId(unsigned int);
 	Packet						*getPacket(const char *, unsigned int);
-	bool						timeout(time_t);
+	bool						timeout(time_t, bool change = true);
 };

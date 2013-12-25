@@ -6,19 +6,10 @@
 #include	"SocketClientTCP.h"
 #include	"SocketClientUDP.h"
 #include	"PacketFactory.h"
-
+#include    "Include/Model/myContactModel.h"
 
 class		Network
 {
-public:
-    enum eStatus
-    {
-        AVAILABLE = 0,
-        BUSY,
-        AWAY,
-        INVISIBLE,
-        ENUM_COUNT
-    };
 private:
     std::queue<Packet *>	_sendQueueUDP;
     std::queue<Packet *>	_sendQueueTCP;
@@ -29,14 +20,13 @@ private:
     bool                    _handshake;
     bool                    _log;
     int                     _reqUID;
-    eStatus                 _status;
-    std::string             _statusText;
+    MyContactModel          *_model;
 
 private:
     Network		&operator=(const Network &);
 
 public:
-    Network();
+    Network(MyContactModel *model);
     Network(const Network &);
     ~Network();
 
@@ -51,16 +41,23 @@ public:
 
     void    sendHandshake();
     void    sendLogin(bool isNewUser, const std::string &login, const std::string &mdp);
+    void    sendStatusText(const std::string &newStat);
+    void    sendStatus(Contact::eStatus status);
+    void    sendList();
+    void    addContact(const std::string& name);
+    void    rmContact(const std::string& name);
+    void    blockContact(const std::string& name);
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);
     void    refreshStatus(Packet *packet);
-
+    void    refreshList(Packet  *packet);
+    void    refreshAdd(Packet *packet);
+    void    refreshRm(Packet *packet);
+    void    refreshBlock(Packet *packet);
     int                 getUID();
     bool                getInit() const;
     bool                getHandshake() const;
     bool                getLog() const;
-    const std::string&  getStatusText() const;
-    eStatus             getStatus() const;
 };
 
 #endif // NETWORK_H
