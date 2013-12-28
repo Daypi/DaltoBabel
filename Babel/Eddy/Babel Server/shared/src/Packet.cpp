@@ -95,7 +95,7 @@ void		Packet::updateData(unsigned int size)
 	tmp = size == 0 ? 0 : new char[size];
 	if (size != 0)
 	{
-		LibC::memcpy(tmp, this->_data, this->_dataSize);
+		LibC::memcpy(tmp, this->_data, this->_dataSize - this->_format.size() - 2);
 		delete[] this->_data;
 		size += this->_format.size() + 2;
 	}
@@ -111,8 +111,8 @@ void			Packet::deserialize(char *packet)
 	{
 		if (this->_data != 0)
 			delete[] this->_data;
-		this->_data = new char[this->_dataSize];
-		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize);
+		this->_data = new char[this->_dataSize - this->_format.size() - 2];
+		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize - this->_format.size() - 2);
 	}
 }
 
@@ -145,7 +145,7 @@ char				*Packet::serialize()
 		this->_serialization[10] = tmp[1];
 		LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
 		if (this->_data != 0)
-			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize);
+			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize - this->_format.size() - 2);
 	}
 	return (this->_serialization);
 }
@@ -194,10 +194,9 @@ unsigned int	Packet::size() const
 bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 {
 	unsigned int	i;
-	std::size_t		listPos;
 	std::string		listFormat;
 
-	for (i = 0; i < this->_format.size() && i < index; ++i)
+	for (i = 0; *pos < this->_format.size() && i < index; ++i)
 	{
 		if (this->_format[i] == 'c')
 			*pos += 3;
