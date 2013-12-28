@@ -51,6 +51,7 @@ public:
     void    sendReject(const std::string& login);
     void    sendCall(const std::string& login);
     void    sendHangUp();
+    void    sendPing();
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);
     void    refreshStatus(Packet *packet);
@@ -62,7 +63,6 @@ public:
     void    acceptCall(Packet *packet);
     void    rejectCall(Packet *packet);
     void    closeCall(Packet *packet);
-    void    sendPing();
     int                 getUID();
     bool                getInit() const;
     bool                getHandshake() const;

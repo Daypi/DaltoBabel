@@ -37,10 +37,13 @@ void    ContactWindow::setContacts(std::vector<Contact *>& list)
         tmp += " - ";
         tmp += list[i]->getStatusText().c_str();
         tmp += " (";
-        tmp += tab[list[i]->getStatus()];
+        if (list[i]->getStatus() <= 3)
+            tmp += tab[list[i]->getStatus()];
         tmp += ")";
         this->ui->listContact->addItem(tmp);
     }
+    if (i == 0)
+        this->ui->listContact->addItem("No Contact Yet");
 }
 
 void    ContactWindow::refresh()

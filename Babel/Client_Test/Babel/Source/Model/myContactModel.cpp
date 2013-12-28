@@ -1,4 +1,5 @@
 #include <QCoreApplication>
+#include <ctime>
 #include "Include/Model/myContactModel.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
@@ -108,9 +109,18 @@ void    MyContactModel::show()
 
 void    MyContactModel::loop()
 {
+    clock_t   time;
+
+    time = clock();
     while (this->_w->isVisible())
     {
         this->_w->refresh();
+        if ((clock() - time) / CLOCKS_PER_SEC > MY_TIMEOUT)
+        {
+            std::cout << "PING" << std::endl;
+            this->_net->sendPing();
+            time = clock();
+        }
         try
         {
             this->_net->handleNetwork();

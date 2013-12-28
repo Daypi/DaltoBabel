@@ -3,6 +3,8 @@
 
 #include "Include/Model/contact.h"
 
+#define MY_TIMEOUT (15)
+
 class ContactWindow;
 class Network;
 class MyConnectModel;
