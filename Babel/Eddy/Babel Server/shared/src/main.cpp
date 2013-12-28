@@ -4,7 +4,7 @@
 
 int				main()
 {
-	/*try
+	try
 	{
 		Server	server(11235, 5);
 
@@ -14,8 +14,8 @@ int				main()
 	{
 		std::cout << e.what();
 		std::cin.get();
-	}*/
-	Packet			packet;
+	}
+	/*Packet			packet;
 	Packet			packet2;
 	Packet			packet3;
 	PacketFactory	factory;
@@ -64,7 +64,7 @@ int				main()
 		tmp->show();
 		tmp->show();
 	}
-	delete[] tab;
+	delete[] tab;*/
 	std::cin.get();
 	return (0);
 }
