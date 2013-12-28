@@ -26,9 +26,6 @@ bool			UserCollection::add(unsigned int sockId, const std::string& name, const s
 {
 	User		*user;
 
-	user = this->getUserByIp(ip);
-	if (user)
-		return (false);
 	user = new User(this->newId(), name, ip);
 	user->setSockId(sockId);
 	this->_userList.push_back(user);

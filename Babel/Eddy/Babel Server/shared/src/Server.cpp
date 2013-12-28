@@ -41,6 +41,7 @@ void									Server::start()
 	std::pair<unsigned int, char *>		ret;
 	Packet								*packet;
 	User								*user;
+	unsigned int						deco = 0;
 
 	this->_accountManager.load();
 	this->_started = true;
@@ -69,6 +70,12 @@ void									Server::start()
 						(this->*(this->_instruction[(Packet::eInstruction)packet->getInstruction()]))(user, packet);
 				}
 			}
+			if (deco > 5)
+			{
+				std::cout << "deco > 5" << std::endl;
+				std::cin.get();
+			}
+			++deco;
 		}
 		this->sendTCP();
 		this->timeout();
@@ -354,6 +361,7 @@ void				Server::acceptCall(User *user, Packet *packet)
 	std::cout << "ACCEPT_CALL" << std::endl;
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = fromCall->getCurrentCall();
+	login = packet->getString(0);
 	if (!toCall)
 		response = "Unknown user " + login + ".";
 	else if (!toCall->connected())
@@ -393,6 +401,7 @@ void				Server::rejectCall(User *user, Packet *packet)
 	std::cout << "REJECT_CALL" << std::endl;
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = fromCall->getCurrentCall();
+	login = packet->getString(0);
 	if (!toCall)
 		response = "Unknown user " + login + ".";
 	else if (!toCall->connected())
@@ -602,7 +611,7 @@ void				Server::error(User *, Packet *)
 	std::cout << "ERROR" << std::endl;
 }
 
-void				Server::handshake(User *user, Packet *packet)
+void				Server::handshake(User *user, Packet *)
 {
 	std::cout << "HANDSHAKE" << std::endl;
 	if (user->timeout(10))
