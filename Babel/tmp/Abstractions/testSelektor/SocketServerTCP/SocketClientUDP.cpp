@@ -21,7 +21,7 @@ void	SocketClientUDP::init(int port, const char *ipAddress)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::UDP);
 	}
-	catch (Exception e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -31,7 +31,7 @@ void	SocketClientUDP::init(int port, const char *ipAddress)
 	{
 	  this->_sock->connect(ipAddress, port);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->close();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -75,7 +75,7 @@ void	SocketClientUDP::send(const char *message, int size)
 			this->_sock->send(message, size);
 			this->_sock->iSended();
 		}
-		catch (Exception &e)
+		catch (const Exception& e)
 		{
 			this->close();
 			this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -100,7 +100,7 @@ char	*SocketClientUDP::recv(char *buffer, int size, int *received)
 		this->_sock->receiv(buffer, size, received);
 		this->_sock->iReaded();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->close();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -116,7 +116,7 @@ void	SocketClientUDP::close()
 	{
 		this->_sock->closeSocketAvd();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		throw e;
 	}

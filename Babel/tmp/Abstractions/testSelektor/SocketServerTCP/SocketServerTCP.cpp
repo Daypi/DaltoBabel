@@ -18,7 +18,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::TCP);
 	}
-	catch (Exception e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -29,7 +29,7 @@ void	SocketServerTCP::init(int port, int nbListen)
 		this->_sock->bind(port);
 		this->_sock->listen(nbListen);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->closeServer();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -48,7 +48,7 @@ std::pair<unsigned int, char *>	&SocketServerTCP::checkConnection()
 	{
 		tmp = this->_sock->accept();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -147,7 +147,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(std::vector<unsigned int>& tab,
 				this->_tabSock[*it]->send(message, size);
 				this->_tabSock[*it]->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 				this->closeClient(*it);
 				this->eraseClient(*it);
@@ -179,7 +179,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 				this->_tabSock[id]->send(message, size);
 				this->_tabSock[id]->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 				this->closeClient(id);
 				this->eraseClient(id);
@@ -220,7 +220,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std:
 			memcpy(tmp_receiv, buffer, tmp_read);
 			this->_map[*it] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 		}
-		catch (Exception)
+		catch (const Exception&)
 		{
 			this->closeClient(*it);
 			this->eraseClient(*it);
@@ -250,7 +250,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsi
 		memcpy(tmp_receiv, buffer, tmp_read);
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
-	catch (Exception)
+	catch (const Exception&)
 	{
 		this->closeClient(id);
 		this->eraseClient(id);
@@ -271,7 +271,7 @@ void	SocketServerTCP::closeServer()
 			{
 				it->second->closeSocketAvd();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 			}
 		}
@@ -280,7 +280,7 @@ void	SocketServerTCP::closeServer()
 	{
 		this->_sock->closeSocket();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		throw e;
 	}
@@ -294,7 +294,7 @@ void	SocketServerTCP::closeClient(unsigned int id)
 		{
 			this->_tabSock[id]->closeSocketAvd();
 		}
-		catch (Exception &e)
+		catch (const Exception& e)
 		{
 			throw e;
 		}
@@ -344,34 +344,10 @@ void							SocketServerTCP::releaseClient(unsigned int id)
 {
 	std::map<unsigned int, SocketAvd *>::iterator	it;
 
-	std::cout << "zizi1" << std::endl;
 	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
 	{
-		std::cout << "zizi2" << std::endl;
 		if (it->first == id)
 		{
-			std::cout << "zizi3" << std::endl;
-			this->_socketPool.getMutex()->lock("SELEKTOR");
-			this->_socketPool.delSocket(it->second);
-			this->_socketPool.getMutex()->unLock("SELEKTOR");
-			this->closeClient(id);
-			this->eraseClient(id);
-			break;
-		}
-	}
-}
-
-void							SocketServerTCP::releaseClient(unsigned int id)
-{
-	std::map<unsigned int, SocketAvd *>::iterator	it;
-
-	std::cout << "zizi1" << std::endl;
-	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
-	{
-		std::cout << "zizi2" << std::endl;
-		if (it->first == id)
-		{
-			std::cout << "zizi3" << std::endl;
 			this->_socketPool.getMutex()->lock("SELEKTOR");
 			this->_socketPool.delSocket(it->second);
 			this->_socketPool.getMutex()->unLock("SELEKTOR");

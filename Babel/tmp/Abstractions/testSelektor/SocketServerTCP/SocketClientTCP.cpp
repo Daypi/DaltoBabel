@@ -21,7 +21,7 @@ void	SocketClientTCP::init(int port, const char *ipAddress)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::TCP);
 	}
-	catch (Exception e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -31,7 +31,7 @@ void	SocketClientTCP::init(int port, const char *ipAddress)
 	{
 		this->_sock->connect(ipAddress, port);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->close();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -75,7 +75,7 @@ void	SocketClientTCP::send(const char *message, int size)
 			this->_sock->send(message, size);
 			this->_sock->iSended();
 		}
-		catch (Exception &e)
+		catch (const Exception& e)
 		{
 			this->close();
 			this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -95,7 +95,7 @@ char	*SocketClientTCP::recv(char *buffer, int size, int *received)
 		this->_sock->receiv(buffer, size, received);
 		this->_sock->iReaded();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->close();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -111,7 +111,7 @@ void	SocketClientTCP::close()
 	{
 		this->_sock->closeSocketAvd();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		throw e;
 	}
