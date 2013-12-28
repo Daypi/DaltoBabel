@@ -1,5 +1,4 @@
-#include	"SocketServerTCP.h"
-#include	"LibC.h"
+#include "SocketServerTCP.h"
 
 SocketServerTCP::SocketServerTCP()
 {
@@ -182,7 +181,6 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 			}
 			catch (const Exception&)
 			{
-				std::cout << "ZIZIPROUT send" << std::endl;
 				this->closeClient(id);
 				this->eraseClient(id);
 				this->_sendRet.push_back(id);
@@ -198,7 +196,7 @@ std::vector<unsigned int>	&SocketServerTCP::send(unsigned int id, const char *me
 	return (this->_sendRet);
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std::vector<unsigned int>& tab, int size)
+std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std::vector<unsigned int>& tab, int size)
 {
 	std::vector<unsigned int>::iterator	it;
 	char	buffer[4096];
@@ -209,15 +207,17 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std
 	this->_socketPool.getMutex()->lock("SELEKTOR");
 	for(it = tab.begin(); it != tab.end(); ++it)
 	{
-		LibC::memset(buffer, 0, 4096);
+		memset(buffer, 0, 4096);
 		tmp_read = 0;
 		try
 		{
 			this->_tabSock[*it]->receiv(buffer, size, &tmp_read);
+			if (tmp_read == 0)
+				throw Exception("Client disconnected.");
 			this->_tabSock[*it]->iReaded();
 			tmp_receiv = new char[tmp_read + 1];
-			LibC::memset(tmp_receiv, 0, tmp_read + 1);
-			LibC::memcpy(tmp_receiv, buffer, tmp_read);
+			memset(tmp_receiv, 0, tmp_read + 1);
+			memcpy(tmp_receiv, buffer, tmp_read);
 			this->_map[*it] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 		}
 		catch (const Exception&)
@@ -230,29 +230,28 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(std
 	return (this->_map);
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(unsigned int id, int size)
+std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsigned int id, int size)
 {
 	char	buffer[4096];
 	int		tmp_read = 0;
 	char	*tmp_receiv;
 
 	this->_socketPool.getMutex()->lock("SELEKTOR");
-	LibC::memset(buffer, 0, 4096);
+	memset(buffer, 0, 4096);
 	this->deleteMap();
 	try
 	{
-		std::cout << "ZIZIPROUT = " << id << std::endl;
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
-		std::cout << "tmp_read = " << tmp_read << std::endl;
+		if (tmp_read == 0)
+			throw Exception("Client disconnected.");
 		this->_tabSock[id]->iReaded();
 		tmp_receiv = new char[tmp_read + 1];
-		LibC::memset(tmp_receiv, 0, tmp_read + 1);
-		LibC::memcpy(tmp_receiv, buffer, tmp_read);
+		memset(tmp_receiv, 0, tmp_read + 1);
+		memcpy(tmp_receiv, buffer, tmp_read);
 		this->_map[id] = std::pair<const char *, int>(tmp_receiv, tmp_read);
 	}
 	catch (const Exception&)
 	{
-		std::cout << "ERROR" << std::endl;
 		this->closeClient(id);
 		this->eraseClient(id);
 	}
@@ -281,7 +280,7 @@ void	SocketServerTCP::closeServer()
 	{
 		this->_sock->closeSocket();
 	}
-	catch (const Exception &e)
+	catch (const Exception& e)
 	{
 		throw e;
 	}
@@ -295,7 +294,7 @@ void	SocketServerTCP::closeClient(unsigned int id)
 		{
 			this->_tabSock[id]->closeSocketAvd();
 		}
-		catch (const Exception &e)
+		catch (const Exception& e)
 		{
 			throw e;
 		}
@@ -321,7 +320,7 @@ void	SocketServerTCP::eraseClient(unsigned int id)
 
 void	SocketServerTCP::deleteMap()
 {
-	std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
+	std::map<unsigned int, std::pair<const char *, int>>::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		 delete (it->second.first);
@@ -339,4 +338,22 @@ std::map<unsigned int, char *>	*SocketServerTCP::getIP()
 		(*mapIP)[(*it).first] = inet_ntoa((*it).second->getInfo().sin_addr);
 	}
 	return (mapIP);
+}
+
+void							SocketServerTCP::releaseClient(unsigned int id)
+{
+	std::map<unsigned int, SocketAvd *>::iterator	it;
+
+	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
+	{
+		if (it->first == id)
+		{
+			this->_socketPool.getMutex()->lock("SELEKTOR");
+			this->_socketPool.delSocket(it->second);
+			this->_socketPool.getMutex()->unLock("SELEKTOR");
+			this->closeClient(id);
+			this->eraseClient(id);
+			break;
+		}
+	}
 }

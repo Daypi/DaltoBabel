@@ -41,7 +41,6 @@ void									Server::start()
 	std::pair<unsigned int, char *>		ret;
 	Packet								*packet;
 	User								*user;
-	unsigned int						deco = 0;
 
 	this->_accountManager.load();
 	this->_started = true;
@@ -66,37 +65,10 @@ void									Server::start()
 				packet = this->getPacket(user);
 				if (packet)
 				{
-					deco = 0;
 					if (packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Packet::ENUM_COUNT)
 						(this->*(this->_instruction[(Packet::eInstruction)packet->getInstruction()]))(user, packet);
 				}
-				if (deco > 5)
-				{
-					std::cout << "User disconnected on deco > 5" << std::endl;
-					this->_userCollection.show();
-					if (!user)
-					{
-						user = this->_userCollection.getUserBySockId(this->_clientList[i]);
-						std::cout << "User not found !!!" << std::endl;
-					}
-					if (user)
-					{
-						std::cout << "User found ???" << std::endl;
-						this->_received = this->_sockTCP.recv(user->getSockId(), 1500);
-						if (this->_received.size() == 0)
-						{
-							//user->disconnect();
-							this->_userCollection.removeUserById(user->getUID());
-							std::cout << "User disconnected on recv on deco > 5" << std::endl;
-							std::cin.get();
-						}
-						//this->_userCollection.removeUserById(user->getUID());
-					}
-					std::cin.get();
-					deco = 0;
-				}
 			}
-			++deco;
 		}
 		this->sendTCP();
 		this->timeout();
@@ -119,6 +91,7 @@ void						Server::timeout()
 		if (userList[i]->timeout(60, false))
 		{
 			// Disconnect the user
+			//this->_sockTCP.releaseClient(userList[i]->getSockId());
 		}
 	}
 }
@@ -138,7 +111,7 @@ Packet					*Server::getPacket(User *user)
 		//user->disconnect();
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "User disconnected on recv" << std::endl;
-		std::cin.get();
+		//std::cin.get();
 	}
 	else
 	{
@@ -178,14 +151,14 @@ void									Server::sendTCP()
 						//user->disconnect();
 						this->_userCollection.removeUserById(user->getUID());
 						std::cout << "User disconnected on send" << std::endl;
-						std::cin.get();
+						//std::cin.get();
 					}
 				}
 				delete packet.first;
 				this->_toSendTCP.pop();
 			}
 		}
-		catch (const Exception &e)
+		catch (const Exception& e)
 		{
 			std::cout << e.what() << std::endl;
 		}
@@ -635,9 +608,10 @@ void				Server::handshake(User *user, Packet *packet)
 	if (user->timeout(10))
 	{
 		// Disconnect the user
+		this->_sockTCP.releaseClient(user->getSockId());
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on handshake" << std::endl;
-		std::cin.get();
+		//std::cin.get();
 	}
 }
 
@@ -647,8 +621,9 @@ void				Server::ping(User *user, Packet *)
 	if (user->timeout(60))
 	{
 		// Disconnect the user
+		this->_sockTCP.releaseClient(user->getSockId());
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "Player Disconnected on ping" << std::endl;
-		std::cin.get();
+		//std::cin.get();
 	}
 }

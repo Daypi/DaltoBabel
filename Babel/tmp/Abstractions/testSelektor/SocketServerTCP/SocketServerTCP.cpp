@@ -212,7 +212,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std:
 		try
 		{
 			this->_tabSock[*it]->receiv(buffer, size, &tmp_read);
-			if (size == 0)
+			if (tmp_read == 0)
 				throw Exception("Client disconnected.");
 			this->_tabSock[*it]->iReaded();
 			tmp_receiv = new char[tmp_read + 1];
@@ -242,7 +242,7 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsi
 	try
 	{
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
-		if (size == 0)
+		if (tmp_read == 0)
 			throw Exception("Client disconnected.");
 		this->_tabSock[id]->iReaded();
 		tmp_receiv = new char[tmp_read + 1];

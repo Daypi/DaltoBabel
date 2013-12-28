@@ -77,7 +77,7 @@ int		main(void)
 	{
 		sock.init(1337, 42);
 	}
-	catch (Exception &e)
+	catch (const Exception &e)
 	{
 		std::cout << e.what() << std::endl;
 	}
@@ -104,7 +104,7 @@ int		main(void)
 			else
 			{
 				std::cout << "recv = " << tmp[uid_client].first << std::endl;
-				sock.releaseClient(uid_client);
+				//sock.releaseClient(uid_client);
 				try
 				{
 					if (sock.isWritable(uid_client).size() == 1)
