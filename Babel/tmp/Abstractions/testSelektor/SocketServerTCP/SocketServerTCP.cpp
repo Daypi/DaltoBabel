@@ -212,6 +212,8 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(std:
 		try
 		{
 			this->_tabSock[*it]->receiv(buffer, size, &tmp_read);
+			if (size == 0)
+				throw Exception("Client disconnected.");
 			this->_tabSock[*it]->iReaded();
 			tmp_receiv = new char[tmp_read + 1];
 			memset(tmp_receiv, 0, tmp_read + 1);
@@ -240,6 +242,8 @@ std::map<unsigned int, std::pair<const char *, int>>&	SocketServerTCP::recv(unsi
 	try
 	{
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
+		if (size == 0)
+			throw Exception("Client disconnected.");
 		this->_tabSock[id]->iReaded();
 		tmp_receiv = new char[tmp_read + 1];
 		memset(tmp_receiv, 0, tmp_read + 1);
@@ -334,4 +338,46 @@ std::map<unsigned int, char *>	*SocketServerTCP::getIP()
 		(*mapIP)[(*it).first] = inet_ntoa((*it).second->getInfo().sin_addr);
 	}
 	return (mapIP);
+}
+
+void							SocketServerTCP::releaseClient(unsigned int id)
+{
+	std::map<unsigned int, SocketAvd *>::iterator	it;
+
+	std::cout << "zizi1" << std::endl;
+	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
+	{
+		std::cout << "zizi2" << std::endl;
+		if (it->first == id)
+		{
+			std::cout << "zizi3" << std::endl;
+			this->_socketPool.getMutex()->lock("SELEKTOR");
+			this->_socketPool.delSocket(it->second);
+			this->_socketPool.getMutex()->unLock("SELEKTOR");
+			this->closeClient(id);
+			this->eraseClient(id);
+			break;
+		}
+	}
+}
+
+void							SocketServerTCP::releaseClient(unsigned int id)
+{
+	std::map<unsigned int, SocketAvd *>::iterator	it;
+
+	std::cout << "zizi1" << std::endl;
+	for (it = this->_tabSock.begin(); it != this->_tabSock.end(); ++it)
+	{
+		std::cout << "zizi2" << std::endl;
+		if (it->first == id)
+		{
+			std::cout << "zizi3" << std::endl;
+			this->_socketPool.getMutex()->lock("SELEKTOR");
+			this->_socketPool.delSocket(it->second);
+			this->_socketPool.getMutex()->unLock("SELEKTOR");
+			this->closeClient(id);
+			this->eraseClient(id);
+			break;
+		}
+	}
 }

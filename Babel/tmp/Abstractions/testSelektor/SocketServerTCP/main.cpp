@@ -104,6 +104,7 @@ int		main(void)
 			else
 			{
 				std::cout << "recv = " << tmp[uid_client].first << std::endl;
+				sock.releaseClient(uid_client);
 				try
 				{
 					if (sock.isWritable(uid_client).size() == 1)

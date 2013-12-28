@@ -39,4 +39,5 @@ public:
 	virtual void					eraseClient(unsigned int id);
 	virtual void					deleteMap();
 	std::map<unsigned int, char *>	*getIP();
+	void							releaseClient(unsigned int id);
 };
