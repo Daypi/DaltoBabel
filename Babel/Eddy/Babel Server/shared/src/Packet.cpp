@@ -204,29 +204,27 @@ bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 		else if (this->_format[i] == 's')
 			this->getStringInData(pos);
 		else if (this->_format[i] == 'l')
-			this->getListInData(pos);
-		//std::cout << "this->_format[" << i << "] = " << this->_format[i] << std::endl;
-	}
-	if (i < index)
-	{
-		listPos = this->_format.find('l');
-		if (listPos != std::string::npos)
 		{
-			listFormat = this->_format.substr(listPos + 1);
-			index -= listFormat.size();
-			i -= listFormat.size();
-			//std::cout << "listFormat = " << listFormat << ", i = " << i << ", index = " << index << std::endl;
-			for (; i < index; ++i)
+			this->getListInData(pos);
+			if (i < index)
 			{
-				if (listFormat[i % listFormat.size()] == 'c')
-					*pos += 3;
-				else if (listFormat[i % listFormat.size()] == 's')
-					this->getStringInData(pos);
-				//std::cout << "listFormat[" << i % listFormat.size() << "] = " << listFormat[i % listFormat.size()] << std::endl;
+				//std::cout << "index = " << index << std::endl;
+				listFormat = this->_format.substr(i + 1);
+				index -= (listFormat.size() - 1);
+				//std::cout << "listFormat = " << listFormat << ", i = " << i << ", index = " << index << std::endl;
+				for (i = 0; i < index; ++i)
+				{
+					if (listFormat[i % listFormat.size()] == 'c')
+						*pos += 3;
+					else if (listFormat[i % listFormat.size()] == 's')
+						this->getStringInData(pos);
+					//std::cout << "listFormat[" << i % listFormat.size() << "] = " << listFormat[i % listFormat.size()] << std::endl;
+				}
+				break;
 			}
 		}
+		//std::cout << "this->_format[" << i << "] = " << this->_format[i] << std::endl;
 	}
-	//std::cout << "i = " << i << ", index = " << index << std::endl;
 	return (i == index);
 }
 

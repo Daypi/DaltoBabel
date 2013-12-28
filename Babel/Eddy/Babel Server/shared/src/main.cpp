@@ -42,9 +42,15 @@ int				main()
 	packet3.setRequestUID(0);
 	packet3.setInstruction(0);
 	packet3.setFormat("clssc");
-	packet3.updateData(7);
+	packet3.updateData(39);
 	packet3.appendToData<char>(0, 1);
-	packet3.appendToData<short>(1, 0);
+	packet3.appendToData<short>(1, 2);
+	packet3.appendToData(2, "pouet");
+	packet3.appendToData(3, "");
+	packet3.appendToData<char>(4, 3);
+	packet3.appendToData(5, "prout");
+	packet3.appendToData(6, "");
+	packet3.appendToData<char>(7, 3);
 
 	char		*tab = new char[packet.size() + packet2.size() + packet3.size()];
 

@@ -142,10 +142,8 @@ void									Server::sendTCP()
 	std::pair<Packet *, unsigned int>	packet;
 	User								*user;
 
-	std::cout << "ZIZIPROUT" << std::endl;
 	while (this->_toSendTCP.size() > 0)
 	{
-	  std::cout << "COUCOU" << std::endl;
 		try
 		{
 			packet = this->_toSendTCP.front();
