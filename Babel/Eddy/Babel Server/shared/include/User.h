@@ -34,6 +34,6 @@ public:
 	virtual void				disconnect();
 	unsigned int				getSockId() const;
 	void						setSockId(unsigned int);
-	Packet						*getPacket(const char *, unsigned int);
+	Packet						*getPacket(const char *data = 0, unsigned int size = 0);
 	bool						timeout(time_t, bool change = true);
 };

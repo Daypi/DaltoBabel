@@ -76,7 +76,8 @@ Packet			*User::getPacket(const char *data, unsigned int size)
 {
 	Packet			*packet = 0;
 
-	this->_packetFactory.feed(data, size);
+	if (data)
+	  this->_packetFactory.feed(data, size);
 	packet = this->_packetFactory.getPacket();
 	return (packet);
 }
