@@ -33,7 +33,7 @@ public:
 	void													stop();
 	void													timeout();
 	
-	Packet													*getPacket(User *);
+	Packet													*getPacket(User *, bool first = true);
 	void													sendTCP();
 
 	// Instruction methods

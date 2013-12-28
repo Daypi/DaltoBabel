@@ -242,7 +242,6 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerTCP::recv(uns
 	try
 	{
 		this->_tabSock[id]->receiv(buffer, size, &tmp_read);
-		std::cout << "tmp_read = " << tmp_read << std::endl;
 		if (tmp_read == 0)
 			throw Exception("Client disconnected.");
 		this->_tabSock[id]->iReaded();

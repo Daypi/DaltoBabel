@@ -3,8 +3,7 @@
 
 TimeStamp::TimeStamp()
 {
-	this->_previousTime = 0;
-	this->_previousTime = 0;
+	this->_previousTime = LibC::time(0);
 	this->_actualTime = LibC::time(0);
 }
 

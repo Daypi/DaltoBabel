@@ -10,7 +10,7 @@ int				main()
 
 		server.start();
 	}
-	catch (Exception& e)
+	catch (const Exception& e)
 	{
 		std::cout << e.what();
 		std::cin.get();
