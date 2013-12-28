@@ -194,7 +194,7 @@ unsigned int	Packet::size() const
 bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 {
 	unsigned int	i;
-	std::size_t	listPos;
+	std::size_t		listPos;
 	std::string		listFormat;
 
 	for (i = 0; i < this->_format.size() && i < index; ++i)

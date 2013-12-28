@@ -63,8 +63,7 @@ void									Server::start()
 			{
 				user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 				std::cout << "Client = " << this->_clientList[i] << std::endl;
-				packet = this->getPacket(user);
-				if (packet)
+				while ((packet = this->getPacket(user)))
 				{
 					if (packet->getMagicNumber() == Packet::MAGIC_NUMBER && packet->getInstruction() < Packet::ENUM_COUNT)
 						(this->*(this->_instruction[(Packet::eInstruction)packet->getInstruction()]))(user, packet);
@@ -619,7 +618,7 @@ void				Server::handshake(User *user, Packet *)
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
 		this->_userCollection.removeUserById(user->getUID());
-		std::cout << "Player Disconnected on handshake" << std::endl;
+		std::cout << "User Disconnected on handshake" << std::endl;
 		//std::cin.get();
 	}
 }
@@ -632,7 +631,7 @@ void				Server::ping(User *user, Packet *)
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
 		this->_userCollection.removeUserById(user->getUID());
-		std::cout << "Player Disconnected on ping" << std::endl;
+		std::cout << "User Disconnected on ping" << std::endl;
 		//std::cin.get();
 	}
 }
