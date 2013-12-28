@@ -21,6 +21,7 @@ public:
 
     void  setContacts(std::vector<Contact *> &list);
     void  refresh();
+    bool    displayCall(const std::string& login);
     void    closeEvent(QCloseEvent *event);
 
 private slots:

@@ -31,6 +31,7 @@ public:
     std::vector<Contact *>& getContacts();
     void    changeStatusText(const std::string& newStat);
     void    changeStatus(Contact::eStatus status);
+    void    handleCall(const std::string&, const std::string&);
     void    show();
     void    close();
     bool    isVisible();

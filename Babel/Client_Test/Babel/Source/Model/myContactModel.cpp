@@ -88,6 +88,13 @@ void    MyContactModel::changeStatus(Contact::eStatus status)
     this->_net->sendStatus(status);
 }
 
+void    MyContactModel::handleCall(const std::string& login, const std::string& ip)
+{
+    if (this->_w->displayCall(login))
+        this->_net->sendAccept(login);
+    this->_net->sendReject(login);
+}
+
 std::vector<Contact *>  &MyContactModel::getContacts()
 {
     return(this->_contactList);

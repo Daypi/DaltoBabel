@@ -47,6 +47,10 @@ public:
     void    addContact(const std::string& name);
     void    rmContact(const std::string& name);
     void    blockContact(const std::string& name);
+    void    sendAccept(const std::string& login);
+    void    sendReject(const std::string& login);
+    void    sendCall(const std::string& login);
+    void    sendHangUp();
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);
     void    refreshStatus(Packet *packet);
@@ -54,6 +58,11 @@ public:
     void    refreshAdd(Packet *packet);
     void    refreshRm(Packet *packet);
     void    refreshBlock(Packet *packet);
+    void    handleCall(Packet *packet);
+    void    acceptCall(Packet *packet);
+    void    rejectCall(Packet *packet);
+    void    closeCall(Packet *packet);
+    void    sendPing();
     int                 getUID();
     bool                getInit() const;
     bool                getHandshake() const;

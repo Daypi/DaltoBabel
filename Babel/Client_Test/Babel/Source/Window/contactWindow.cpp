@@ -48,6 +48,20 @@ void    ContactWindow::refresh()
     QCoreApplication::processEvents();
 }
 
+bool    ContactWindow::displayCall(const std::string& login)
+{
+    QMessageBox msgBox;
+    int         ret;
+    QString     tmp(login.c_str());
+
+    msgBox.setText("You have a call from " + tmp);
+    msgBox.setStandardButtons(QMessageBox::No | QMessageBox::Yes);
+    ret = msgBox.exec();
+    if (ret == QMessageBox::Yes)
+        return (true);
+    return (false);
+}
+
 void    ContactWindow::on_call_clicked()
 {
     std::string   tmp;

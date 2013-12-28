@@ -78,6 +78,14 @@ void	Network::handlePackets()
             this->refreshRm(packet);
         else if (packet->getInstruction() == Packet::BLOCK_CONTACT)
             this->refreshBlock(packet);
+        else if (packet->getInstruction() == Packet::CALL)
+            this->handleCall(packet);
+        else if (packet->getInstruction() == Packet::HANGUP)
+            this->closeCall(packet);
+        else if (packet->getInstruction() == Packet::ACCEPT_CALL)
+            this->acceptCall(packet);
+        else if (packet->getInstruction() == Packet::REJECT_CALL)
+            this->rejectCall(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
@@ -271,9 +279,49 @@ void    Network::blockContact(const std::string& name)
     this->sendList();
 }
 
+void    Network::sendAccept(const std::string& login)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::ACCEPT_CALL);
+
+    pack->setFormat("s");
+    pack->updateData(4 + login.size());
+    pack->appendToData(0, login);
+    this->_sendQueueTCP.push(pack);
+}
+
+void    Network::sendReject(const std::string& login)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::REJECT_CALL);
+
+    pack->setFormat("s");
+    pack->updateData(4 + login.size());
+    pack->appendToData(0, login);
+    this->_sendQueueTCP.push(pack);
+}
+
 void    Network::sendList()
 {
     this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::LIST));
+}
+
+void    Network::sendCall(const std::string& login)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::CALL);
+
+    pack->setFormat("s");
+    pack->updateData(4 + login.size());
+    pack->appendToData(0, login);
+    this->_sendQueueTCP.push(pack);
+}
+
+void    Network::sendHangUp()
+{
+    this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::HANGUP));
+}
+
+void    Network::sendPing()
+{
+    this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::PING));
 }
 
 void    Network::checkLogin(Packet *packet)
@@ -348,6 +396,62 @@ void    Network::refreshBlock(Packet *packet)
         return;
     }
 }
+
+void    Network::handleCall(Packet *packet)
+{
+    std::string ip;
+    std::string login;
+
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    login = packet->getString(1);
+    ip = packet->getString(2);
+    this->_model->handleCall(login, ip);
+}
+
+void    Network::acceptCall(Packet *packet)
+{
+    std::string ip;
+    std::string login;
+
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    login = packet->getString(1);
+    ip = packet->getString(2);
+    // Open the chatWindow with the good login and the ip
+}
+
+void    Network::rejectCall(Packet *packet)
+{
+    std::string ip;
+    std::string login;
+
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    login = packet->getString(1);
+    ip = packet->getString(2);
+    // Close the chatWindow qui etait en attente de la reponse)
+}
+
+void    Network::closeCall(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    // Close the chatWindow qui est en cours d'appel
+}
+
 int     Network::getUID()
 {
     return _reqUID++;
