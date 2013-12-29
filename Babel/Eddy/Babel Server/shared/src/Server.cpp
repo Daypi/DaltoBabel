@@ -35,7 +35,27 @@ Server::~Server()
 {
 }
 
-void									Server::start()
+void								Server::start()
+{
+	Thread<Server, void, void *>	thread(this, &Server::start, 0);
+	bool							stop = false;
+	std::string						line = "";
+
+	thread.start();
+	while (!stop)
+	{
+		std::cout << "> ";
+		std::getline(std::cin, line);
+		if (line == "exit")
+		{
+			stop = true;
+			this->stop();
+		}
+	}
+	thread.stop();
+}
+
+void									Server::start(void *)
 {
 	unsigned int						i;
 	std::pair<unsigned int, char *>		ret;
@@ -44,7 +64,9 @@ void									Server::start()
 	unsigned int						deco = 0;
 
 	this->_accountManager.load();
+	this->_mutex.lock();
 	this->_started = true;
+	this->_mutex.unLock();
 	while (this->_started)
 	{
 		this->_clientList = this->_sockTCP.isReadable();
@@ -86,7 +108,9 @@ void									Server::start()
 
 void			Server::stop()
 {
+	this->_mutex.lock();
 	this->_started = false;
+	this->_mutex.unLock();
 }
 
 void						Server::timeout()

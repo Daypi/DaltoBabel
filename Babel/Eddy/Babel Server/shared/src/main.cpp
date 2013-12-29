@@ -64,7 +64,7 @@ int				main()
 		tmp->show();
 		tmp->show();
 	}
-	delete[] tab;*/
-	std::cin.get();
+	delete[] tab;
+	std::cin.get();*/
 	return (0);
 }

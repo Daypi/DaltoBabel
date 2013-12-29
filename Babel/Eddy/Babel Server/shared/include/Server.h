@@ -7,6 +7,7 @@
 #include													"UserCollection.h"
 #include													"SocketServerTCP.h"
 #include													"AccountManager.h"
+#include													"Mutex.h"
 
 class														Server
 {
@@ -15,6 +16,7 @@ class														Server
 	bool													_started;
 	UserCollection											_userCollection;
 	AccountManager											_accountManager;
+	Mutex													_mutex;
 
 	SocketServerTCP											_sockTCP;
 	std::queue<std::pair<Packet *, unsigned int> >			_toSendTCP;
@@ -29,6 +31,7 @@ public:
 	Server(int, int);
 	~Server();
 
+	void													start(void *);
 	void													start();
 	void													stop();
 	void													timeout();
