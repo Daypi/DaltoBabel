@@ -10,6 +10,7 @@
 ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
     QDialog(parent),
     _model(model),
+    _close(false),
     ui(new Ui::ConnectWindow)
 {
     ui->setupUi(this);
@@ -68,6 +69,16 @@ bool    ConnectWindow::getNewUser()
     return (this->ui->newUser->isChecked());
 }
 
+bool    ConnectWindow::isClosed()
+{
+    return (this->_close);
+}
+
+void    ConnectWindow::setClose(bool value)
+{
+    this->_close = value;
+}
+
 const std::string   ConnectWindow::getLogin()
 {
     return (this->ui->editLogin->text().toStdString());
@@ -82,6 +93,14 @@ const std::string   ConnectWindow::getMdp()
 
 void    ConnectWindow::closeEvent(QCloseEvent *event)
 {
-    this->_model->close();
-    event->accept();
+    if (!_close)
+    {
+        _close = true;
+        event->ignore();
+    }
+    else
+    {
+        this->_model->close();
+        event->accept();
+    }
 }

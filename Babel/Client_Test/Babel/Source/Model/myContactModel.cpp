@@ -112,7 +112,7 @@ void    MyContactModel::loop()
     clock_t   time;
 
     time = clock();
-    while (this->_w->isVisible())
+    while (!this->_w->isClosed())
     {
         this->_w->refresh();
         if ((clock() - time) / CLOCKS_PER_SEC > MY_TIMEOUT)
@@ -135,11 +135,12 @@ void    MyContactModel::loop()
 void    MyContactModel::close()
 {
     this->_w->close();
+    this->_w->refresh();
 }
 
-bool    MyContactModel::isVisible()
+bool    MyContactModel::isClosed()
 {
-    return (this->_w->isVisible());
+    return (this->_w->isClosed());
 }
 
 

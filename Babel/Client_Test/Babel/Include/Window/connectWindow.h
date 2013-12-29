@@ -15,6 +15,8 @@ class ConnectWindow : public QDialog
 {
     Q_OBJECT
     MyConnectModel  *_model;
+    bool            _close;
+
 public:
     explicit ConnectWindow(MyConnectModel *model, QWidget *parent = 0);
     ~ConnectWindow();
@@ -26,7 +28,9 @@ public:
     bool                getNewUser();
     const std::string   getLogin();
     const std::string   getMdp();
-    void    closeEvent(QCloseEvent *event);
+    bool                isClosed();
+    void                setClose(bool);
+    void                closeEvent(QCloseEvent *event);
 
 private slots:
     void on_valider_clicked();

@@ -12,6 +12,8 @@ class MyConnectModel
     Network                 *_net;
     ConnectWindow           _w;
     MyContactModel          *_contact;
+    bool                    _ok;
+
 public:
     MyConnectModel(Network *net, MyContactModel *contact, QWidget *parent);
     ~MyConnectModel();
@@ -19,6 +21,7 @@ public:
     void        connect(const std::string &ip, int port);
     void        show();
     void        close();
+    void        closeWin();
 };
 
 #include "Include/Model/myContactModel.h"

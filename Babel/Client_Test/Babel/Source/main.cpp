@@ -6,5 +6,7 @@ int main(int argc, char *argv[])
   QApplication a(argc, argv);
   MyContactModel w;
 
-  return a.exec();
+  while (!w.isClosed())
+      a.processEvents();
+  return 0;
 }

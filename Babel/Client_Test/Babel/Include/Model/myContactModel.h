@@ -36,7 +36,7 @@ public:
     void    handleCall(const std::string&, const std::string&);
     void    show();
     void    close();
-    bool    isVisible();
+    bool    isClosed();
     void    loop();
 };
 

@@ -6,6 +6,7 @@
 ContactWindow::ContactWindow(MyContactModel *model, QWidget *parent) :
     QDialog(parent),
     _model(model),
+    _close(false),
     ui(new Ui::ContactWindow)
 {
     ui->setupUi(this);
@@ -63,6 +64,11 @@ bool    ContactWindow::displayCall(const std::string& login)
     if (ret == QMessageBox::Yes)
         return (true);
     return (false);
+}
+
+bool    ContactWindow::isClosed()
+{
+    return (this->_close);
 }
 
 void    ContactWindow::on_call_clicked()
@@ -160,8 +166,13 @@ void ContactWindow::on_block_clicked()
 
 void    ContactWindow::closeEvent(QCloseEvent *event)
 {
-    event->accept();
-    exit(0);
+    if (!this->_close)
+    {
+        _close = true;
+        event->ignore();
+    }
+    else
+        event->accept();
 }
 
 void ContactWindow::on_status_currentIndexChanged(int index)
