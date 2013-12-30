@@ -339,7 +339,11 @@ void				AccountManager::load()
 	File			file;
 	Account			*account;
 
-	folder.open("Accounts");
+	if (!folder.open("Accounts"))
+	{
+		std::cout << "Cannot open Accounts folder." << std::endl;
+		return;
+	}
 	while (folder.nextFile(file))
 	{
 		if (!file.folder)

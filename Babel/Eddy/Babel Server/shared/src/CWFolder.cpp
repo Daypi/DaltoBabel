@@ -1,5 +1,6 @@
+#include			<Shlwapi.h>
+#pragma				comment(lib, "Shlwapi.lib")
 #include			"CWFolder.h"
-#include			<iostream>
 
 CWFolder::CWFolder(const std::string& name) : _name(name + "\\*"), _first(true)
 {
@@ -17,6 +18,8 @@ bool			CWFolder::open(const std::string& name)
 
 bool			CWFolder::open(const char *name)
 {
+	if (PathFileExists(name) == FALSE)
+		return (false);
 	this->_name = std::string(name) + "\\*";
 	return (true);
 }

@@ -15,9 +15,11 @@ bool			CUFolder::open(const std::string& name)
 
 bool			CUFolder::open(const char *name)
 {
-	this->_name = std::string(name);
 	this->_dir = ::opendir(name);
-	return (!(this->_dir == 0));
+	if (this->_dir == 0)
+		return (false);
+	this->_name = std::string(name);
+	return (true);
 }
 
 bool			CUFolder::open()
