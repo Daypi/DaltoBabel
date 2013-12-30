@@ -29,7 +29,7 @@ void	SocketClientUDP::init(int port, const char *ipAddress)
 
 	try
 	{
-	  this->_sock->connect(ipAddress, port);
+      this->_sock->connect(ipAddress, port);
 	}
 	catch (Exception &e)
 	{
@@ -114,7 +114,7 @@ void	SocketClientUDP::close()
 {
 	try
 	{
-		this->_sock->closeSocketAvd();
+        this->_sock->closeSocketAvd();
 	}
 	catch (Exception &e)
 	{

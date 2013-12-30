@@ -5,6 +5,7 @@
 #include	<queue>
 #include	"SocketClientTCP.h"
 #include	"SocketClientUDP.h"
+#include    "SocketServerUDP.h"
 #include	"PacketFactory.h"
 #include    "Include/Model/myContactModel.h"
 
@@ -12,8 +13,10 @@ class		Network
 {
 private:
     std::queue<Packet *>	_sendQueueUDP;
+    std::queue<Packet *>	_sendQueueUDPServ;
     std::queue<Packet *>	_sendQueueTCP;
     SocketClientUDP         *_sockUDP;
+    SocketServerUDP         *_sockUDPServ;
     SocketClientTCP         *_sockTCP;
     PacketFactory           _factory;
     bool                    _init;
@@ -36,6 +39,7 @@ public:
     void	pushUDP(Packet *packet);
     void	pushTCP(Packet *packet);
     void	handleNetworkUDP();
+    void	handleNetworkUDPServ();
     void	handleNetworkTCP();
     void	handlePackets();
 

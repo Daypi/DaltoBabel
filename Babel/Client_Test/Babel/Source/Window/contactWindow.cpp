@@ -72,44 +72,34 @@ bool    ContactWindow::isClosed()
 
 void    ContactWindow::on_call_clicked()
 {
-    std::string   tmp;
-    unsigned int  i;
-    unsigned int  size;
     std::vector<Contact *> _contactList(_model->getContacts());
 
     if (this->ui->listContact->selectedItems().isEmpty())
         return;
-    tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
-    size = _contactList.size();
-    for (i = 0; i < size; ++i)
-    {
-        if (tmp == _contactList[i]->getName())
-        {
-            _contactList[i]->myShow();
-            _contactList[i]->setCalling(true);
-        }
-    }
+    QString tmp(this->ui->listContact->selectedItems().front()->text());
+    tmp = tmp.split(" ")[0];
+    this->_model->sendCall(tmp.toStdString());
 }
 
 void ContactWindow::on_chat_clicked()
 {
-    std::string   tmp;
-    unsigned int  i;
-    unsigned int  size;
+//    unsigned int  i;
+//    unsigned int  size;
     std::vector<Contact *> _contactList(_model->getContacts());
 
     if (this->ui->listContact->selectedItems().isEmpty())
         return;
-    tmp = this->ui->listContact->selectedItems().front()->text().toStdString();
-    size = _contactList.size();
-    for (i = 0; i < size; ++i)
-    {
-        if (tmp == _contactList[i]->getName())
-        {
-            _contactList[i]->myShow();
-            _contactList[i]->setCalling(false);
-        }
-    }
+    QString tmp(this->ui->listContact->selectedItems().front()->text());
+    tmp = tmp.split(" ")[0];
+//    size = _contactList.size();
+//    for (i = 0; i < size; ++i)
+//    {
+//        if (tmp == _contactList[i]->getName())
+//        {
+//            _contactList[i]->myShow();
+//            _contactList[i]->setCalling(false);
+//        }
+//    }
 }
 
 void ContactWindow::on_wizz_clicked()

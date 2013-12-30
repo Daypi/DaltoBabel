@@ -16,6 +16,7 @@ public:
     ~MyChatModel();
 
     void        myShow();
+    void        init(const std::string& ip);
     void        setChat(std::vector<std::string> &hist);
     void        setCalling(bool b);
     bool        isCalling() const;
@@ -23,6 +24,5 @@ public:
 };
 
 #include "Include/Model/myContactModel.h"
-//#include "Include/Network/network.h"
 
 #endif // MYCHATW_H

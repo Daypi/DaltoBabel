@@ -52,6 +52,7 @@ void    MyContactModel::setContacts(std::vector<Contact *>& list)
     this->_w->setContacts(_contactList);
 }
 
+
 void    MyContactModel::setStatusText(const std::string& newStat)
 {
     this->_statusText = newStat;
@@ -97,6 +98,11 @@ void    MyContactModel::sendBlock(const std::string& name)
     this->_net->blockContact(name);
 }
 
+void    MyContactModel::sendCall(const std::string& login)
+{
+    this->_net->sendCall(login);
+}
+
 void    MyContactModel::changeStatusText(const std::string& newStat)
 {
     this->_net->sendStatusText(newStat);
@@ -117,6 +123,19 @@ void    MyContactModel::handleCall(const std::string& login, const std::string& 
 std::vector<Contact *>  &MyContactModel::getContacts()
 {
     return (this->_contactList);
+}
+
+void    MyContactModel::openChat(const std::string& login)
+{
+    for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end(); ++it)
+    {
+        if (*(*it) == login)
+        {
+            ((*it))->setCalling(true);
+            ((*it)->myShow());
+            break;
+        }
+    }
 }
 
 ContactWindow   *MyContactModel::getWin()

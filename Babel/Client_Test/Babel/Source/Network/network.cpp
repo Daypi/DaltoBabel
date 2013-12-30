@@ -38,6 +38,20 @@ void	Network::connect(const std::string &ip, int port)
             _init = false;
             throw Exception(e);
         }
+
+        this->_sockUDPServ = new SocketServerUDP;
+        try
+        {
+            this->_sockUDPServ->init(1337);
+        }
+        catch (Exception &e)
+        {
+            delete _sockUDPServ;
+            _sockUDPServ = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+
         this->_sockTCP = new SocketClientTCP;
         try
         {
@@ -102,6 +116,7 @@ void	Network::handleNetwork()
         try
         {
             handleNetworkUDP();
+            handleNetworkUDPServ();
             handleNetworkTCP();
             handlePackets();
         }
@@ -161,6 +176,49 @@ void	Network::handleNetworkUDP()
     }
 }
 
+void	Network::handleNetworkUDPServ()
+{
+    if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1)
+    {
+        Packet	*packet = this->_sendQueueUDPServ.front();
+        this->_sendQueueUDPServ.pop();
+        try
+        {
+            _sockUDPServ->send(1, packet->serialize(), packet->size());
+        }
+        catch (Exception &e)
+        {
+            delete _sockUDPServ;
+            _sockUDPServ = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        delete packet;
+    }
+    if (_sockUDPServ->isReadable().size() == 1)
+    {
+        char buffer[4098];
+        int rdSize = 0;
+        std::map<unsigned int, std::pair<const char *, int> >   map;
+
+        try
+        {
+            map = _sockUDPServ->recv(4096);
+            for (std::map<unsigned int, std::pair<const char *, int> >::iterator it = map.begin(); it != map.end(); ++it)
+            {
+                rdSize = (*it).second.second;
+            }
+        }
+        catch (Exception &e)
+        {
+            delete _sockUDPServ;
+            _sockUDPServ = NULL;
+            _init = false;
+            throw Exception(e);
+        }
+        _factory.feed(buffer, rdSize);
+    }
+}
 void	Network::handleNetworkTCP()
 {
     if (_sendQueueTCP.empty() == false && _sockTCP->isWritable())
@@ -197,7 +255,7 @@ void	Network::handleNetworkTCP()
             throw Exception(e);
         }
         std::cout << "Data packet factory = push buff in factory" << std::endl;
-        for (unsigned int i = 0; i < rdSize; ++i)
+        for (unsigned int i = 0; i < (unsigned int)rdSize; ++i)
         {
             std::cout << Util::format('0', 2, Util::toHex<unsigned int>((unsigned char)buffer[i])) << " ";
         }
@@ -287,6 +345,7 @@ void    Network::sendAccept(const std::string& login)
     pack->updateData(4 + login.size());
     pack->appendToData(0, login);
     this->_sendQueueTCP.push(pack);
+    this->_model->openChat(login);
 }
 
 void    Network::sendReject(const std::string& login)
@@ -426,7 +485,10 @@ void    Network::acceptCall(Packet *packet)
     }
     login = packet->getString(1);
     ip = packet->getString(2);
-    // Open the chatWindow with the good login and the ip
+
+    this->_sockUDP->close();
+    this->_sockUDP->init(1337, ip.c_str());
+    this->_model->openChat(login);
 }
 
 void    Network::rejectCall(Packet *packet)
@@ -441,6 +503,7 @@ void    Network::rejectCall(Packet *packet)
     }
     login = packet->getString(1);
     ip = packet->getString(2);
+
     // Close the chatWindow qui etait en attente de la reponse)
 }
 

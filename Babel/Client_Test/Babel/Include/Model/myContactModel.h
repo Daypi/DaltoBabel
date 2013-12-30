@@ -1,7 +1,7 @@
 #ifndef MYCONTACTW_H
 #define MYCONTACTW_H
 
-#define MY_TIMEOUT (15)
+#define MY_TIMEOUT (10)
 
 #include <string>
 #include <vector>
@@ -42,7 +42,9 @@ public:
     void    sendAdd(const std::string& name);
     void    sendRm(const std::string& name);
     void    sendBlock(const std::string& name);
+    void    sendCall(const std::string& login);
     std::vector<Contact *>& getContacts();
+    void    openChat(const std::string& login);
     ContactWindow *getWin();
     void    changeStatusText(const std::string& newStat);
     void    changeStatus(eStatus status);
