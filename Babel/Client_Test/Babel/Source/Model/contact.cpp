@@ -1,10 +1,10 @@
 #include "Include/Window/contactWindow.h"
 #include "Include/Model/contact.h"
 
-Contact::Contact(const std::string& name, unsigned int uid, const std::string& statusText, Contact::eStatus status, QWidget *parent)
+Contact::Contact(Network *net, const std::string& name, unsigned int uid, const std::string& statusText, eStatus status, QWidget *parent)
     :  _uid(uid), _name(name), _statusText(statusText), _status(status)
 {
-    _c = new MyChatModel(name, parent);
+    _c = new MyChatModel(net, name, parent);
 }
 
 Contact::Contact(const Contact& oldContact)
@@ -14,9 +14,13 @@ Contact::Contact(const Contact& oldContact)
 
 Contact     &Contact::operator=(const Contact &other)
 {
-    _uid = other._uid;
-    _statusText = other._statusText;
-    _status = other._status;
+    if (this != &other)
+    {
+        _uid = other._uid;
+        _statusText = other._statusText;
+        _status = other._status;
+    }
+    return (*this);
 }
 
 Contact::~Contact()
@@ -57,7 +61,7 @@ void                    Contact::setStatusText(const std::string& status)
     this->_statusText = status;
 }
 
-void                    Contact::setStatus(Contact::eStatus status)
+void                    Contact::setStatus(eStatus status)
 {
     this->_status = status;
 }
@@ -77,7 +81,7 @@ const std::string&      Contact::getStatusText() const
     return (this->_statusText);
 }
 
-Contact::eStatus      Contact::getStatus() const
+eStatus      Contact::getStatus() const
 {
     return (this->_status);
 }

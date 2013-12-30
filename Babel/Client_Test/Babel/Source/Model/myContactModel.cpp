@@ -3,7 +3,7 @@
 #include "Include/Model/myContactModel.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
-    : _status(Contact::AVAILABLE),
+    : _status(AVAILABLE),
       _net(new Network(this)),
       _w(new ContactWindow(this, parent)),
       _connect(new MyConnectModel(_net, this, _w))
@@ -57,12 +57,12 @@ void    MyContactModel::setStatusText(const std::string& newStat)
     this->_statusText = newStat;
 }
 
-void    MyContactModel::setStatus(Contact::eStatus status)
+void    MyContactModel::setStatus(eStatus status)
 {
     this->_status = status;
 }
 
-void    MyContactModel::addContact(const std::string &name, const std::string &statusText, Contact::eStatus status)
+void    MyContactModel::addContact(const std::string &name, const std::string &statusText, eStatus status)
 {
     unsigned int    i;
     bool            find(false);
@@ -71,7 +71,7 @@ void    MyContactModel::addContact(const std::string &name, const std::string &s
         if (_contactList[i]->getName() == name)
             find = true;
     if (!find)
-        _contactList.push_back(new Contact(name, _contactList.size() + 1, statusText, status, _w));
+        _contactList.push_back(new Contact(this->_net, name, _contactList.size() + 1, statusText, status, _w));
     this->_w->setContacts(_contactList);
 }
 
@@ -102,7 +102,7 @@ void    MyContactModel::changeStatusText(const std::string& newStat)
     this->_net->sendStatusText(newStat);
 }
 
-void    MyContactModel::changeStatus(Contact::eStatus status)
+void    MyContactModel::changeStatus(eStatus status)
 {
     this->_net->sendStatus(status);
 }
@@ -150,7 +150,8 @@ void    MyContactModel::loop()
         }
         catch (Exception &e)
         {
-            throw Exception(e);
+            std::cout << e.what() << std::endl;
+            this->close();
         }
     }
 }

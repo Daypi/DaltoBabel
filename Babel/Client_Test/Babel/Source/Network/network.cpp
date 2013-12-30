@@ -236,7 +236,7 @@ void    Network::sendStatusText(const std::string& newStat)
     this->_sendQueueTCP.push(pack);
 }
 
-void    Network::sendStatus(Contact::eStatus status)
+void    Network::sendStatus(eStatus status)
 {
     Packet  *pack = new Packet(this->getUID(), Packet::STATUS);
 
@@ -351,7 +351,7 @@ void    Network::refreshStatus(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    this->_model->setStatus((Contact::eStatus)packet->getChar(1));
+    this->_model->setStatus((eStatus)packet->getChar(1));
 }
 
 void    Network::refreshList(Packet *packet)
@@ -367,7 +367,7 @@ void    Network::refreshList(Packet *packet)
     unsigned short  size = packet->getList(1, format);
 
     for (unsigned int i = 0; i < size * format.size(); i += format.size())
-        list.push_back(new Contact(packet->getString(i + 2), i, packet->getString(i + 3), (Contact::eStatus)packet->getChar(i + 4), this->_model->getWin()));
+        list.push_back(new Contact(this, packet->getString(i + 2), i, packet->getString(i + 3), (eStatus)packet->getChar(i + 4), this->_model->getWin()));
     _model->setContacts(list);
 }
 

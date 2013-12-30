@@ -3,13 +3,16 @@
 
 #include "Include/Window/chatWindow.h"
 
+class Network;
+
 class MyChatModel
 {
+    Network     *_net;
     ChatWindow  *_w;
     bool        _call;
 
 public:
-    MyChatModel(const std::string &name, QWidget *parent);
+    MyChatModel(Network *net, const std::string &name, QWidget *parent);
     ~MyChatModel();
 
     void        myShow();
@@ -18,5 +21,8 @@ public:
     bool        isCalling() const;
     void        close();
 };
+
+#include "Include/Model/myContactModel.h"
+//#include "Include/Network/network.h"
 
 #endif // MYCHATW_H

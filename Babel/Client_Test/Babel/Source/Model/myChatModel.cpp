@@ -1,7 +1,8 @@
 #include "Include/Model/myChatModel.h"
 
-MyChatModel::MyChatModel(const std::string &name, QWidget *parent)
+MyChatModel::MyChatModel(Network *net, const std::string &name, QWidget *parent)
 {
+    this->_net = net;
     _w = new ChatWindow(name, parent);
 }
 

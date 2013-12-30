@@ -177,7 +177,7 @@ void    ContactWindow::closeEvent(QCloseEvent *event)
 
 void ContactWindow::on_status_currentIndexChanged(int index)
 {
-    this->_model->changeStatus((Contact::eStatus)index);
+    this->_model->changeStatus((eStatus)index);
 }
 
 void ContactWindow::on_editStatusText_editingFinished()

@@ -1,18 +1,30 @@
 #ifndef MYCONTACTW_H
 #define MYCONTACTW_H
 
-#include "Include/Model/contact.h"
-
 #define MY_TIMEOUT (15)
+
+#include <string>
+#include <vector>
+#include <QWidget>
+
+enum eStatus
+{
+    AVAILABLE = 0,
+    BUSY,
+    AWAY,
+    INVISIBLE,
+    ENUM_COUNT
+};
 
 class ContactWindow;
 class Network;
 class MyConnectModel;
+class Contact;
 
 class MyContactModel
 {
     std::vector<Contact *>  _contactList;
-    Contact::eStatus        _status;
+    eStatus                 _status;
     std::string             _statusText;
     Network                 *_net;
     ContactWindow           *_w;
@@ -24,8 +36,8 @@ public:
 
     void    setContacts(std::vector<Contact *> &list);
     void    setStatusText(const std::string& newStat);
-    void    setStatus(Contact::eStatus status);
-    void    addContact(const std::string &name, const std::string &statusText, Contact::eStatus status);
+    void    setStatus(eStatus status);
+    void    addContact(const std::string &name, const std::string &statusText, eStatus status);
     void    clearContact();
     void    sendAdd(const std::string& name);
     void    sendRm(const std::string& name);
@@ -33,7 +45,7 @@ public:
     std::vector<Contact *>& getContacts();
     ContactWindow *getWin();
     void    changeStatusText(const std::string& newStat);
-    void    changeStatus(Contact::eStatus status);
+    void    changeStatus(eStatus status);
     void    handleCall(const std::string&, const std::string&);
     void    show();
     void    close();
@@ -44,5 +56,6 @@ public:
 #include "Include/Window/contactWindow.h"
 #include "Include/Network/network.h"
 #include "Include/Model/myConnectModel.h"
+#include "Include/Model/contact.h"
 
 #endif // MYCONTACTW_H

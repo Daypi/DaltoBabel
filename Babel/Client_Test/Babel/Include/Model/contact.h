@@ -7,16 +7,6 @@
 
 class Contact
 {
-public:
-    enum eStatus
-    {
-        AVAILABLE = 0,
-        BUSY,
-        AWAY,
-        INVISIBLE,
-        ENUM_COUNT
-    };
-
 private:
     unsigned int    _uid;
     std::string     _ip;
@@ -27,7 +17,7 @@ private:
     MyChatModel     *_c;
 
 public:
-    Contact(const std::string& name, unsigned int uid, const std::string& statusText, Contact::eStatus status, QWidget *parent);
+    Contact(Network *net, const std::string& name, unsigned int uid, const std::string& statusText, eStatus status, QWidget *parent);
     Contact(const Contact& oldContact);
     ~Contact();
 

@@ -42,7 +42,7 @@ public:
     void    sendHandshake();
     void    sendLogin(bool isNewUser, const std::string &login, const std::string &mdp);
     void    sendStatusText(const std::string &newStat);
-    void    sendStatus(Contact::eStatus status);
+    void    sendStatus(eStatus status);
     void    sendList();
     void    addContact(const std::string& name);
     void    rmContact(const std::string& name);

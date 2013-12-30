@@ -15,7 +15,8 @@ MyConnectModel::MyConnectModel(Network *net, MyContactModel *contact, QWidget *p
         }
         catch (Exception &e)
         {
-            throw Exception(e);
+            std::cout << e.what() << std::endl;
+            this->_w.close();
         }
 
         if (this->_net->getHandshake())
