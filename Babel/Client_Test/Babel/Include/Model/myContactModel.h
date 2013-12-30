@@ -22,7 +22,7 @@ public:
     MyContactModel(QWidget *parent = 0);
     ~MyContactModel();
 
-    void    setContacts(std::vector<std::string>& list);
+    void    setContacts(std::vector<Contact *> &list);
     void    setStatusText(const std::string& newStat);
     void    setStatus(Contact::eStatus status);
     void    addContact(const std::string &name, const std::string &statusText, Contact::eStatus status);
@@ -31,6 +31,7 @@ public:
     void    sendRm(const std::string& name);
     void    sendBlock(const std::string& name);
     std::vector<Contact *>& getContacts();
+    ContactWindow *getWin();
     void    changeStatusText(const std::string& newStat);
     void    changeStatus(Contact::eStatus status);
     void    handleCall(const std::string&, const std::string&);

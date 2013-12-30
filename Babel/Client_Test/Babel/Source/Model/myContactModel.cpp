@@ -14,7 +14,7 @@ MyContactModel::~MyContactModel()
 {
 }
 
-void    MyContactModel::setContacts(std::vector<std::string>& list)
+void    MyContactModel::setContacts(std::vector<Contact *>& list)
 {
     unsigned int  size;
     unsigned int  i;
@@ -23,13 +23,31 @@ void    MyContactModel::setContacts(std::vector<std::string>& list)
     size = list.size();
     for (i = 0; i < size; ++i)
     {
-        bool      find(false);
+        int      find(-1);
 
         for (j = 0; j < _contactList.size(); ++j)
-            if (_contactList[j]->getName() == list[i])
+            if (_contactList[j] == list[i])
+                find = (int)j;
+        if (find == -1)
+            _contactList.push_back(new Contact(*(list[i])));
+        else
+            _contactList[j] = list[i];
+    }
+    for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end();)
+    {
+        bool      find(false);
+
+        for (j = 0; j < size; ++j)
+            if (list[j]->getName() == (*it)->getName())
                 find = true;
         if (!find)
-            _contactList.push_back(new Contact(list[i], _contactList.size() + 1, "Online", Contact::AVAILABLE, _w));
+        {
+            (*it)->close();
+            delete (*it);
+            _contactList.erase(it);
+        }
+        else
+            ++it;
     }
     this->_w->setContacts(_contactList);
 }
@@ -98,7 +116,12 @@ void    MyContactModel::handleCall(const std::string& login, const std::string& 
 
 std::vector<Contact *>  &MyContactModel::getContacts()
 {
-    return(this->_contactList);
+    return (this->_contactList);
+}
+
+ContactWindow   *MyContactModel::getWin()
+{
+    return (this->_w);
 }
 
 void    MyContactModel::show()

@@ -5,17 +5,18 @@
 
 class MyChatModel
 {
-  ChatWindow  *_w;
-  bool        _call;
+    ChatWindow  *_w;
+    bool        _call;
 
 public:
-  MyChatModel(const std::string &name, QWidget *parent);
-  ~MyChatModel();
+    MyChatModel(const std::string &name, QWidget *parent);
+    ~MyChatModel();
 
-  void        myShow();
-  void        setChat(std::vector<std::string> &hist);
-  void        setCalling(bool b);
-  bool        isCalling() const;
+    void        myShow();
+    void        setChat(std::vector<std::string> &hist);
+    void        setCalling(bool b);
+    bool        isCalling() const;
+    void        close();
 };
 
 #endif // MYCHATW_H

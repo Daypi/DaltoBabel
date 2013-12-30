@@ -356,6 +356,8 @@ void    Network::refreshStatus(Packet *packet)
 
 void    Network::refreshList(Packet *packet)
 {
+    std::vector<Contact *>  list;
+
     if (packet->getChar(0) != 1)
     {
         std::cout << packet->getString(1) << std::endl;
@@ -364,9 +366,9 @@ void    Network::refreshList(Packet *packet)
     std::string     format;
     unsigned short  size = packet->getList(1, format);
 
-    this->_model->clearContact();
     for (unsigned int i = 0; i < size * format.size(); i += format.size())
-        this->_model->addContact(packet->getString(i + 2), packet->getString(i + 3), (Contact::eStatus)packet->getChar(i + 4));
+        list.push_back(new Contact(packet->getString(i + 2), i, packet->getString(i + 3), (Contact::eStatus)packet->getChar(i + 4), this->_model->getWin()));
+    _model->setContacts(list);
 }
 
 void    Network::refreshAdd(Packet *packet)

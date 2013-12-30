@@ -9,23 +9,28 @@ MyChatModel::~MyChatModel()
 {
 }
 
-void  MyChatModel::myShow()
+void    MyChatModel::myShow()
 {
-  _w->myShow();
+    _w->myShow();
 }
 
-void  MyChatModel::setChat(std::vector<std::string> &hist)
+void    MyChatModel::setChat(std::vector<std::string> &hist)
 {
-  _w->setChat(hist);
+    _w->setChat(hist);
 }
 
-void  MyChatModel::setCalling(bool b)
+void    MyChatModel::setCalling(bool b)
 {
-  _w->setCalling(b);
-  _call = b;
+    _w->setCalling(b);
+    _call = b;
 }
 
-bool  MyChatModel::isCalling() const
+bool    MyChatModel::isCalling() const
 {
-  return (_call);
+    return (_call);
+}
+
+void    MyChatModel::close()
+{
+    this->_w->close();
 }

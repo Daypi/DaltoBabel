@@ -12,6 +12,13 @@ Contact::Contact(const Contact& oldContact)
 {
 }
 
+Contact     &Contact::operator=(const Contact &other)
+{
+    _uid = other._uid;
+    _statusText = other._statusText;
+    _status = other._status;
+}
+
 Contact::~Contact()
 {
 }
@@ -108,4 +115,9 @@ void                    Contact::setCalling(bool b)
 bool                    Contact::isCalling() const
 {
     return (this->_c->isCalling());
+}
+
+void                    Contact::close()
+{
+    this->_c->close();
 }
