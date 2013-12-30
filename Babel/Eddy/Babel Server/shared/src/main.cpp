@@ -5,10 +5,11 @@
 
 int				main()
 {
-	/*AccountManager	manager;
+  /*AccountManager	manager;
 
 	manager.create("192.168.0.33", "Titi", "password");
 	manager.create("127.0.0.1", "Jeanjean", "toto");
+	manager.addContact("Jeanjean", "Titi");
 	manager.save();
 	manager.show();
 	manager.clear();

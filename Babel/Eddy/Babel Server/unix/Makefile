@@ -5,7 +5,7 @@
 ## Login   <taiebi_e@epitech.net>
 ##
 ## Started on  Sun Dec 22 13:29:59 2013 eddy taiebi
-## Last update Sun Dec 22 14:03:32 2013 eddy taiebi
+## Last update Mon Dec 30 19:04:10 2013 eddy taiebi
 ##
 
 NAME=	server
@@ -37,7 +37,7 @@ SRC=	../shared/src/LibC.cpp \
 
 OBJ=	$(SRC:.cpp=.o)
 
-CXX=	g++ -W -Wall -Wextra -I../shared/include/
+CXX=	g++ -W -Wall -Wextra -I../shared/include/ -g3
 
 $(NAME):	$(OBJ)
 	$(CXX) -o $(NAME) $(OBJ) -lpthread

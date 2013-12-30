@@ -2,6 +2,7 @@
 
 #include												<string>
 #include												<vector>
+#include												<fstream>
 #include												"Account.h"
 
 class													AccountManager
@@ -43,7 +44,7 @@ public:
 	bool												addContact(unsigned int, const std::string&);
 	bool												addContact(const std::string&, const std::string&);
 	bool												addContact(const char *, const std::string&);
-	
+
 	bool												removeContact(Account *, const std::string&);
 	bool												removeContact(unsigned int, const std::string&);
 	bool												removeContact(const std::string&, const std::string&);
@@ -53,6 +54,9 @@ public:
 	bool												blockContact(unsigned int, const std::string&);
 	bool												blockContact(const std::string&, const std::string&);
 	bool												blockContact(const char *, const std::string&);
+
+	void												writeAccount(std::ofstream&, Account *);
+	Account												*readAccount(std::ifstream&);
 
 	void												save();
 	void												load();

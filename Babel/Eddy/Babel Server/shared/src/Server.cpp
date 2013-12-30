@@ -52,7 +52,7 @@ void								Server::start()
 			this->stop();
 		}
 	}
-	thread.stop();
+	//thread.stop();
 }
 
 void									Server::start(void *)

@@ -174,16 +174,21 @@ void					Packet::header(char *packet)
 
 void				Packet::format(char *packet)
 {
-	char			tmp;
+	char			*tmp;
 	unsigned short	size;
-	
+
 	if (this->_dataSize == 0)
 		return;
 	size = *reinterpret_cast<const unsigned short *>(packet + Packet::DATA_SIZE_INDEX + 3);
-	tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
-	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
-	this->_format = std::string(packet + Packet::DATA_SIZE_INDEX + 3 + 2);
-	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = tmp;
+	tmp = new char[size + 1];
+	LibC::memcpy(tmp, packet + Packet::DATA_SIZE_INDEX + 3 + 2, size);
+	tmp[size] = '\0';
+	this->_format = std::string(tmp);
+	delete[] tmp;
+	//tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
+	//packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
+	//this->_format = std::string(packet + Packet::DATA_SIZE_INDEX + 3 + 2);
+	//packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = tmp;
 }
 
 unsigned int	Packet::size() const
@@ -231,18 +236,19 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 {
 	std::string		str;
 	unsigned short	size;
-	char			tmp;
+	char			*tmp;
 
-	if (*pos + 4 <= this->_dataSize)
+	if (*pos + 4 <= this->_dataSize - this->_format.size() - 2)
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 	else
 		throw std::out_of_range("Error : not found");
-	if (*pos + 4 + size <= this->_dataSize)
+	if (*pos + 4 + size <= this->_dataSize - this->_format.size() - 2)
 	{
-		tmp = this->_data[*pos + 4 + size];
-		this->_data[*pos + 4 + size] = 0;
-		str = std::string(this->_data + *pos + 4);
-		this->_data[*pos + 4 + size] = tmp;
+	  tmp = new char[size + 1];
+	  LibC::memcpy(tmp, this->_data + *pos + 4, size);
+	  tmp[size] = '\0';
+	  str = std::string(tmp);
+	  delete[] tmp;
 		*pos += 4 + size;
 	}
 	return (str);
@@ -252,7 +258,7 @@ unsigned short		Packet::getListInData(unsigned int *pos) const
 {
 	unsigned short	size;
 
-	if (*pos + 4 <= this->_dataSize)
+	if (*pos + 4 <= this->_dataSize - this->_format.size() - 2)
 	{
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 		*pos += 4;

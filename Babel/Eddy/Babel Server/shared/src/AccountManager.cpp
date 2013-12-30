@@ -1,7 +1,13 @@
-#include			<fstream>
 #include			<iostream>
+#include			<map>
 #include			"AccountManager.h"
 #include			"Folder.h"
+
+#ifdef _WIN32
+# define			PATH_SEPARATOR	"\\"
+#else
+# define			PATH_SEPARATOR	"/"
+#endif
 
 AccountManager::AccountManager()
 {
@@ -28,6 +34,8 @@ void				AccountManager::clear()
 
 void				AccountManager::show() const
 {
+  std::vector<std::pair<Account *, bool> >	contactList;
+
 	std::cout << "*** ACCOUNT LIST ***" << std::endl;
 	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
 	{
@@ -35,6 +43,15 @@ void				AccountManager::show() const
 		std::cout << "Ip = " << this->_accountList[i]->getIp() << std::endl;
 		std::cout << "Name = " << this->_accountList[i]->getName() << std::endl;
 		std::cout << "Password = " << this->_accountList[i]->getPassword() << std::endl;
+		std::cout << "Status = " << this->_accountList[i]->getStatus() << std::endl;
+		std::cout << "StatusText = " << this->_accountList[i]->getStatusText() << std::endl;
+		std::cout << "=== ContactList ===" << std::endl;
+		contactList = this->_accountList[i]->getContactList();
+		for (unsigned int j = 0; j < contactList.size(); ++j)
+		  {
+		    std::cout << contactList[j].first->getName() << std::endl;
+		  }
+		std::cout << "=== XXXXXXXXXXX ===" << std::endl;
 		std::cout << "*** ### ***" << std::endl;
 	}
 	std::cout << "*** XXXXXXX XXXX ***" << std::endl;
@@ -228,6 +245,7 @@ bool				AccountManager::accountExists(unsigned int id) const
 
 bool				AccountManager::accountExists(const std::string& name) const
 {
+  std::cout << "name = " << name << std::endl;
 	return (this->getAccountByName(name) != 0);
 }
 
@@ -314,30 +332,88 @@ bool				AccountManager::blockContact(const char *name, const std::string& nameTo
 	return (this->removeContact(this->getAccountByName(name), nameToAdd));
 }
 
+void				AccountManager::writeAccount(std::ofstream& ofs, Account *account)
+{
+  	unsigned int		uid;
+	Account::eStatus	status;
+	std::vector<std::pair<Account *, bool> >	contactList;
+	std::size_t		size;
+
+	uid = account->getUID();
+	ofs.write(reinterpret_cast<const char *>(&uid), sizeof(unsigned int));
+	ofs.write(account->getIp().c_str(), account->getIp().size());
+	ofs.write("\n", 1);
+	ofs.write(account->getName().c_str(), account->getName().size());
+	ofs.write("\n", 1);
+	ofs.write(account->getPassword().c_str(), account->getPassword().size());
+	ofs.write("\n", 1);
+	status = account->getStatus();
+	ofs.write(reinterpret_cast<const char *>(&status), sizeof(Account::eStatus));
+	ofs.write(account->getStatusText().c_str(), account->getStatusText().size());
+	ofs.write("\n", 1);
+	contactList = account->getContactList();
+	size = contactList.size();
+	ofs.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
+	for (unsigned int i = 0; i < contactList.size(); ++i)
+	  {
+	    ofs.write(contactList[i].first->getName().c_str(), contactList[i].first->getName().size());
+	    ofs.write("\n", 1);
+	  }
+}
+
+Account				*AccountManager::readAccount(std::ifstream& ifs)
+{
+	unsigned int		uid;
+	std::string		ip;
+	std::string		name;
+	std::string		password;
+	Account::eStatus	status;
+	std::string		statusText;
+	Account			*account;
+
+	ifs.read(reinterpret_cast<char *>(&uid), sizeof(unsigned int));
+	std::getline(ifs, ip);
+	std::getline(ifs, name);
+	std::getline(ifs, password);
+	ifs.read(reinterpret_cast<char *>(&status), sizeof(Account::eStatus));
+	std::getline(ifs, statusText);
+	account = new Account(uid, ip, name, password);
+	account->setStatus(status);
+	account->setStatusText(statusText);
+	return (account);
+}
+
 void				AccountManager::save()
 {
-	std::fstream	fs;
+	std::ofstream	ofs;
 	std::string		filename;
 	Folder			folder;
-	
+
 	folder.remove("Accounts");
 	folder.create("Accounts");
 	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
 	{
-		filename = "Accounts/" + this->_accountList[i]->getName() + ".sav";
-		fs.open(filename.c_str(), std::ios::out);
-		fs.write(reinterpret_cast<const char *>(this->_accountList[i]), sizeof(Account));
-		fs.close();
+	  filename = "Accounts" + std::string(PATH_SEPARATOR) + this->_accountList[i]->getName() + ".sav";
+		ofs.open(filename.c_str());
+		if (ofs.is_open())
+		  {
+			this->writeAccount(ofs, this->_accountList[i]);
+			ofs.close();
+		  }
 	}
 }
 
 void				AccountManager::load()
 {
-	std::fstream	fs;
+	std::ifstream	ifs;
 	std::string		filename;
 	Folder			folder;
 	File			file;
 	Account			*account;
+	std::map<std::string, std::vector<std::string> >	contacts;
+	std::vector<std::string>	contactList;
+	std::size_t		size;
+	std::string		line;
 
 	if (!folder.open("Accounts"))
 	{
@@ -348,18 +424,32 @@ void				AccountManager::load()
 	{
 		if (!file.folder)
 		{
-			filename = "Accounts/" + file.name;
-			fs.open(filename.c_str(), std::ios::in);
-			if (fs.is_open())
+		  filename = "Accounts" + std::string(PATH_SEPARATOR) + file.name;
+		  ifs.open(filename.c_str());
+			if (ifs.is_open())
 			{
-				account = new Account();
-				fs.read(reinterpret_cast<char *>(account), sizeof(Account));
+				account = this->readAccount(ifs);
+				ifs.read(reinterpret_cast<char *>(&size), sizeof(std::size_t));
+				for (unsigned int i = 0; i < size; ++i)
+				  {
+				    std::getline(ifs, line);
+				    contactList.push_back(line);
+				  }
+				contacts[account->getName()] = contactList;
+				contactList.clear();
 				this->_accountList.push_back(account);
-				fs.close();
+				ifs.close();
 			}
 		}
 	}
 	folder.close();
+	for (std::map<std::string, std::vector<std::string> >::iterator it = contacts.begin(); it != contacts.end(); ++it)
+	  {
+	    for (unsigned int i = 0; i < it->second.size(); ++i)
+	      {
+		this->addContact(it->first, it->second[i]);
+	      }
+	  }
 }
 
 unsigned int		AccountManager::newId() const

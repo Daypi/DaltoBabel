@@ -45,7 +45,7 @@ public:
 
 	const std::string&									getPassword() const;
 	void												setPassword(const std::string&);
-	
+
 	Account::eStatus									getStatus() const;
 	const std::string&									getStatusText() const;
 	void												setStatus(Account::eStatus);
