@@ -27,7 +27,7 @@ bool			CUFolder::open()
 
 bool			CUFolder::close()
 {
-	return (close(this->_dir) == 0);
+	return (closedir(this->_dir) == 0);
 }
 
 bool			CUFolder::create(const std::string& name)
