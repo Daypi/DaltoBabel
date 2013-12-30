@@ -72,11 +72,14 @@
     <ClInclude Include="..\..\..\shared\include\CircularBuffer.hpp" />
     <ClInclude Include="..\..\..\shared\include\CondVar.hh" />
     <ClInclude Include="..\..\..\shared\include\CWCondVar.h" />
+    <ClInclude Include="..\..\..\shared\include\CWFolder.h" />
     <ClInclude Include="..\..\..\shared\include\CWMutex.h" />
     <ClInclude Include="..\..\..\shared\include\CWSocket.hh" />
     <ClInclude Include="..\..\..\shared\include\CWThread.hpp" />
     <ClInclude Include="..\..\..\shared\include\Exception.h" />
+    <ClInclude Include="..\..\..\shared\include\Folder.h" />
     <ClInclude Include="..\..\..\shared\include\ICondVar.h" />
+    <ClInclude Include="..\..\..\shared\include\IFolder.h" />
     <ClInclude Include="..\..\..\shared\include\IMutex.h" />
     <ClInclude Include="..\..\..\shared\include\ISocket.hh" />
     <ClInclude Include="..\..\..\shared\include\ISocketServer.h" />
@@ -104,9 +107,11 @@
     <ClCompile Include="..\..\..\shared\src\CircularBuffer.cpp" />
     <ClCompile Include="..\..\..\shared\src\CondVar.cpp" />
     <ClCompile Include="..\..\..\shared\src\CWCondVar.cpp" />
+    <ClCompile Include="..\..\..\shared\src\CWFolder.cpp" />
     <ClCompile Include="..\..\..\shared\src\CWMutex.cpp" />
     <ClCompile Include="..\..\..\shared\src\CWSocket.cpp" />
     <ClCompile Include="..\..\..\shared\src\Exception.cpp" />
+    <ClCompile Include="..\..\..\shared\src\Folder.cpp" />
     <ClCompile Include="..\..\..\shared\src\LibC.cpp" />
     <ClCompile Include="..\..\..\shared\src\main.cpp" />
     <ClCompile Include="..\..\..\shared\src\Mutex.cpp" />

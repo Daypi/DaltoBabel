@@ -1,6 +1,7 @@
 #include			<fstream>
 #include			<iostream>
 #include			"AccountManager.h"
+#include			"Folder.h"
 
 AccountManager::AccountManager()
 {
@@ -8,11 +9,35 @@ AccountManager::AccountManager()
 
 AccountManager::~AccountManager()
 {
+	//this->clear();
 }
 
 unsigned int		AccountManager::size() const
 {
 	return (this->_accountList.size());
+}
+
+void				AccountManager::clear()
+{
+	for (std::vector<Account *>::iterator it = this->_accountList.begin(); it != this->_accountList.end(); ++it)
+	{
+		delete *it;
+	}
+	this->_accountList.clear();
+}
+
+void				AccountManager::show() const
+{
+	std::cout << "*** ACCOUNT LIST ***" << std::endl;
+	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
+	{
+		std::cout << "*** User " << this->_accountList[i]->getUID() << " ***" << std::endl;
+		std::cout << "Ip = " << this->_accountList[i]->getIp() << std::endl;
+		std::cout << "Name = " << this->_accountList[i]->getName() << std::endl;
+		std::cout << "Password = " << this->_accountList[i]->getPassword() << std::endl;
+		std::cout << "*** ### ***" << std::endl;
+	}
+	std::cout << "*** XXXXXXX XXXX ***" << std::endl;
 }
 
 const std::vector<Account *>&		AccountManager::getAccountList() const
@@ -103,7 +128,10 @@ bool									AccountManager::removeAccountById(unsigned int id)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_accountList.erase(tmp);
+	}
 	return (found);
 }
 
@@ -121,7 +149,10 @@ bool									AccountManager::removeAccountByName(const std::string& name)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_accountList.erase(tmp);
+	}
 	return (found);
 }
 
@@ -140,7 +171,10 @@ bool									AccountManager::removeAccountByName(const char *name)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_accountList.erase(tmp);
+	}
 	return (found);
 }
 
@@ -158,7 +192,10 @@ bool									AccountManager::removeAccountByIp(const std::string& ip)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_accountList.erase(tmp);
+	}
 	return (found);
 }
 
@@ -177,7 +214,10 @@ bool									AccountManager::removeAccountByIp(const char *ip)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_accountList.erase(tmp);
+	}
 	return (found);
 }
 
@@ -276,20 +316,46 @@ bool				AccountManager::blockContact(const char *name, const std::string& nameTo
 
 void				AccountManager::save()
 {
-	std::fstream	fs("Accounts.sav", std::ios::in | std::ios::out | std::ios::binary);
-
-	if (!fs)
-		std::cerr << "Could not open Accounts.sav" << std::endl;
-	fs.write(reinterpret_cast<const char *>(this), sizeof(AccountManager));
+	std::fstream	fs;
+	std::string		filename;
+	Folder			folder;
+	
+	folder.remove("Accounts");
+	folder.create("Accounts");
+	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
+	{
+		filename = "Accounts/" + this->_accountList[i]->getName() + ".sav";
+		fs.open(filename.c_str(), std::ios::out);
+		fs.write(reinterpret_cast<const char *>(this->_accountList[i]), sizeof(Account));
+		fs.close();
+	}
 }
 
 void				AccountManager::load()
 {
-	std::fstream	fs("Accounts.sav", std::ios::in | std::ios::out | std::ios::binary);
+	std::fstream	fs;
+	std::string		filename;
+	Folder			folder;
+	File			file;
+	Account			*account;
 
-	if (!fs)
-		std::cerr << "Could not open Accounts.sav" << std::endl;
-	fs.read(reinterpret_cast<char *>(this), sizeof(AccountManager));
+	folder.open("Accounts");
+	while (folder.nextFile(file))
+	{
+		if (!file.folder)
+		{
+			filename = "Accounts/" + file.name;
+			fs.open(filename.c_str(), std::ios::in);
+			if (fs.is_open())
+			{
+				account = new Account();
+				fs.read(reinterpret_cast<char *>(account), sizeof(Account));
+				this->_accountList.push_back(account);
+				fs.close();
+			}
+		}
+	}
+	folder.close();
 }
 
 unsigned int		AccountManager::newId() const
