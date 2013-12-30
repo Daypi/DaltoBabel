@@ -26,7 +26,7 @@ void    MyContactModel::setContacts(std::vector<Contact *>& list)
         int      find(-1);
 
         for (j = 0; j < _contactList.size(); ++j)
-            if (_contactList[j] == list[i])
+            if (_contactList[j]->getName() == list[i]->getName())
                 find = (int)j;
         if (find == -1)
             _contactList.push_back(new Contact(*(list[i])));

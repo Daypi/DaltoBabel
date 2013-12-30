@@ -32,7 +32,6 @@ void    ContactWindow::setContacts(std::vector<Contact *>& list)
     this->ui->listContact->clear();
     for (i = 0; i < size; ++i)
     {
-        std::cout << "prout prout" << i << std::endl;
         QString tmp;
         tmp = list[i]->getName().c_str();
         tmp += " - ";
