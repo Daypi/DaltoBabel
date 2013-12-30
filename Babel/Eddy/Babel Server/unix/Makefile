@@ -16,9 +16,11 @@ SRC=	../shared/src/LibC.cpp \
 	../shared/src/CircularBuffer.cpp \
 	../shared/src/CondVar.cpp \
 	../shared/src/CUCondVar.cpp \
+	../shared/src/CUFolder.cpp \
 	../shared/src/CUMutex.cpp \
 	../shared/src/CUSocket.cpp \
 	../shared/src/Exception.cpp \
+	../shared/src/Folder.cpp \
 	../shared/src/main.cpp \
 	../shared/src/Mutex.cpp \
 	../shared/src/MutexPool.cpp \

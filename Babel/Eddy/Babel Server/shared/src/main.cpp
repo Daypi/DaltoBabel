@@ -1,9 +1,22 @@
 #include		<iostream>
 #include		"Server.h"
 #include		"Util.hpp"
+#include		"Folder.h"
 
 int				main()
 {
+	/*AccountManager	manager;
+
+	manager.create("192.168.0.33", "Titi", "password");
+	manager.create("127.0.0.1", "Jeanjean", "toto");
+	manager.save();
+	manager.show();
+	manager.clear();
+	std::cout << manager.size() << std::endl;
+	manager.show();
+	manager.load();
+	std::cout << manager.size() << std::endl;
+	manager.show();*/
 	try
 	{
 		Server	server(11235, 5);
@@ -64,7 +77,7 @@ int				main()
 		tmp->show();
 		tmp->show();
 	}
-	delete[] tab;
-	std::cin.get();*/
+	delete[] tab;*/
+	//std::cin.get();
 	return (0);
 }

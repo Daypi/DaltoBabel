@@ -105,6 +105,15 @@
     <ClInclude Include="..\..\..\shared\include\LibC.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\shared\include\IFolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\shared\include\CWFolder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\shared\include\Folder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\shared\src\Account.cpp">
@@ -171,6 +180,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\shared\src\LibC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\shared\src\CWFolder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\shared\src\Folder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

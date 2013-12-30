@@ -22,7 +22,7 @@ void	CWMutex::unLock()
 
 bool	CWMutex::tryLock()
 {
-	return (TryEnterCriticalSection(&_mutex));
+	return (TryEnterCriticalSection(&_mutex) == TRUE);
 }
 
 CRITICAL_SECTION	*CWMutex::getMutex()

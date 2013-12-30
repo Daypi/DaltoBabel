@@ -133,7 +133,10 @@ void								UserCollection::removeUserById(unsigned int id)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_userList.erase(tmp);
+	}
 }
 
 void								UserCollection::removeUserByName(const std::string& name)
@@ -150,7 +153,10 @@ void								UserCollection::removeUserByName(const std::string& name)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_userList.erase(tmp);
+	}
 }
 
 void								UserCollection::removeUserByName(const char *name)
@@ -168,7 +174,10 @@ void								UserCollection::removeUserByName(const char *name)
 		}
 	}
 	if (found)
+	{
+		delete *tmp;
 		this->_userList.erase(tmp);
+	}
 }
 
 unsigned int		UserCollection::newId() const

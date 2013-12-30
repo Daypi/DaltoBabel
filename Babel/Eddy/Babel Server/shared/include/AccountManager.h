@@ -15,6 +15,8 @@ public:
 	virtual ~AccountManager();
 
 	unsigned int										size() const;
+	void												clear();
+	void												show() const;
 
 	const std::vector<Account *>&						getAccountList() const;
 

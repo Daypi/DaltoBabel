@@ -29,7 +29,7 @@ private:
 	bool												_calling;
 
 public:
-	Account(unsigned int, const std::string&, const std::string&, const std::string&);
+	Account(unsigned int id = 0, const std::string& ip = "", const std::string& name = "", const std::string& password = "");
 	virtual ~Account();
 
 	virtual bool										operator==(const IUser&);
