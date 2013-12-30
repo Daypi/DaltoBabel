@@ -16,7 +16,7 @@ bool			CUFolder::open(const std::string& name)
 bool			CUFolder::open(const char *name)
 {
 	this->_name = std::string(name);
-	this->_dir = opendir(name);
+	this->_dir = ::opendir(name);
 	return (!(this->_dir == 0));
 }
 
@@ -27,7 +27,7 @@ bool			CUFolder::open()
 
 bool			CUFolder::close()
 {
-	return (closedir(this->_dir) == 0);
+	return (::closedir(this->_dir) == 0);
 }
 
 bool			CUFolder::create(const std::string& name)
@@ -66,7 +66,7 @@ bool					CUFolder::nextFile(File& file)
 	struct dirent		*ent;
 	struct stat			st;
 
-	ent = readdir(this->_dir);
+	ent = ::readdir(this->_dir);
 	if (!ent)
 		return (false);
 	file.name = std::string(ent->d_name);
