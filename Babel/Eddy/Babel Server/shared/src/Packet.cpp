@@ -245,18 +245,20 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 	std::string		str;
 	unsigned short	size;
 	char			*tmp;
+	unsigned int	formatSize;
 
-	if (*pos + 4 <= this->_dataSize - this->_format.size() - 2)
+	formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+	if (*pos + 4 <= this->_dataSize - formatSize)
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 	else
 		throw std::out_of_range("Error : not found");
-	if (*pos + 4 + size <= this->_dataSize - this->_format.size() - 2)
+	if (*pos + 4 + size <= this->_dataSize - formatSize)
 	{
-	  tmp = new char[size + 1];
-	  LibC::memcpy(tmp, this->_data + *pos + 4, size);
-	  tmp[size] = '\0';
-	  str = std::string(tmp);
-	  delete[] tmp;
+		tmp = new char[size + 1];
+		LibC::memcpy(tmp, this->_data + *pos + 4, size);
+		tmp[size] = '\0';
+		str = std::string(tmp);
+		delete[] tmp;
 		*pos += 4 + size;
 	}
 	return (str);
@@ -265,8 +267,10 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 unsigned short		Packet::getListInData(unsigned int *pos) const
 {
 	unsigned short	size;
+	unsigned int	formatSize;
 
-	if (*pos + 4 <= this->_dataSize - this->_format.size() - 2)
+	formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+	if (*pos + 4 <= this->_dataSize - formatSize)
 	{
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 		*pos += 4;

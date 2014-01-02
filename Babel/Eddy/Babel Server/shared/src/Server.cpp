@@ -508,6 +508,7 @@ void				Server::login(User *user, unsigned short req, char status, const std::st
 	if (status)
 	{
 		account->connect();
+		account->setStatus(Account::AVAILABLE);
 		user->setName(account->getName());
 	}
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
@@ -630,7 +631,7 @@ void				Server::chat(User *user, Packet *packet)
 
 	std::cout << "CHAT" << std::endl;
 	login = packet->getString(0);
-	msg = packet->getString(0);
+	msg = packet->getString(1);
 	response = user->getName();
 	toChat = this->_accountManager.getAccountByName(login);
 	if (!toChat)

@@ -1,6 +1,6 @@
 #include		"Account.h"
 
-Account::Account(unsigned int uid, const std::string& ip, const std::string& name, const std::string& password) : _uid(uid), _ip(ip), _name(name), _password(password), _connected(false), _status(Account::AVAILABLE), _statusText(""), _currentCall(0), _calling(false)
+Account::Account(unsigned int uid, const std::string& ip, const std::string& name, const std::string& password) : _uid(uid), _ip(ip), _name(name), _password(password), _connected(false), _status(Account::INVISIBLE), _statusText(""), _currentCall(0), _calling(false)
 {
 }
 
@@ -51,11 +51,13 @@ bool		Account::connected() const
 void		Account::connect()
 {
 	this->_connected = true;
+	this->_status = Account::AVAILABLE;
 }
 
 void		Account::disconnect()
 {
 	this->_connected = false;
+	this->_status = Account::INVISIBLE;
 }
 
 const std::string&		Account::getPassword() const

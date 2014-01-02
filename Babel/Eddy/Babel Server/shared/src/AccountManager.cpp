@@ -334,7 +334,6 @@ bool				AccountManager::blockContact(const char *name, const std::string& nameTo
 void				AccountManager::writeAccount(std::ofstream& ofs, Account *account)
 {
   	unsigned int		uid;
-	Account::eStatus	status;
 	std::vector<std::pair<Account *, bool> >	contactList;
 	std::size_t		size;
 
@@ -346,8 +345,6 @@ void				AccountManager::writeAccount(std::ofstream& ofs, Account *account)
 	ofs.write("\n", 1);
 	ofs.write(account->getPassword().c_str(), account->getPassword().size());
 	ofs.write("\n", 1);
-	status = account->getStatus();
-	ofs.write(reinterpret_cast<const char *>(&status), sizeof(Account::eStatus));
 	ofs.write(account->getStatusText().c_str(), account->getStatusText().size());
 	ofs.write("\n", 1);
 	contactList = account->getContactList();
@@ -366,7 +363,6 @@ Account				*AccountManager::readAccount(std::ifstream& ifs)
 	std::string		ip;
 	std::string		name;
 	std::string		password;
-	Account::eStatus	status;
 	std::string		statusText;
 	Account			*account;
 
@@ -374,10 +370,8 @@ Account				*AccountManager::readAccount(std::ifstream& ifs)
 	std::getline(ifs, ip);
 	std::getline(ifs, name);
 	std::getline(ifs, password);
-	ifs.read(reinterpret_cast<char *>(&status), sizeof(Account::eStatus));
 	std::getline(ifs, statusText);
 	account = new Account(uid, ip, name, password);
-	account->setStatus(status);
 	account->setStatusText(statusText);
 	return (account);
 }
