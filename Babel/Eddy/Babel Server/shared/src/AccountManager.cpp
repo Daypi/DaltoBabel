@@ -48,9 +48,9 @@ void				AccountManager::show() const
 		std::cout << "=== ContactList ===" << std::endl;
 		contactList = this->_accountList[i]->getContactList();
 		for (unsigned int j = 0; j < contactList.size(); ++j)
-		  {
+		{
 		    std::cout << contactList[j].first->getName() << std::endl;
-		  }
+		}
 		std::cout << "=== XXXXXXXXXXX ===" << std::endl;
 		std::cout << "*** ### ***" << std::endl;
 	}
@@ -245,7 +245,6 @@ bool				AccountManager::accountExists(unsigned int id) const
 
 bool				AccountManager::accountExists(const std::string& name) const
 {
-  std::cout << "name = " << name << std::endl;
 	return (this->getAccountByName(name) != 0);
 }
 
@@ -355,10 +354,10 @@ void				AccountManager::writeAccount(std::ofstream& ofs, Account *account)
 	size = contactList.size();
 	ofs.write(reinterpret_cast<const char *>(&size), sizeof(std::size_t));
 	for (unsigned int i = 0; i < contactList.size(); ++i)
-	  {
+	{
 	    ofs.write(contactList[i].first->getName().c_str(), contactList[i].first->getName().size());
-	    ofs.write("\n", 1);
-	  }
+		ofs.write("\n", 1);
+	}
 }
 
 Account				*AccountManager::readAccount(std::ifstream& ifs)
@@ -393,13 +392,13 @@ void				AccountManager::save()
 	folder.create("Accounts");
 	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
 	{
-	  filename = "Accounts" + std::string(PATH_SEPARATOR) + this->_accountList[i]->getName() + ".sav";
+		filename = "Accounts" + std::string(PATH_SEPARATOR) + this->_accountList[i]->getName() + ".sav";
 		ofs.open(filename.c_str());
 		if (ofs.is_open())
-		  {
+		{
 			this->writeAccount(ofs, this->_accountList[i]);
 			ofs.close();
-		  }
+		}
 	}
 }
 
@@ -424,17 +423,17 @@ void				AccountManager::load()
 	{
 		if (!file.folder)
 		{
-		  filename = "Accounts" + std::string(PATH_SEPARATOR) + file.name;
-		  ifs.open(filename.c_str());
+			filename = "Accounts" + std::string(PATH_SEPARATOR) + file.name;
+			ifs.open(filename.c_str());
 			if (ifs.is_open())
 			{
 				account = this->readAccount(ifs);
 				ifs.read(reinterpret_cast<char *>(&size), sizeof(std::size_t));
 				for (unsigned int i = 0; i < size; ++i)
-				  {
-				    std::getline(ifs, line);
-				    contactList.push_back(line);
-				  }
+				{
+					std::getline(ifs, line);
+					contactList.push_back(line);
+				}
 				contacts[account->getName()] = contactList;
 				contactList.clear();
 				this->_accountList.push_back(account);
@@ -444,12 +443,12 @@ void				AccountManager::load()
 	}
 	folder.close();
 	for (std::map<std::string, std::vector<std::string> >::iterator it = contacts.begin(); it != contacts.end(); ++it)
-	  {
+	{
 	    for (unsigned int i = 0; i < it->second.size(); ++i)
-	      {
-		this->addContact(it->first, it->second[i]);
-	      }
-	  }
+		{
+			this->addContact(it->first, it->second[i]);
+	    }
+	}
 }
 
 unsigned int		AccountManager::newId() const

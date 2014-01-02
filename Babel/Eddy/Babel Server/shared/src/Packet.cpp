@@ -81,38 +81,43 @@ char		*Packet::getData() const
 	return (this->_data);
 }
 
-void		Packet::updateData(unsigned int size)
+void				Packet::updateData(unsigned int size)
 {
-	char	*tmp;
+	char			*tmp;
+	unsigned int	formatSize;
 
 	if (this->_data == 0)
 	{
 		this->_data = size == 0 ? 0 : new char[size];
-		size += this->_format.size() + 2;
+		size += (size > 0 ? (this->_format.size() + 2) : 0);
 		this->_dataSize = size;
 		return;
 	}
 	tmp = size == 0 ? 0 : new char[size];
 	if (size != 0)
 	{
-		LibC::memcpy(tmp, this->_data, this->_dataSize - this->_format.size() - 2);
+		formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+		LibC::memcpy(tmp, this->_data, this->_dataSize - formatSize);
 		delete[] this->_data;
-		size += this->_format.size() + 2;
+		size += formatSize;
 	}
 	this->_data = tmp;
 	this->_dataSize = size;
 }
 
-void			Packet::deserialize(char *packet)
+void				Packet::deserialize(char *packet)
 {
+	unsigned int	formatSize;
+
 	this->header(packet);
 	this->format(packet);
 	if (this->_dataSize > 0)
 	{
 		if (this->_data != 0)
 			delete[] this->_data;
-		this->_data = new char[this->_dataSize - this->_format.size() - 2];
-		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize - this->_format.size() - 2);
+		formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+		this->_data = new char[this->_dataSize - formatSize];
+		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + formatSize, this->_dataSize - formatSize);
 	}
 }
 
@@ -145,7 +150,10 @@ char				*Packet::serialize()
 		this->_serialization[10] = tmp[1];
 		LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
 		if (this->_data != 0)
-			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize - this->_format.size() - 2);
+		{
+			formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + formatSize, this->_data, this->_dataSize - formatSize);
+		}
 	}
 	return (this->_serialization);
 }

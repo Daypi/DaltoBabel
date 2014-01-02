@@ -5,7 +5,7 @@
 
 int				main()
 {
-  /*AccountManager	manager;
+	/*AccountManager	manager;
 
 	manager.create("192.168.0.33", "Titi", "password");
 	manager.create("127.0.0.1", "Jeanjean", "toto");
@@ -17,7 +17,8 @@ int				main()
 	manager.show();
 	manager.load();
 	std::cout << manager.size() << std::endl;
-	manager.show();*/
+	manager.show();
+	std::cin.get();*/
 	try
 	{
 		Server	server(11235, 5);

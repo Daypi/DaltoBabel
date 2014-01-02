@@ -61,7 +61,6 @@ void									Server::start(void *)
 	std::pair<unsigned int, char *>		ret;
 	Packet								*packet;
 	User								*user;
-	unsigned int						deco = 0;
 
 	this->_accountManager.load();
 	this->_mutex.lock();
@@ -93,12 +92,6 @@ void									Server::start(void *)
 					packet = this->getPacket(user, false);
 				}
 			}
-			if (deco > 5)
-			{
-				std::cout << "deco > 5" << std::endl;
-				std::cin.get();
-			}
-			++deco;
 		}
 		this->sendTCP();
 		this->timeout();
@@ -116,6 +109,7 @@ void			Server::stop()
 void						Server::timeout()
 {
 	std::vector<User *>		userList;
+	Account					*account;
 
 	userList = this->_userCollection.getUserList();
 	for (unsigned int i = 0; i < userList.size(); ++i)
@@ -124,6 +118,9 @@ void						Server::timeout()
 		{
 			// Disconnect the user
 			this->_sockTCP.releaseClient(userList[i]->getSockId());
+			account = this->_accountManager.getAccountById(userList[i]->getUID());
+			if (account)
+				account->disconnect();
 			this->_userCollection.removeUserById(userList[i]->getUID());
 			std::cout << "User disconnected on timeout" << std::endl;
 		}
@@ -133,6 +130,7 @@ void						Server::timeout()
 Packet					*Server::getPacket(User *user, bool first)
 {
 	Packet				*packet = 0;
+	Account				*account;
 
 	if (!user)
 	{
@@ -145,6 +143,9 @@ Packet					*Server::getPacket(User *user, bool first)
 	if (this->_received.size() == 0)
 	{
 		//user->disconnect();
+		account = this->_accountManager.getAccountById(user->getUID());
+		if (account)
+			account->disconnect();
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "User disconnected on recv" << std::endl;
 		//std::cin.get();
@@ -167,6 +168,7 @@ void									Server::sendTCP()
 {
 	std::pair<Packet *, unsigned int>	packet;
 	User								*user;
+	Account								*account;
 
 	while (this->_toSendTCP.size() > 0)
 	{
@@ -185,6 +187,9 @@ void									Server::sendTCP()
 					if (user)
 					{
 						//user->disconnect();
+						account = this->_accountManager.getAccountById(user->getUID());
+						if (account)
+							account->disconnect();
 						this->_userCollection.removeUserById(user->getUID());
 						std::cout << "User disconnected on send" << std::endl;
 						//std::cin.get();
@@ -218,6 +223,13 @@ void											Server::list(User *user, unsigned short req)
 
 	std::cout << "LIST" << std::endl;
 	account = this->_accountManager.getAccountByName(user->getName());
+	if (!account)
+	{
+		std::cout << "user->getName() = " << user->getName() << std::endl;
+		std::cout << "Account not found" << std::endl;
+		this->_accountManager.show();
+		return;
+	}
 	contactList = account->getContactList();
 	for (unsigned int i = 0; i < contactList.size(); ++i)
 	{
@@ -494,7 +506,10 @@ void				Server::login(User *user, unsigned short req, char status, const std::st
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
 	if (status)
+	{
 		account->connect();
+		user->setName(account->getName());
+	}
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 	if (status)
 	{
@@ -642,11 +657,16 @@ void				Server::error(User *, Packet *)
 
 void				Server::handshake(User *user, Packet *)
 {
+	Account			*account;
+
 	std::cout << "HANDSHAKE" << std::endl;
 	if (user->timeout(10))
 	{
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
+		account = this->_accountManager.getAccountById(user->getUID());
+		if (account)
+			account->disconnect();
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "User Disconnected on handshake" << std::endl;
 		//std::cin.get();
@@ -655,11 +675,16 @@ void				Server::handshake(User *user, Packet *)
 
 void				Server::ping(User *user, Packet *)
 {
+	Account			*account;
+
 	std::cout << "PING" << std::endl;
 	if (user->timeout(60))
 	{
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
+		account = this->_accountManager.getAccountById(user->getUID());
+		if (account)
+			account->disconnect();
 		this->_userCollection.removeUserById(user->getUID());
 		std::cout << "User Disconnected on ping" << std::endl;
 		//std::cin.get();
