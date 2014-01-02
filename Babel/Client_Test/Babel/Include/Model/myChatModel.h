@@ -18,9 +18,11 @@ public:
     void        myShow();
     void        init(const std::string& ip);
     void        setChat(std::vector<std::string> &hist);
+    void        sendCall(const std::string& login);
     void        setCalling(bool b);
     bool        isCalling() const;
     void        displayMsg(const std::string& login, const std::string& msg);
+    void        closeCall();
     void        close();
 
     void        sendMsg(const std::string& login, const std::string& msg);

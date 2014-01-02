@@ -11,7 +11,6 @@ HEADERS += \
     Include/Network/network.h \
     Include/Network/Thread.hpp \
     Include/Network/SocketServerUDP.h \
-    Include/Network/SocketServerTCP.h \
     Include/Network/SocketClientUDP.h \
     Include/Network/SocketClientTCP.h \
     Include/Network/SocketAvd.hh \
@@ -49,7 +48,6 @@ SOURCES += \
     Source/Model/myConnectModel.cpp \
     Source/Network/network.cpp \
     Source/Network/socketServerUDP.cpp \
-    Source/Network/SocketServerTCP.cpp \
     Source/Network/SocketClientUDP.cpp \
     Source/Network/SocketClientTCP.cpp \
     Source/Network/SocketAvd.cpp \

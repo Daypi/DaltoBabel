@@ -1,4 +1,4 @@
-#include "SocketServerUDP.h"
+#include "Include/Network/SocketServerUDP.h"
 
 SocketServerUDP::SocketServerUDP()
 {
@@ -244,6 +244,23 @@ void	SocketServerUDP::closeClient(unsigned int id)
 			throw e;
 		}
 	}
+}
+
+void	SocketServerUDP::closeClients()
+{
+    std::map<unsigned int, SocketAvd *>::iterator it;
+
+    try
+        {
+            for (it = this->_tabSock.begin(); it != this->_tabSock.end(); it++)
+            {
+                (*it).second->closeSocket();
+            }
+        }
+        catch (const Exception& e)
+        {
+            throw e;
+        }
 }
 
 void	SocketServerUDP::eraseClient(unsigned int id)

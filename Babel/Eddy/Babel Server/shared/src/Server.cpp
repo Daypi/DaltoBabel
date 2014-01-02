@@ -20,15 +20,6 @@ Server::Server(int port, int nbListen) : _port(port), _nbListen(nbListen), _star
 	this->_instruction[Packet::ERROR_] = &Server::error;
 	this->_instruction[Packet::HANDSHAKE] = &Server::handshake;
 	this->_instruction[Packet::PING] = &Server::ping;
-	try
-	{
-		this->_sockTCP.init(port, nbListen);
-		std::cout << "INIT" << std::endl;
-	}
-	catch (const Exception& e)
-	{
-		throw e;
-	}
 }
 
 Server::~Server()
@@ -62,6 +53,15 @@ void									Server::start(void *)
 	Packet								*packet;
 	User								*user;
 
+    try
+    {
+        this->_sockTCP.init(this->_port, this->_nbListen);
+        std::cout << "INIT" << std::endl;
+    }
+    catch (const Exception& e)
+    {
+        throw e;
+    }
 	this->_accountManager.load();
 	this->_mutex.lock();
 	this->_started = true;

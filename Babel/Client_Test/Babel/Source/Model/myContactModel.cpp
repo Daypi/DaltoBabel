@@ -117,6 +117,18 @@ void    MyContactModel::handleCall(const std::string& login, const std::string& 
     this->_net->sendReject(login);
 }
 
+void    MyContactModel::closeCall()
+{
+    for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end(); ++it)
+    {
+        if ((*it)->isCalling())
+        {
+            (*it)->setCalling(false);
+            break;
+        }
+    }
+}
+
 std::vector<Contact *>  &MyContactModel::getContacts()
 {
     return (this->_contactList);

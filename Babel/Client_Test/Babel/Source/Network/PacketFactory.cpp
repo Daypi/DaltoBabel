@@ -30,7 +30,7 @@ void			PacketFactory::feed(const char *data, unsigned int size)
 				packet = new char[this->_current->size()];
 				this->_buff.read(packet, this->_current->size());
 				this->_current->deserialize(packet);
-				delete packet;
+                delete[] packet;
 				this->_packet.push(this->_current);
 				this->_current = 0;
 				cont = true;

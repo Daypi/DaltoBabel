@@ -5,6 +5,9 @@ Network::Network(MyContactModel *model)
     :   _model(model)
 {
     _sockUDP = NULL;
+    this->_currentClient = false;
+    _sockUDPServ = NULL;
+    this->_currentServ = false;
     _sockTCP = NULL;
     _init = false;
     _handshake = false;
@@ -143,6 +146,7 @@ void	Network::handleNetworkUDP()
 {
     if (_sendQueueUDP.empty() == false && _sockUDP->isWritable())
     {
+        this->_currentClient = true;
         Packet	*packet = this->_sendQueueUDP.front();
         this->_sendQueueUDP.pop();
         try
@@ -160,6 +164,7 @@ void	Network::handleNetworkUDP()
     }
     if (_sockUDP->isReadable())
     {
+        this->_currentClient = true;
         char buffer[4098];
         int rdSize;
 
@@ -182,6 +187,7 @@ void	Network::handleNetworkUDPServ()
 {
     if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1)
     {
+        this->_currentServ = true;
         Packet	*packet = this->_sendQueueUDPServ.front();
         this->_sendQueueUDPServ.pop();
         try
@@ -203,6 +209,7 @@ void	Network::handleNetworkUDPServ()
         int rdSize = 0;
         std::map<unsigned int, std::pair<const char *, int> >   map;
 
+        this->_currentServ = true;
         try
         {
             map = _sockUDPServ->recv(4096);
@@ -390,6 +397,11 @@ void    Network::sendCall(const std::string& login)
 void    Network::sendHangUp()
 {
     this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::HANGUP));
+    if (this->_currentServ)
+    {
+        this->_sockUDPServ->closeClients();
+        this->_model->closeCall();
+    }
 }
 
 void    Network::sendPing()
@@ -526,7 +538,11 @@ void    Network::closeCall(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    // Close the chatWindow qui est en cours d'appel
+    if (this->_currentServ)
+    {
+        this->_sockUDPServ->closeClients();
+        this->_model->closeCall();
+    }
 }
 
 void    Network::receiveChat(Packet *packet)

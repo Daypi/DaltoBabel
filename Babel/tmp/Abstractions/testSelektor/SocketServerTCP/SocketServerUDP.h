@@ -38,6 +38,7 @@ public:
 	virtual	std::map<unsigned int, std::pair<const char *, int> >&	recv(std::vector<unsigned int>& tab, int);
 	virtual	std::map<unsigned int, std::pair<const char *, int> >&	recv(unsigned int, int);
 	virtual void	closeClient(unsigned int id);
+    void            closeClients();
 	virtual void	closeServer();
 	virtual void	eraseClient(unsigned int id);
 	virtual void	deleteMap();

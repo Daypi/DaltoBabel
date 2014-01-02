@@ -16,7 +16,9 @@ private:
     std::queue<Packet *>	_sendQueueUDPServ;
     std::queue<Packet *>	_sendQueueTCP;
     SocketClientUDP         *_sockUDP;
+    bool                    _currentClient;
     SocketServerUDP         *_sockUDPServ;
+    bool                    _currentServ;
     SocketClientTCP         *_sockTCP;
     PacketFactory           _factory;
     bool                    _init;

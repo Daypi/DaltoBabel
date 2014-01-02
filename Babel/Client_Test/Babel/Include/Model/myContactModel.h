@@ -49,6 +49,7 @@ public:
     void    changeStatusText(const std::string& newStat);
     void    changeStatus(eStatus status);
     void    handleCall(const std::string&, const std::string&);
+    void    closeCall();
     void    show();
     void    showChat(const std::string &login);
     void    displayMsg(const std::string& login, const std::string& msg);

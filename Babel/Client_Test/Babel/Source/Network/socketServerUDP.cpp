@@ -23,7 +23,7 @@ void	SocketServerUDP::init(int port)
 	{
 		this->_sock = new SocketAvd(this->_th, &this->_socketPool, ISocket::UDP);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
 		throw e;
@@ -33,7 +33,7 @@ void	SocketServerUDP::init(int port)
 	{
 		this->_sock->bind(port);
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->closeServer();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -71,9 +71,8 @@ std::vector<unsigned int>&	SocketServerUDP::isReadable()
 	return (this->_ids);
 }
 
-std::vector<unsigned int>&	SocketServerUDP::isReadable(unsigned int id)
+std::vector<unsigned int>&	SocketServerUDP::isReadable(unsigned int)
 {
-	(void)id;
 	return (this->isReadable());
 }
 
@@ -90,9 +89,8 @@ std::vector<unsigned int>&	SocketServerUDP::isWritable()
 	return (this->_ids);
 }
 
-std::vector<unsigned int>&	SocketServerUDP::isWritable(unsigned int id)
+std::vector<unsigned int>&	SocketServerUDP::isWritable(unsigned int)
 {
-	(void)id;
 	return (this->isWritable());
 }
 
@@ -111,7 +109,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(std::vector<unsigned int>& tab,
 				this->_tabSock[*it]->send(message, size);
 				this->_sock->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 				this->eraseClient(*it);
 				this->_sendRet.push_back(*it);
@@ -140,7 +138,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(unsigned int id, const char *me
 				this->_tabSock[id]->send(message, size);
 				this->_sock->iSended();
 			}
-			catch (Exception)
+			catch (const Exception&)
 			{
 				this->eraseClient(id);
 				this->_sendRet.push_back(id);
@@ -173,7 +171,7 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(int
 		tmp = this->_sock->receivUdp(buffer, size, &tmp_read);
 		this->_sock->iReaded();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		this->_sock->iReaded();
 		this->_socketPool.getMutex()->unLock("SELEKTOR");
@@ -211,15 +209,13 @@ std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(int
 	return (this->_map);
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(std::vector<unsigned int>& tab, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(std::vector<unsigned int>&, int size)
 {
-	(void)tab;
 	return (this->recv(size));
 }
 
-std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(unsigned int id, int size)
+std::map<unsigned int, std::pair<const char *, int> >&	SocketServerUDP::recv(unsigned int, int size)
 {
-	(void)id;
 	return (this->recv(size));
 }
 
@@ -229,7 +225,7 @@ void	SocketServerUDP::closeServer()
 	{
 		this->_sock->closeSocketAvd();
 	}
-	catch (Exception &e)
+	catch (const Exception& e)
 	{
 		throw e;
 	}
@@ -243,11 +239,28 @@ void	SocketServerUDP::closeClient(unsigned int id)
 		{
 			this->_tabSock[id]->closeSocket();
 		}
-		catch (Exception &e)
+		catch (const Exception& e)
 		{
 			throw e;
 		}
 	}
+}
+
+void	SocketServerUDP::closeClients()
+{
+    std::map<unsigned int, SocketAvd *>::iterator it;
+
+    try
+        {
+            for (it = this->_tabSock.begin(); it != this->_tabSock.end(); it++)
+            {
+                (*it).second->closeSocket();
+            }
+        }
+        catch (const Exception& e)
+        {
+            throw e;
+        }
 }
 
 void	SocketServerUDP::eraseClient(unsigned int id)
@@ -276,7 +289,7 @@ bool			SocketServerUDP::checkClientUDP(sockaddr_in one, sockaddr_in two)
 
 void		SocketServerUDP::deleteMap()
 {
-    std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
+	std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
 		delete (it->second.first);

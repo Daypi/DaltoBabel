@@ -63,6 +63,8 @@ void          ChatWindow::setCalling(bool b)
 
 void          ChatWindow::on_close_clicked()
 {
+    if (this->_model->isCalling()== true)
+        this->_model->closeCall();
     this->hide();
 }
 
@@ -76,6 +78,11 @@ void ChatWindow::on_send_clicked()
 }
 
 void ChatWindow::on_call_clicked()
-{
-    // TO DO
+{ 
+    if (this->_model->isCalling() == true)
+        this->_model->closeCall();
+    else
+    {
+        this->_model->sendCall(this->ui->name->text().toStdString());
+    }
 }

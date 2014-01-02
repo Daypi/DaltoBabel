@@ -20,6 +20,11 @@ void    MyChatModel::setChat(std::vector<std::string> &hist)
     _w->setChat(hist);
 }
 
+void    MyChatModel::sendCall(const std::string& login)
+{
+    this->_net->sendCall(login);
+}
+
 void    MyChatModel::setCalling(bool b)
 {
     _w->setCalling(b);
@@ -35,6 +40,11 @@ void    MyChatModel::displayMsg(const std::string& login, const std::string& msg
 {
     this->_w->myShow();
     this->_w->addMsg(login + " : " + msg);
+}
+
+void    MyChatModel::closeCall()
+{
+    this->_net->sendHangUp();
 }
 
 void    MyChatModel::close()
