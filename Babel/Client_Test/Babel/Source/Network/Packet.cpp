@@ -81,38 +81,43 @@ char		*Packet::getData() const
 	return (this->_data);
 }
 
-void		Packet::updateData(unsigned int size)
+void				Packet::updateData(unsigned int size)
 {
-	char	*tmp;
+	char			*tmp;
+	unsigned int	formatSize;
 
 	if (this->_data == 0)
 	{
 		this->_data = size == 0 ? 0 : new char[size];
-		size += this->_format.size() + 2;
+		size += (size > 0 ? (this->_format.size() + 2) : 0);
 		this->_dataSize = size;
 		return;
 	}
 	tmp = size == 0 ? 0 : new char[size];
 	if (size != 0)
 	{
-		LibC::memcpy(tmp, this->_data, this->_dataSize);
+		formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+		LibC::memcpy(tmp, this->_data, this->_dataSize - formatSize);
 		delete[] this->_data;
-		size += this->_format.size() + 2;
+		size += formatSize;
 	}
 	this->_data = tmp;
 	this->_dataSize = size;
 }
 
-void			Packet::deserialize(char *packet)
+void				Packet::deserialize(char *packet)
 {
+	unsigned int	formatSize;
+
 	this->header(packet);
 	this->format(packet);
 	if (this->_dataSize > 0)
 	{
 		if (this->_data != 0)
 			delete[] this->_data;
-		this->_data = new char[this->_dataSize];
-		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_dataSize);
+		formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+		this->_data = new char[this->_dataSize - formatSize];
+		LibC::memcpy(this->_data, packet + Packet::HEADER_SIZE + formatSize, this->_dataSize - formatSize);
 	}
 }
 
@@ -145,7 +150,10 @@ char				*Packet::serialize()
 		this->_serialization[10] = tmp[1];
 		LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2, this->_format.c_str(), this->_format.size());
 		if (this->_data != 0)
-			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + 2 + this->_format.size(), this->_data, this->_dataSize);
+		{
+			formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+			LibC::memcpy(this->_serialization + Packet::HEADER_SIZE + formatSize, this->_data, this->_dataSize - formatSize);
+		}
 	}
 	return (this->_serialization);
 }
@@ -174,16 +182,21 @@ void					Packet::header(char *packet)
 
 void				Packet::format(char *packet)
 {
-	char			tmp;
+	char			*tmp;
 	unsigned short	size;
-	
+
 	if (this->_dataSize == 0)
 		return;
 	size = *reinterpret_cast<const unsigned short *>(packet + Packet::DATA_SIZE_INDEX + 3);
-	tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
-	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
-	this->_format = std::string(packet + Packet::DATA_SIZE_INDEX + 3 + 2);
-	packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = tmp;
+	tmp = new char[size + 1];
+	LibC::memcpy(tmp, packet + Packet::DATA_SIZE_INDEX + 3 + 2, size);
+	tmp[size] = '\0';
+	this->_format = std::string(tmp);
+	delete[] tmp;
+	//tmp = packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size];
+	//packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = '\0';
+	//this->_format = std::string(packet + Packet::DATA_SIZE_INDEX + 3 + 2);
+	//packet[Packet::DATA_SIZE_INDEX + 3 + 2 + size] = tmp;
 }
 
 unsigned int	Packet::size() const
@@ -196,7 +209,7 @@ bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 	unsigned int	i;
 	std::string		listFormat;
 
-	for (i = 0; i < this->_format.size() && i < index; ++i)
+    for (i = 0; *pos < this->size() && i < index; ++i)
 	{
 		if (this->_format[i] == 'c')
 			*pos += 3;
@@ -231,18 +244,21 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 {
 	std::string		str;
 	unsigned short	size;
-	char			tmp;
+	char			*tmp;
+	unsigned int	formatSize;
 
-	if (*pos + 4 <= this->_dataSize)
+	formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+	if (*pos + 4 <= this->_dataSize - formatSize)
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 	else
 		throw std::out_of_range("Error : not found");
-	if (*pos + 4 + size <= this->_dataSize)
+	if (*pos + 4 + size <= this->_dataSize - formatSize)
 	{
-		tmp = this->_data[*pos + 4 + size];
-		this->_data[*pos + 4 + size] = 0;
-		str = std::string(this->_data + *pos + 4);
-		this->_data[*pos + 4 + size] = tmp;
+		tmp = new char[size + 1];
+		LibC::memcpy(tmp, this->_data + *pos + 4, size);
+		tmp[size] = '\0';
+		str = std::string(tmp);
+		delete[] tmp;
 		*pos += 4 + size;
 	}
 	return (str);
@@ -251,8 +267,10 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 unsigned short		Packet::getListInData(unsigned int *pos) const
 {
 	unsigned short	size;
+	unsigned int	formatSize;
 
-	if (*pos + 4 <= this->_dataSize)
+	formatSize = this->_dataSize > 0 ? (this->_format.size() + 2) : 0;
+	if (*pos + 4 <= this->_dataSize - formatSize)
 	{
 		size = *reinterpret_cast<unsigned short *>(this->_data + *pos + 2);
 		*pos += 4;

@@ -56,6 +56,8 @@ public:
     void    sendCall(const std::string& login);
     void    sendHangUp();
     void    sendPing();
+    void    sendMsg(const std::string& login, const std::string& msg);
+
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);
     void    refreshStatus(Packet *packet);
@@ -67,6 +69,7 @@ public:
     void    acceptCall(Packet *packet);
     void    rejectCall(Packet *packet);
     void    closeCall(Packet *packet);
+    void    receiveChat(Packet *packet);
     int                 getUID();
     bool                getInit() const;
     bool                getHandshake() const;

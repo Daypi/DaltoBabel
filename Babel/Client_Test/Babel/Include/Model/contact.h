@@ -22,6 +22,7 @@ public:
     ~Contact();
 
     Contact                 &operator=(const Contact& contact);
+    Contact                 *operator=(Contact* contact);
     bool                    operator==(const std::string& name);
     bool                    operator==(const Contact& contact);
     void                    clearChat();
@@ -42,6 +43,7 @@ public:
     void                    setCalling(bool b);
     bool                    isCalling() const;
     void                    close();
+    void                    displayMsg(const std::string &login, const std::string &msg);
 };
 
 #endif // CONTACT_H

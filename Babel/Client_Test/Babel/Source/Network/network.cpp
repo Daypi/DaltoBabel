@@ -100,6 +100,8 @@ void	Network::handlePackets()
             this->acceptCall(packet);
         else if (packet->getInstruction() == Packet::REJECT_CALL)
             this->rejectCall(packet);
+        else if (packet->getInstruction() == Packet::CHAT)
+            this->receiveChat(packet);
         else
         {
             std::cout << "PACKET NON GERE" << std::endl;
@@ -304,6 +306,18 @@ void    Network::sendStatus(eStatus status)
     this->_sendQueueTCP.push(pack);
 }
 
+void    Network::sendMsg(const std::string& login, const std::string& msg)
+{
+    Packet  *pack = new Packet(this->getUID(), Packet::CHAT);
+
+    pack->setFormat("ss");
+    pack->updateData(4 + login.size() + 4 + msg.size());
+    pack->appendToData(0, login);
+    pack->appendToData(1, msg);
+    pack->show();
+    this->_sendQueueTCP.push(pack);
+}
+
 void    Network::addContact(const std::string& name)
 {
     Packet  *pack = new Packet(this->getUID(), Packet::ADD_CONTACT);
@@ -503,8 +517,6 @@ void    Network::rejectCall(Packet *packet)
     }
     login = packet->getString(1);
     ip = packet->getString(2);
-
-    // Close the chatWindow qui etait en attente de la reponse)
 }
 
 void    Network::closeCall(Packet *packet)
@@ -515,6 +527,16 @@ void    Network::closeCall(Packet *packet)
         return;
     }
     // Close the chatWindow qui est en cours d'appel
+}
+
+void    Network::receiveChat(Packet *packet)
+{
+    if (packet->getChar(0) != 1)
+    {
+        std::cout << packet->getString(1) << std::endl;
+        return;
+    }
+    this->_model->displayMsg(packet->getString(1), packet->getString(2));
 }
 
 int     Network::getUID()

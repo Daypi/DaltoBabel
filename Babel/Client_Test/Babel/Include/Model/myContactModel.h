@@ -1,7 +1,7 @@
 #ifndef MYCONTACTW_H
 #define MYCONTACTW_H
 
-#define MY_TIMEOUT (10)
+#define MY_TIMEOUT (45)
 
 #include <string>
 #include <vector>
@@ -50,6 +50,8 @@ public:
     void    changeStatus(eStatus status);
     void    handleCall(const std::string&, const std::string&);
     void    show();
+    void    showChat(const std::string &login);
+    void    displayMsg(const std::string& login, const std::string& msg);
     void    close();
     bool    isClosed();
     void    loop();
