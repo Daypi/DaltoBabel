@@ -35,7 +35,8 @@ HEADERS += \
     Include/Network/CondVar.hh \
     Include/Network/CircularBuffer.hpp \
     Include/Network/Util.hpp \
-    Include/Network/LibC.h
+    Include/Network/LibC.h \
+    Include/Network/TimeStamp.h
 
 SOURCES += \
     Source/main.cpp \
@@ -64,7 +65,8 @@ SOURCES += \
     Source/Network/CUCondVar.cpp \
     Source/Network/CondVar.cpp \
     Source/Network/CircularBuffer.cpp \
-    Source/Network/LibC.cpp
+    Source/Network/LibC.cpp \
+    Source/Network/TimeStamp.cpp
 
 FORMS += \
     Source/Window/contactWindow.ui \

@@ -20,7 +20,10 @@ public:
     void        setChat(std::vector<std::string> &hist);
     void        setCalling(bool b);
     bool        isCalling() const;
+    void        displayMsg(const std::string& login, const std::string& msg);
     void        close();
+
+    void        sendMsg(const std::string& login, const std::string& msg);
 };
 
 #include "Include/Model/myContactModel.h"

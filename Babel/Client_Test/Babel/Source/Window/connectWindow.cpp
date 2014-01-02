@@ -16,7 +16,7 @@ ConnectWindow::ConnectWindow(MyConnectModel *model, QWidget *parent) :
     ui->setupUi(this);
     setBackground();
     centerWindow();
-    ui->editIP->setText("192.168.1.16");
+    ui->editIP->setText("10.20.86.175");
     ui->editPort->setText("11235");
     this->show();
 }

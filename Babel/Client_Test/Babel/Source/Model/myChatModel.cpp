@@ -3,7 +3,7 @@
 MyChatModel::MyChatModel(Network *net, const std::string &name, QWidget *parent)
 {
     this->_net = net;
-    _w = new ChatWindow(name, parent);
+    _w = new ChatWindow(name, this, parent);
 }
 
 MyChatModel::~MyChatModel()
@@ -31,7 +31,19 @@ bool    MyChatModel::isCalling() const
     return (_call);
 }
 
+void    MyChatModel::displayMsg(const std::string& login, const std::string& msg)
+{
+    this->_w->myShow();
+    this->_w->addMsg(login + " : " + msg);
+}
+
 void    MyChatModel::close()
 {
     this->_w->close();
 }
+
+void    MyChatModel::sendMsg(const std::string& login, const std::string& msg)
+{
+    this->_net->sendMsg(login, msg);
+}
+

@@ -23,6 +23,17 @@ Contact     &Contact::operator=(const Contact &other)
     return (*this);
 }
 
+Contact     *Contact::operator=(Contact *other)
+{
+    if (this != other)
+    {
+        _uid = other->getId();
+        _statusText = other->getStatusText();
+        _status = other->getStatus();
+    }
+    return (this);
+}
+
 Contact::~Contact()
 {
 }
@@ -124,4 +135,9 @@ bool                    Contact::isCalling() const
 void                    Contact::close()
 {
     this->_c->close();
+}
+
+void                    Contact::displayMsg(const std::string &login, const std::string &msg)
+{
+    this->_c->displayMsg(login, msg);
 }

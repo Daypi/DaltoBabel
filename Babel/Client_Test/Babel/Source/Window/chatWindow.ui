@@ -66,13 +66,6 @@ p, li { white-space: pre-wrap; }
    <item row="2" column="1">
     <widget class="QLineEdit" name="msg"/>
    </item>
-   <item row="2" column="0">
-    <widget class="QPushButton" name="wizz">
-     <property name="text">
-      <string>WIZZ</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>

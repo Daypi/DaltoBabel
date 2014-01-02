@@ -3,30 +3,34 @@
 
 #include <QDialog>
 
+class MyChatModel;
+
 namespace Ui {
-  class ChatWindow;
+class ChatWindow;
 }
 
 class ChatWindow : public QDialog
 {
-  Q_OBJECT
+    Q_OBJECT
+    MyChatModel     *_model;
 
 public:
-  explicit ChatWindow(const std::string &name, QWidget *parent = 0);
-  ~ChatWindow();
+    explicit ChatWindow(const std::string &name, MyChatModel *model, QWidget *parent = 0);
+    ~ChatWindow();
 
-  void    myShow();
-  void    setChat(std::vector<std::string> &hist);
-  void    setCalling(bool b);
+    void    myShow();
+    void    setChat(std::vector<std::string> &hist);
+    void    addMsg(const std::string& msg);
+    void    setCalling(bool b);
 
 private slots:
-  void on_close_clicked();
-  void on_send_clicked();
-  void on_wizz_clicked();
-  void on_call_clicked();
+    void on_close_clicked();
+    void on_send_clicked();
+    void on_call_clicked();
 
 private:
-  Ui::ChatWindow *ui;
+    Ui::ChatWindow *ui;
 };
 
+#include "Include/Model/myChatModel.h"
 #endif // CHATWINDOW_H

@@ -1,6 +1,7 @@
 #include <QCoreApplication>
 #include <ctime>
 #include "Include/Model/myContactModel.h"
+#include "Include/Network/TimeStamp.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
     : _status(AVAILABLE),
@@ -23,12 +24,8 @@ void    MyContactModel::setContacts(std::vector<Contact *>& list)
     size = list.size();
     for (i = 0; i < size; ++i)
     {
-        int      find(-1);
-
-        for (j = 0; j < _contactList.size(); ++j)
-            if (_contactList[j]->getName() == list[i]->getName())
-                find = (int)j;
-        if (find == -1)
+        for (j = 0; j < _contactList.size() && _contactList[j]->getName() != list[i]->getName(); ++j);
+        if (_contactList.size() == j)
             _contactList.push_back(new Contact(*(list[i])));
         else
             _contactList[j] = list[i];
@@ -149,19 +146,46 @@ void    MyContactModel::show()
     this->loop();
 }
 
+void    MyContactModel::showChat(const std::string& name)
+{
+    unsigned int    size;
+    unsigned int    i;
+
+    size = _contactList.size();
+    for (i = 0; i < size; ++i)
+    {
+        if (name == _contactList[i]->getName())
+        {
+            _contactList[i]->myShow();
+            _contactList[i]->setCalling(false);
+        }
+    }
+}
+
+void    MyContactModel::displayMsg(const std::string& login, const std::string& msg)
+{
+    for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end(); ++it)
+        {
+            if (*(*it) == login)
+            {
+                (*it)->displayMsg(login, msg);
+                break;
+            }
+        }
+}
+
 void    MyContactModel::loop()
 {
-    clock_t   time;
+    TimeStamp   time;
 
-    time = clock();
     while (!this->_w->isClosed())
     {
         this->_w->refresh();
-        if ((clock() - time) / CLOCKS_PER_SEC > MY_TIMEOUT)
+        if (time.elapsedTime(false) > MY_TIMEOUT)
         {
             std::cout << "PING" << std::endl;
             this->_net->sendPing();
-            time = clock();
+            time.elapsedTime();
         }
         try
         {
