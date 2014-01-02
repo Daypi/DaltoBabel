@@ -44,6 +44,7 @@ void		SocketAvd::init(Thread<SeleKtor, void, void *> *thread, SeleKtor *pool)
 
 bool		SocketAvd::isWritable()
 {
+	std::cout << "isWritable = " << (this->_isWritable ? "true" : "false") << std::endl;
 	if (this->_isWritable == true)
 		this->_askWritable = true;
 	return (this->_isWritable);

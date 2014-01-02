@@ -169,6 +169,7 @@ void									Server::sendTCP()
 	std::pair<Packet *, unsigned int>	packet;
 	User								*user;
 	Account								*account;
+	unsigned int						nb = 0;
 
 	while (this->_toSendTCP.size() > 0)
 	{
@@ -176,14 +177,16 @@ void									Server::sendTCP()
 		{
 			packet = this->_toSendTCP.front();
 			this->_clientList = this->_sockTCP.isWritable(packet.second);
+			std::cout << "packet.second = " << packet.second << std::endl;
 			if (this->_clientList.size() == 1)
 			{
-				std::cout << "I CAN WRITE TCP" << std::endl;
+				user = this->_userCollection.getUserBySockId(packet.second);
+				std::cout << "I CAN WRITE TCP " << nb << " to " << (user ? user->getName() : "NULL") << " : " << packet.second << std::endl;
 				packet.first->show();
 				this->_clientList = this->_sockTCP.send(packet.second, packet.first->serialize(), packet.first->size());
 				for (unsigned int i = 0; i < this->_clientList.size(); ++i)
 				{
-					user = this->_userCollection.getUserById(this->_clientList[i]);
+					user = this->_userCollection.getUserBySockId(this->_clientList[i]);
 					if (user)
 					{
 						//user->disconnect();
@@ -202,7 +205,10 @@ void									Server::sendTCP()
 		catch (const Exception& e)
 		{
 			std::cout << e.what() << std::endl;
+			std::cout << "toSendTCP.size() = " << this->_toSendTCP.size() << std::endl;
+			std::cin.get();
 		}
+		++nb;
 	}
 }
 
@@ -225,9 +231,7 @@ void											Server::list(User *user, unsigned short req)
 	account = this->_accountManager.getAccountByName(user->getName());
 	if (!account)
 	{
-		std::cout << "user->getName() = " << user->getName() << std::endl;
 		std::cout << "Account not found" << std::endl;
-		this->_accountManager.show();
 		return;
 	}
 	contactList = account->getContactList();
@@ -242,15 +246,17 @@ void											Server::list(User *user, unsigned short req)
 	toSend->updateData(3 + 4 + (status ? nb : response.size()));
 	toSend->appendToData<char>(0, status);
 	if (status)
-		toSend->appendToData<short>(1, contactList.size());
-	for (unsigned int i = 0; i < contactList.size(); ++i)
 	{
-		toSend->appendToData(id, contactList[i].first->getName());
-		toSend->appendToData(id + 1, contactList[i].first->getStatusText());
-		toSend->appendToData<char>(id + 2, contactList[i].first->getStatus());
-		id += 3;
+		toSend->appendToData<short>(1, contactList.size());
+		for (unsigned int i = 0; i < contactList.size(); ++i)
+		{
+			toSend->appendToData(id, contactList[i].first->getName());
+			toSend->appendToData(id + 1, contactList[i].first->getStatusText());
+			toSend->appendToData<char>(id + 2, contactList[i].first->getStatus());
+			id += 3;
+		}
 	}
-	if (!status)
+	else
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 }
@@ -346,17 +352,27 @@ void				Server::statusText(User *user, Packet *packet)
 	this->statusText(user, packet->getRequestUID(), status, response);
 }
 
-void				Server::statusText(User *user, unsigned short req, char status, const std::string& response)
+void						Server::statusText(User *user, unsigned short req, char status, const std::string& response)
 {
-	Packet			*toSend = 0;
+	Packet					*toSend = 0;
+	Account					*account;
+	std::vector<User *>		userList;
 
 	std::cout << "STATUSTEXT" << std::endl;
+	account = this->_accountManager.getAccountByName(user->getName());
+	if (account && status)
+		account->setStatusText(response);
 	toSend = new Packet(req, Packet::STATUSTEXT);
 	toSend->setFormat("cs");
 	toSend->updateData(3 + 4 + response.size());
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	userList = this->_userCollection.getUserList();
+	for (unsigned int i = 0; i < userList.size(); ++i)
+	{
+		this->list(userList[i], (unsigned short)0);
+	}
 }
 
 void				Server::status(User *user, Packet *packet)
@@ -374,11 +390,16 @@ void				Server::status(User *user, Packet *packet)
 	this->status(user, packet->getRequestUID(), status, stat, response);
 }
 
-void				Server::status(User *user, unsigned short req, char status, char stat, const std::string& response)
+void						Server::status(User *user, unsigned short req, char status, char stat, const std::string& response)
 {
-	Packet			*toSend = 0;
+	Packet					*toSend = 0;
+	Account					*account;
+	std::vector<User *>		userList;
 
 	std::cout << "STATUS" << std::endl;
+	account = this->_accountManager.getAccountByName(user->getName());
+	if (account && status)
+		account->setStatus((Account::eStatus)stat);
 	toSend = new Packet(req, Packet::STATUS);
 	toSend->setFormat(status ? "cc" : "cs");
 	toSend->updateData(3 + (status ? 3 : (4 + response.size())));
@@ -388,6 +409,11 @@ void				Server::status(User *user, unsigned short req, char status, char stat, c
 	else
 		toSend->appendToData(1, stat);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	userList = this->_userCollection.getUserList();
+	for (unsigned int i = 0; i < userList.size(); ++i)
+	{
+		this->list(userList[i], (unsigned short)0);
+	}
 }
 
 void				Server::acceptCall(User *user, Packet *packet)
@@ -516,7 +542,7 @@ void				Server::login(User *user, unsigned short req, char status, const std::st
 	{
 		this->statusText(user, 0, 1, account->getStatusText());
 		this->status(user, 0, 1, account->getStatus(), "");
-		this->list(user, (unsigned short)0);
+		//this->list(user, (unsigned short)0);
 	}
 }
 
@@ -554,17 +580,18 @@ void				Server::createAccount(User *user, Packet *packet)
 void				Server::addContact(User *user, Packet *packet)
 {
 	std::string		login;
-	char			status = 1;
+	char			status = 0;
 	Packet			*toSend;
 	std::string		response = "";
 
 	std::cout << "ADD_CONTACT" << std::endl;
 	login = packet->getString(0);
 	if (!this->_accountManager.addContact(user->getName(), login))
-	{
-		status = 0;
 		response = "Unknown user " + login + ".";
-	}
+	else if (user->getName() == login)
+		response = "Cannot add yourself.";
+	else
+		status = 1;
 	toSend = new Packet(packet->getRequestUID(), Packet::ADD_CONTACT);
 	toSend->setFormat(status ? "c" : "cs");
 	toSend->updateData(!status ? (3 + 4 + response.size()) : 3);
@@ -572,6 +599,7 @@ void				Server::addContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	this->list(user, (unsigned short)0);
 }
 
 void				Server::removeContact(User *user, Packet *packet)
@@ -595,6 +623,7 @@ void				Server::removeContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	this->list(user, (unsigned short)0);
 }
 
 void				Server::blockContact(User *user, Packet *packet)

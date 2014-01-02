@@ -128,6 +128,7 @@ char				*Packet::serialize()
 
 	if (this->_serialization != 0)
 		delete[] this->_serialization;
+	std::cout << "this->size() = " << this->size() << std::endl;
 	this->_serialization = new char[this->size()];
 	tmp = reinterpret_cast<char *>(&this->_magicNumber);
 	this->_serialization[0] = tmp[0];
@@ -209,7 +210,7 @@ bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 	unsigned int	i;
 	std::string		listFormat;
 
-	for (i = 0; *pos < this->_format.size() && i < index; ++i)
+	for (i = 0; *pos < this->size() && i < index; ++i)
 	{
 		if (this->_format[i] == 'c')
 			*pos += 3;
@@ -235,6 +236,7 @@ bool				Packet::consumeFormat(unsigned int *pos, unsigned int index) const
 				break;
 			}
 		}
+		//std::cout << "*pos = " << *pos << ", index = " << index << std::endl;
 		//std::cout << "this->_format[" << i << "] = " << this->_format[i] << std::endl;
 	}
 	return (i == index);
@@ -259,7 +261,7 @@ std::string			Packet::getStringInData(unsigned int *pos) const
 		tmp[size] = '\0';
 		str = std::string(tmp);
 		delete[] tmp;
-		*pos += 4 + size;
+		*pos += (4 + size);
 	}
 	return (str);
 }
