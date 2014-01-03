@@ -114,7 +114,8 @@ void    MyContactModel::handleCall(const std::string& login, const std::string& 
 {
     if (this->_w->displayCall(login))
         this->_net->sendAccept(login);
-    this->_net->sendReject(login);
+    else
+        this->_net->sendReject(login);
 }
 
 void    MyContactModel::closeCall()

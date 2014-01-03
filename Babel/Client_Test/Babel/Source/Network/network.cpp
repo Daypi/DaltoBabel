@@ -147,6 +147,7 @@ void	Network::handleNetworkUDP()
     if (_sendQueueUDP.empty() == false && _sockUDP->isWritable())
     {
         this->_currentClient = true;
+        this->_currentServ = false;
         Packet	*packet = this->_sendQueueUDP.front();
         this->_sendQueueUDP.pop();
         try
@@ -165,6 +166,7 @@ void	Network::handleNetworkUDP()
     if (_sockUDP->isReadable())
     {
         this->_currentClient = true;
+        this->_currentServ = false;
         char buffer[4098];
         int rdSize;
 
@@ -188,6 +190,7 @@ void	Network::handleNetworkUDPServ()
     if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1)
     {
         this->_currentServ = true;
+        this->_currentClient = false;
         Packet	*packet = this->_sendQueueUDPServ.front();
         this->_sendQueueUDPServ.pop();
         try
@@ -210,6 +213,7 @@ void	Network::handleNetworkUDPServ()
         std::map<unsigned int, std::pair<const char *, int> >   map;
 
         this->_currentServ = true;
+        this->_currentClient = false;
         try
         {
             map = _sockUDPServ->recv(4096);
@@ -366,6 +370,7 @@ void    Network::sendAccept(const std::string& login)
     pack->updateData(4 + login.size());
     pack->appendToData(0, login);
     this->_sendQueueTCP.push(pack);
+    this->_currentServ = true;
     this->_model->openChat(login);
 }
 
@@ -397,11 +402,9 @@ void    Network::sendCall(const std::string& login)
 void    Network::sendHangUp()
 {
     this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::HANGUP));
+    this->_model->closeCall();
     if (this->_currentServ)
-    {
         this->_sockUDPServ->closeClients();
-        this->_model->closeCall();
-    }
 }
 
 void    Network::sendPing()
@@ -514,6 +517,7 @@ void    Network::acceptCall(Packet *packet)
 
     this->_sockUDP->close();
     this->_sockUDP->init(1337, ip.c_str());
+    this->_currentClient = true;
     this->_model->openChat(login);
 }
 
@@ -538,11 +542,9 @@ void    Network::closeCall(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
+    this->_model->closeCall();
     if (this->_currentServ)
-    {
         this->_sockUDPServ->closeClients();
-        this->_model->closeCall();
-    }
 }
 
 void    Network::receiveChat(Packet *packet)

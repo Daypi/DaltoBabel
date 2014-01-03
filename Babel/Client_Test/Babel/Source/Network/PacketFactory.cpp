@@ -19,7 +19,7 @@ void			PacketFactory::feed(const char *data, unsigned int size)
 	this->_buff.write(data, size);
 	while (cont)
 	{
-		if (this->_buff.getReadable() >= Packet::HEADER_SIZE)
+        if ((unsigned int)this->_buff.getReadable() >= Packet::HEADER_SIZE)
 		{
 			if (this->_current == 0)
 				this->_current = new Packet();

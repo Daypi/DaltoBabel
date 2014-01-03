@@ -4,6 +4,7 @@ MyChatModel::MyChatModel(Network *net, const std::string &name, QWidget *parent)
 {
     this->_net = net;
     _w = new ChatWindow(name, this, parent);
+    _call = false;
 }
 
 MyChatModel::~MyChatModel()
