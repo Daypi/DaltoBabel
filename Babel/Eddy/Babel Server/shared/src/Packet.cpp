@@ -15,6 +15,18 @@ Packet::Packet(unsigned short requestUID, unsigned char instruction)
 	this->_actualDataSize = 0;
 }
 
+Packet::Packet(const Packet& other)
+{
+	this->_magicNumber = other._magicNumber;
+	this->_requestUID = other._requestUID;
+	this->_instruction = other._instruction;
+	this->_dataSize = other._dataSize;
+	this->_format = other._format;
+	this->_data = other._data;
+	this->_serialization = other._serialization;
+	this->_actualDataSize = other._actualDataSize;
+}
+
 Packet::~Packet()
 {
 	if (this->_serialization != 0)

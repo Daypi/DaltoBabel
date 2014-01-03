@@ -20,6 +20,15 @@ Server::Server(int port, int nbListen) : _port(port), _nbListen(nbListen), _star
 	this->_instruction[Packet::ERROR_] = &Server::error;
 	this->_instruction[Packet::HANDSHAKE] = &Server::handshake;
 	this->_instruction[Packet::PING] = &Server::ping;
+	try
+	{
+		this->_sockTCP.init(port, nbListen);
+		std::cout << "INIT" << std::endl;
+	}
+	catch (const Exception& e)
+	{
+		throw e;
+	}
 }
 
 Server::~Server()
@@ -32,6 +41,7 @@ void								Server::start()
 	bool							stop = false;
 	std::string						line = "";
 
+	this->_accountManager.load();
 	thread.start();
 	while (!stop)
 	{
@@ -43,6 +53,7 @@ void								Server::start()
 			this->stop();
 		}
 	}
+	this->_accountManager.save();
 	//thread.stop();
 }
 
@@ -53,16 +64,6 @@ void									Server::start(void *)
 	Packet								*packet;
 	User								*user;
 
-    try
-    {
-        this->_sockTCP.init(this->_port, this->_nbListen);
-        std::cout << "INIT" << std::endl;
-    }
-    catch (const Exception& e)
-    {
-        throw e;
-    }
-	this->_accountManager.load();
 	this->_mutex.lock();
 	this->_started = true;
 	this->_mutex.unLock();
@@ -96,7 +97,6 @@ void									Server::start(void *)
 		this->sendTCP();
 		this->timeout();
 	}
-	this->_accountManager.save();
 }
 
 void			Server::stop()
@@ -170,6 +170,8 @@ void									Server::sendTCP()
 	User								*user;
 	Account								*account;
 	unsigned int						nb = 0;
+	bool								deco = false;
+	unsigned int						decoNb = 0;
 
 	while (this->_toSendTCP.size() > 0)
 	{
@@ -180,6 +182,8 @@ void									Server::sendTCP()
 			std::cout << "packet.second = " << packet.second << std::endl;
 			if (this->_clientList.size() == 1)
 			{
+				deco = false;
+				decoNb = 0;
 				user = this->_userCollection.getUserBySockId(packet.second);
 				std::cout << "I CAN WRITE TCP " << nb << " to " << (user ? user->getName() : "NULL") << " : " << packet.second << std::endl;
 				packet.first->show();
@@ -206,7 +210,14 @@ void									Server::sendTCP()
 		{
 			std::cout << e.what() << std::endl;
 			std::cout << "toSendTCP.size() = " << this->_toSendTCP.size() << std::endl;
-			std::cin.get();
+			deco = true;
+		}
+		if (deco)
+			++decoNb;
+		if (deco && decoNb > 10)
+		{
+			std::cout << "deco && decoNb > 10" << std::endl;
+			return;
 		}
 		++nb;
 	}
@@ -272,9 +283,9 @@ void				Server::call(User *user, Packet *packet)
 
 	std::cout << "CALL" << std::endl;
 	login = packet->getString(0);
-	response = login;
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = this->_accountManager.getAccountByName(login);
+	response = fromCall->getName();
 	if (!toCall)
 		response = "Unknown user " + login + ".";
 	else if (!toCall->connected())
@@ -323,6 +334,11 @@ void				Server::hangUp(User *user, Packet *packet)
 	}
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = fromCall->getCurrentCall();
+	if (!toCall)
+	{
+		std::cerr << "toCall NULL" << std::endl;
+		return;
+	}
 	toSend = new Packet(packet->getRequestUID(), Packet::HANGUP);
 	toSend->setFormat(status ? "cs" : "css");
 	toSend->updateData(3 + 4 + response.size() + (status ? 0 : (4 + toCall->getName().size())));
@@ -394,7 +410,6 @@ void						Server::status(User *user, unsigned short req, char status, char stat,
 {
 	Packet					*toSend = 0;
 	Account					*account;
-	std::vector<User *>		userList;
 
 	std::cout << "STATUS" << std::endl;
 	account = this->_accountManager.getAccountByName(user->getName());
@@ -409,11 +424,6 @@ void						Server::status(User *user, unsigned short req, char status, char stat,
 	else
 		toSend->appendToData(1, stat);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	userList = this->_userCollection.getUserList();
-	for (unsigned int i = 0; i < userList.size(); ++i)
-	{
-		this->list(userList[i], (unsigned short)0);
-	}
 }
 
 void				Server::acceptCall(User *user, Packet *packet)
@@ -429,12 +439,13 @@ void				Server::acceptCall(User *user, Packet *packet)
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = fromCall->getCurrentCall();
 	login = packet->getString(0);
+	response = fromCall->getName();
 	if (!toCall)
 		response = "Unknown user " + login + ".";
 	else if (!toCall->connected())
 		response = "User disconnected.";
-	else if (toCall->pending() || toCall->inCall())
-		response = "User already in call.";
+	/*else if (toCall->pending() || toCall->inCall())
+		response = "User already in call.";*/
 	else if (fromCall->hasContact(toCall) && fromCall->contactBlocked(toCall))
 		response = "Contact blocked.";
 	else
@@ -469,12 +480,13 @@ void				Server::rejectCall(User *user, Packet *packet)
 	fromCall = this->_accountManager.getAccountByName(user->getName());
 	toCall = fromCall->getCurrentCall();
 	login = packet->getString(0);
+	response = fromCall->getName();
 	if (!toCall)
 		response = "Unknown user " + login + ".";
 	else if (!toCall->connected())
 		response = "User disconnected.";
-	else if (toCall->pending() || toCall->inCall())
-		response = "User already in call.";
+	/*else if (toCall->pending() || toCall->inCall())
+		response = "User already in call.";*/
 	else if (fromCall->hasContact(toCall) && fromCall->contactBlocked(toCall))
 		response = "Contact blocked.";
 	else
@@ -542,7 +554,7 @@ void				Server::login(User *user, unsigned short req, char status, const std::st
 	{
 		this->statusText(user, 0, 1, account->getStatusText());
 		this->status(user, 0, 1, account->getStatus(), "");
-		//this->list(user, (unsigned short)0);
+		this->list(user, (unsigned short)0);
 	}
 }
 
@@ -599,7 +611,7 @@ void				Server::addContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	this->list(user, (unsigned short)0);
+	//this->list(user, (unsigned short)0);
 }
 
 void				Server::removeContact(User *user, Packet *packet)
@@ -623,7 +635,7 @@ void				Server::removeContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	this->list(user, (unsigned short)0);
+	//this->list(user, (unsigned short)0);
 }
 
 void				Server::blockContact(User *user, Packet *packet)
@@ -677,7 +689,7 @@ void				Server::chat(User *user, Packet *packet)
 		toSend->appendToData(2, msg);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
 	user = this->_userCollection.getUserByName(login);
-	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(new Packet(*toSend), user->getSockId()));
 }
 
 void				Server::error(User *, Packet *)

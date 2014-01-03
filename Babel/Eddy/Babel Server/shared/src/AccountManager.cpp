@@ -382,6 +382,7 @@ void				AccountManager::save()
 	std::string		filename;
 	Folder			folder;
 
+	std::cout << "SAVING ACCOUNTS" << std::endl;
 	folder.remove("Accounts");
 	folder.create("Accounts");
 	for (unsigned int i = 0; i < this->_accountList.size(); ++i)
@@ -408,6 +409,7 @@ void				AccountManager::load()
 	std::size_t		size;
 	std::string		line;
 
+	std::cout << "LOADING ACCOUNTS" << std::endl;
 	if (!folder.open("Accounts"))
 	{
 		std::cout << "Cannot open Accounts folder." << std::endl;

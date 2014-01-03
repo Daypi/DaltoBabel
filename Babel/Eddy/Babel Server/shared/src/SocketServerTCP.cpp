@@ -323,7 +323,7 @@ void	SocketServerTCP::deleteMap()
 	std::map<unsigned int, std::pair<const char *, int> >::iterator	it;
 
 	for (it = this->_map.begin(); it != this->_map.end(); ++it)
-		 delete (it->second.first);
+		 delete[] (it->second.first);
 	this->_map.clear();
 }
 

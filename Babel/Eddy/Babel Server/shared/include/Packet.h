@@ -55,6 +55,7 @@ public:
 	};
 
 	Packet(unsigned short requestUID = 0, unsigned char instruction = 0);
+	Packet(const Packet&);
 	virtual ~Packet();
 
 	void						setMagicNumber(unsigned int);
