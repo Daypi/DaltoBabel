@@ -25,25 +25,26 @@ OpusCompressor::~OpusCompressor() {
     opus_decoder_destroy(this->_dec);
 }
 
-unsigned char *OpusCompressor::encodeFrame(const float *frame, unsigned char *compressed_buffer)
+opusFrame *OpusCompressor::encodeFrame(const float *frame, opusFrame *compressed_buffer)
 {
 	int ret;
 
 	printf("encoding.\n");
 	printf("OPUS enc: %f\n", frame[0]);
 //	compressed_buffer = new (unsigned char[this->_maxSize]);
-	ret = opus_encode_float(this->_enc, frame, this->_maxSize, compressed_buffer, this->_maxSize);
+	ret = opus_encode_float(this->_enc, frame, this->_maxSize, compressed_buffer->_frame, this->_maxSize);
+	compressed_buffer->_size = ret;
 	return (compressed_buffer);
 }
 
-float *OpusCompressor::decodeFrame(const unsigned char *data, float *frame)
+float *OpusCompressor::decodeFrame(const opusFrame *data, float *frame)
 {
 	int ret;
 //	float *frame = new (float[frame_size * this->_num_channels]);
 	printf("decoding.\n");
 	printf("OPUS dec: %c\n", data[0]);
-	if (!opus_packet_get_nb_channels(data))
+	if (!opus_packet_get_nb_channels(data->_frame))
 		return NULL;
-	ret = opus_decode_float(this->_dec, data, this->_maxSize, frame, this->_maxSize, 0);
+	ret = opus_decode_float(this->_dec, data->_frame, this->_maxSize, frame, this->_maxSize, 0);
 	return (frame);
 }
