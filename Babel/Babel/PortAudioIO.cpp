@@ -2,6 +2,20 @@
 
 PortAudioIO::PortAudioIO()
 {
+	this->_err = Pa_Initialize();
+	int totalFrames = NUM_SECONDS * SAMPLE_RATE;
+	int numSamples = totalFrames * NUM_CHANNELS;
+
+	this->_playingBuffer = 0;
+	this->_recordingBuffer = 0;
+	this->_lastGetRecord = 1;
+	this->_recordBuffers[_recordingBuffer].maxFrameIndex = totalFrames;
+	this->_recordBuffers[0].frameIndex = 0;
+	this->_playBuffers[0].frameIndex = 0;
+	this->_recordBuffers[1].frameIndex = 0;
+	this->_playBuffers[1].frameIndex = 0;
+	this->_recordBuffers[0].available = false;
+	this->_recordBuffers[1].available = false;
 
 }
 
@@ -38,10 +52,8 @@ bool	PortAudioIO::cleanup(void)
 
 void	PortAudioIO::pushBuffer(PortAudioBuffer buf)
 {
-//	std::cout << "maxframeindex:" << buf.maxFrameIndex << std::endl;
 	int	idBuffer = _playingBuffer == 1 ? 0 : 1;
 	buf.frameIndex = 0;
-//	std::cout << "pushing in " << idBuffer << std::endl;
 	this->_playBuffers[idBuffer] = buf;
 }
 
@@ -54,8 +66,6 @@ bool	PortAudioIO::startRecording(void)
 	int			max, val;
 	double		average;
 
-	this->_recordingBuffer = 0;
-	this->_playingBuffer = 0;
 	this->_inputParams.device = Pa_GetDefaultInputDevice();
 	if (this->_inputParams.device == paNoDevice)
 		return false;
@@ -87,14 +97,7 @@ float *PortAudioIO::paLoop()
 	std::cout << std::endl << std::endl;
 	std::cout << "playing in " << _playingBuffer << std::endl;
 	std::cout << "recording in" << _recordingBuffer << std::endl;
-	this->_recordBuffers[_recordingBuffer].maxFrameIndex = totalFrames;
-	this->_recordBuffers[0].frameIndex = 0;
-	this->_playBuffers[0].frameIndex = 0;
-	this->_recordBuffers[1].frameIndex = 0;
-	this->_playBuffers[1].frameIndex = 0;
 
-	this->_recordBuffers[0].available = false;
-	this->_recordBuffers[1].available = false;
 	for( i=0; i< totalFrames; i++ ) {
 		this->_recordBuffers[_recordingBuffer].recordedSamples[i] = 0;
 	}
@@ -112,6 +115,7 @@ float *PortAudioIO::paLoop()
 	this->_err = Pa_StartStream( this->_Stream );
 	if (this->_err != paNoError)
 		std::cerr << this->getError() << std::endl;
+
 	return (this->_recordingBuffer == 1 ? this->_recordBuffers[0].recordedSamples : this->_recordBuffers[1].recordedSamples);
 }
 
@@ -119,7 +123,6 @@ void PortAudioIO::switchBuffer(eBuffType type)
 {
 	if (type == RECORD)
 	{
-//		this->pushBuffer(this->_recordBuffers[this->_recordingBuffer]);
 		this->_recordingBuffer = this->_recordingBuffer == 1 ? 0 : 1;
 		this->_recordBuffers[_recordingBuffer].frameIndex = 0;
 	}
@@ -229,7 +232,6 @@ const float *PortAudioIO::getRecord()
 {
 	int i = 0;
 	int tmp = this->_recordingBuffer;
-//	std::cout << this->_lastGetRecord << " / " <<  this->_recordingBuffer << std::endl;
 	if (this->_lastGetRecord != tmp && this->_recordBuffers[tmp].available == true)
 	{
 		std::cout << "start" << std::endl;
