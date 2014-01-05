@@ -41,7 +41,7 @@ public:
 
 	virtual void		start()
 	{
-		_thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&startThread<T, U, V>, this, 0, &_id);
+        _thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&startThread<T, U, V>, this, 0, &_id);
 	}
 
 	virtual void		join()
@@ -52,17 +52,17 @@ public:
 	virtual void		stop()
 	{
 		TerminateThread(_thread, _id);
-	}
+    }
 };
 
 template <typename T, typename U, typename V>
 void				*startThread(void *arg)
 {
-	CWThread<T, U, V>	*tmp = reinterpret_cast<CWThread<T, U, V> *>(arg);
+    CWThread<T, U, V>	*tmp = reinterpret_cast<CWThread<T, U, V> *>(arg);
 
-	tmp->_running = true;
-	(tmp->_obj->*(tmp->_func))(tmp->_param);
-	tmp->_running = false;
+    tmp->_running = true;
+    (tmp->_obj->*(tmp->_func))(tmp->_param);
+    tmp->_running = false;
 
-	return (NULL);
+    return (NULL);
 }

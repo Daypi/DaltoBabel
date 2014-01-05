@@ -1,5 +1,5 @@
-#include <QMessageBox>
-#include <QInputDialog>
+#include <QtWidgets/QMessageBox>
+#include <QtWidgets/QInputDialog>
 #include "Include/Window/contactWindow.h"
 #include "ui_contactWindow.h"
 

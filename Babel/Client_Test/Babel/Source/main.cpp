@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QtWidgets/QApplication>
 #include "Include/Model/myContactModel.h"
 
 int main(int argc, char *argv[])

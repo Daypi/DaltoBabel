@@ -1,8 +1,8 @@
 #ifndef CONNECTWINDOW_H
 #define CONNECTWINDOW_H
 
-#include <QMainWindow>
-#include <QMessageBox>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMessageBox>
 #include <QCloseEvent>
 
 class MyConnectModel;

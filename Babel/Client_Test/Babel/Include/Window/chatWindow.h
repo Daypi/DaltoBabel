@@ -1,7 +1,7 @@
 #ifndef CHATWINDOW_H
 #define CHATWINDOW_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 
 class MyChatModel;
 

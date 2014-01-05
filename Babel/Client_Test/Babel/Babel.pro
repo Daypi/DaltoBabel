@@ -1,5 +1,7 @@
 TARGET = Babel
 
+QT += widgets
+
 HEADERS += \
     Include/Window/contactWindow.h \
     Include/Window/connectWindow.h \
@@ -27,10 +29,6 @@ HEADERS += \
     Include/Network/IMutex.h \
     Include/Network/ICondVar.h \
     Include/Network/Exception.h \
-    Include/Network/CUThread.hpp \
-    Include/Network/CUSocket.hh \
-    Include/Network/CUMutex.h \
-    Include/Network/CUCondVar.h \
     Include/Network/CondVar.hh \
     Include/Network/CircularBuffer.hpp \
     Include/Network/Util.hpp \
@@ -58,9 +56,6 @@ SOURCES += \
     Source/Network/MutexPool.cpp \
     Source/Network/Mutex.cpp \
     Source/Network/Exception.cpp \
-    Source/Network/CUSocket.cpp \
-    Source/Network/CUMutex.cpp \
-    Source/Network/CUCondVar.cpp \
     Source/Network/CondVar.cpp \
     Source/Network/CircularBuffer.cpp \
     Source/Network/LibC.cpp \
@@ -78,3 +73,31 @@ OBJECTS_DIR = $$DESTDIR/.obj
 MOC_DIR = $$DESTDIR/.moc
 RCC_DIR = $$DESTDIR/.qrc
 UI_DIR = $$DESTDIR/.ui
+
+INCLUDEPATH += .
+
+win32 {
+SOURCES += \
+    Source/Network/CWSocket.cpp \
+    Source/Network/CWMutex.cpp \
+    Source/Network/CWCondVar.cpp
+
+HEADERS += \
+    Include/Network/CWThread.hpp \
+    Include/Network/CWSocket.hh \
+    Include/Network/CWMutex.h \
+    Include/Network/CWCondVar.h
+}
+
+!win32 {
+SOURCES += \
+    Source/Network/CUSocket.cpp \
+    Source/Network/CUMutex.cpp \
+    Source/Network/CUCondVar.cpp
+
+HEADERS += \
+    Include/Network/CUThread.hpp \
+    Include/Network/CUSocket.hh \
+    Include/Network/CUMutex.h \
+    Include/Network/CUCondVar.h
+}

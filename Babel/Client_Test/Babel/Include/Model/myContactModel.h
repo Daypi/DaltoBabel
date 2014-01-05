@@ -5,7 +5,7 @@
 
 #include <string>
 #include <vector>
-#include <QWidget>
+#include <QtWidgets/QWidget>
 
 enum eStatus
 {

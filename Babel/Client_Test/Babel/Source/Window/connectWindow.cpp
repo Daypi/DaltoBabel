@@ -1,7 +1,7 @@
 #include <QRect>
-#include <QDesktopWidget>
+#include <QtWidgets/QDesktopWidget>
 #include <QPixmap>
-#include <QLabel>
+#include <QtWidgets/QLabel>
 #include <QCryptographicHash>
 #include "Include/Window/connectWindow.h"
 #include "Include/Model/myContactModel.h"
@@ -86,7 +86,7 @@ const std::string   ConnectWindow::getLogin()
 
 const std::string   ConnectWindow::getMdp()
 {
-    QString tmp = QCryptographicHash::hash((this->ui->editMdp->text().toAscii()),QCryptographicHash::Md5).toHex();
+    QString tmp = QCryptographicHash::hash((this->ui->editMdp->text().toStdString().c_str()),QCryptographicHash::Md5).toHex();
 //    return (this->ui->editMdp->text().toStdString());
     return (tmp.toStdString());
 }

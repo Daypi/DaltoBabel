@@ -1,7 +1,7 @@
 #ifndef CONTACTWINDOW_H
 #define CONTACTWINDOW_H
 
-#include <QDialog>
+#include <QtWidgets/QDialog>
 #include "Include/Model/contact.h"
 
 class MyContactModel;

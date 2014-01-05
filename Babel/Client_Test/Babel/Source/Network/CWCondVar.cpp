@@ -1,5 +1,5 @@
-#include "CWCondVar.h"
-#include "Exception.h"
+#include "Include/Network/CWCondVar.h"
+#include "Include/Network/Exception.h"
 
 CWCondVar::CWCondVar(Mutex &mutex) : _mutex(mutex)
 {
