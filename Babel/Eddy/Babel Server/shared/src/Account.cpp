@@ -58,6 +58,8 @@ void		Account::disconnect()
 {
 	this->_connected = false;
 	this->_status = Account::INVISIBLE;
+	this->_currentCall = 0;
+	this->_calling = false;
 }
 
 const std::string&		Account::getPassword() const

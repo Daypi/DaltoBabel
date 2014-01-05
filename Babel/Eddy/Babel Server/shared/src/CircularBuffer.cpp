@@ -16,7 +16,7 @@ CircularBuffer& CircularBuffer::operator=(const CircularBuffer& other)
 {
 	if (this != &other)
 	{
-		delete _buff;
+		delete[] _buff;
 		_size = other._size;
 		_start = other._start;
 		_end = other._end;
@@ -28,7 +28,7 @@ CircularBuffer& CircularBuffer::operator=(const CircularBuffer& other)
 
 CircularBuffer::~CircularBuffer()
 {
-	delete _buff;
+	delete[] _buff;
 }
 
 int	CircularBuffer::getReadable() const

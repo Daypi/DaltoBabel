@@ -4,12 +4,12 @@
 #include "Include/Network/TimeStamp.h"
 
 MyContactModel::MyContactModel(QWidget *parent)
-    : _status(AVAILABLE),
-      _net(new Network(this)),
-      _w(new ContactWindow(this, parent)),
-      _connect(new MyConnectModel(_net, this, _w)),
-      _isCalling(false)
 {
+    this->_isCalling = false;
+    this->_status = AVAILABLE;
+    this->_net = new Network(this);
+    this->_w = new ContactWindow(this, parent);
+    this->_connect = new MyConnectModel(_net, this, _w);
 }
 
 MyContactModel::~MyContactModel()
@@ -145,7 +145,7 @@ void    MyContactModel::openChat(const std::string& login)
             ((*it))->setCalling(true);
             this->_audio.initLoop();
             this->_isCalling = true;
-           ((*it)->myShow());
+            ((*it)->myShow());
             break;
         }
     }
@@ -181,13 +181,13 @@ void    MyContactModel::showChat(const std::string& name)
 void    MyContactModel::displayMsg(const std::string& login, const std::string& msg)
 {
     for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end(); ++it)
+    {
+        if (*(*it) == login)
         {
-            if (*(*it) == login)
-            {
-                (*it)->displayMsg(login, msg);
-                break;
-            }
+            (*it)->displayMsg(login, msg);
+            break;
         }
+    }
 }
 
 void    MyContactModel::loop()
