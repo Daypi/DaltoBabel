@@ -23,11 +23,11 @@ void AudioManager::mainLoop()
 
 	opusFrame *encode = new opusFrame;
 	encode->_frame = new unsigned char[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
-	float *decode = new float[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
-	decode = NULL;
+	float *decode = new float[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];;
+	//decode = NULL;
 	this->_paio.paLoop(decode);
 	std::cout << "___________START LOOP___________" << std::endl;
-		while( ( this->_paio._err = Pa_IsStreamActive(this->_paio._Stream) ) == 1)
+		while ( ( this->_paio._err =  Pa_IsStreamActive(this->_paio._Stream ) ) == 1)
 	{
 		if ((temp2 = this->_paio.getRecord()) != NULL)
 		{
@@ -47,6 +47,7 @@ void AudioManager::mainLoop()
 				//std::cout << this->_out << std::endl;
 				this->_in = this->_out;
 				_opus.decodeFrame(_in, decode);
+				//this->_paio.setPlay(const_cast<float *>(decode), 480);
 			}
 		}
 	}
