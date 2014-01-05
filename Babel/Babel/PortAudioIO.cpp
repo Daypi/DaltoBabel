@@ -78,7 +78,7 @@ bool	PortAudioIO::startRecording(void)
 	return true;
 }
 
-float *PortAudioIO::paLoop(float *in)
+float *PortAudioIO::paLoop()
 {
 	int i;
 	int totalFrames = NUM_SECONDS * SAMPLE_RATE;
@@ -112,17 +112,6 @@ float *PortAudioIO::paLoop(float *in)
 	this->_err = Pa_StartStream( this->_Stream );
 	if (this->_err != paNoError)
 		std::cerr << this->getError() << std::endl;
-
-/*	this->_err = Pa_CloseStream(this->_Stream);
-	if (this->_err != paNoError)
-		std::cerr << this->getError() << std::endl;
-	std::cout << "maxframeindex:" << this->_recordBuffers[this->_recordingBuffer].maxFrameIndex << std::endl;
-	this->pushBuffer(this->_recordBuffers[this->_recordingBuffer]);
-	this->_recordingBuffer = this->_recordingBuffer == 1 ? 0 : 1;
-	for( i=0; i< totalFrames; i++ ) {
-		this->_playBuffers[this->_playingBuffer].recordedSamples[i] = 0;
-	}
-	this->_playingBuffer = this->_playingBuffer == 1 ? 0 : 1;*/
 	return (this->_recordingBuffer == 1 ? this->_recordBuffers[0].recordedSamples : this->_recordBuffers[1].recordedSamples);
 }
 

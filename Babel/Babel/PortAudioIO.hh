@@ -53,7 +53,7 @@ public:
   bool					startRecording(void);
   const std::string		&getError();
   void					initRecording(void);
-  float					*paLoop(float *in);
+  float					*paLoop();
   void					switchBuffer(eBuffType);
   const float					*getRecord();
   void					setPlay(float *, int);
