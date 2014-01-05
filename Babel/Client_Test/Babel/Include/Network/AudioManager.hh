@@ -20,10 +20,10 @@ public:
 private:
 	const float *	getRecord;
 	bool			_isRecording;
-	opusFrame*		_in;
-	opusFrame*		_out;
-	opusFrame*		encode;
+	compressedFrame*		_in;
+	compressedFrame*		_out;
+	compressedFrame*		encode;
 	float*			decode;
 	PortAudioIO		_paio;
-	OpusCompressor	_opus;
+	ICompressor		*_compressor;
 };

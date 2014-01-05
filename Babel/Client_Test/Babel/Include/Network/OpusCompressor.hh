@@ -16,12 +16,7 @@
 
 #define		MAX_SIZE 1000
 
-typedef struct s_opusFrame {
-	unsigned char	*_frame;
-	int				_size;
-} opusFrame;
-
-class OpusCompressor {
+class OpusCompressor : public ICompressor {
 private:
 	int				_num_channels;
 	int				_error;
@@ -31,8 +26,8 @@ private:
 	size_t			_maxSize;
 public:
 	OpusCompressor();
-	opusFrame	*encodeFrame(const float *, opusFrame*);
-	float			*decodeFrame(const opusFrame*, float *);
+	virtual compressedFrame	*encodeFrame(const float *, compressedFrame*);
+	virtual float			*decodeFrame(const compressedFrame*, float *);
 	virtual ~OpusCompressor();
 };
 

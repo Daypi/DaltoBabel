@@ -8,34 +8,38 @@ AudioManager::AudioManager()
 		std::cout << "Portaudio init failed !" << std::endl;
 	else
 		std::cout << "Portaudio Initialised" << std::endl;
-	this->_in = new opusFrame;
-	this->_out = new opusFrame;
+	this->_in = new compressedFrame;
+	this->_out = new compressedFrame;
     this->_in->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
     this->_out->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
-
+	this->_compressor = new OpusCompressor;
 }
 
 void AudioManager::mainLoop()
 {
 
 	this->initLoop();
+	std::cout << "___________START LOOP___________" << std::endl;
 		while ( ( this->_paio._err =  Pa_IsStreamActive(this->_paio._Stream ) ) == 1)
 	{
 		if ((this->getRecord = this->_paio.getRecord()) != NULL)
 		{
+			std::cout << "coucou" << std::endl;
 			if (decode != NULL)
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 				this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
 			}
 			else
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
+				//std::cout << this->_out << std::endl;
 				this->_in = this->_out;
-                _opus.decodeFrame(_in, decode);
-            }
+				_compressor->decodeFrame(_in, decode);
+				//this->_paio.setPlay(const_cast<float *>(decode), 480);
+			}
 		}
 	}
 
@@ -44,12 +48,12 @@ void AudioManager::mainLoop()
 void AudioManager::initLoop()
 {
 		const float *temp2;
-    int frameSize = FRAMES_PER_BUFFER * NUM_CHANNELS;
+    int frameSize = NUM_CHANNELS * FRAMES_PER_BUFFER;
 	this->_isRecording = true;
 
-	this->encode = new opusFrame;
-    encode->_frame = new unsigned char[FRAMES_PER_BUFFER * NUM_CHANNELS];
-    this->decode = new float[FRAMES_PER_BUFFER * NUM_CHANNELS];
+	this->encode = new compressedFrame;
+    encode->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
+    this->decode = new float[NUM_CHANNELS * FRAMES_PER_BUFFER];
 	this->_paio.paLoop();
 }
 
@@ -61,16 +65,16 @@ void AudioManager::recordAndPlay()
 		{
 			if (decode != NULL)
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 				this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
 			}
 			else
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord, encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord, encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 			}
 		}
 	}

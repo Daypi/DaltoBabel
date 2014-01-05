@@ -25,10 +25,13 @@ OpusCompressor::~OpusCompressor() {
     opus_decoder_destroy(this->_dec);
 }
 
-opusFrame *OpusCompressor::encodeFrame(const float *frame, opusFrame *compressed_buffer)
+compressedFrame *OpusCompressor::encodeFrame(const float *frame, compressedFrame *compressed_buffer)
 {
 	int ret;
 
+	/*for (int i = 0 ; i < 200 ; i++)
+		printf("OPUS enc: %f\n", frame[i]);*/
+	//compressed_buffer->_frame = new (unsigned char[this->_maxSize]);
 	ret = opus_encode_float(this->_enc, frame, FRAMES_PER_BUFFER, compressed_buffer->_frame, this->_encoded_data_size);
 	std::cout << "ret:" << ret << std::endl;
 	
@@ -36,11 +39,15 @@ opusFrame *OpusCompressor::encodeFrame(const float *frame, opusFrame *compressed
 	return (compressed_buffer);
 }
 
-float *OpusCompressor::decodeFrame(const opusFrame *data, float *frame)
+float *OpusCompressor::decodeFrame(const compressedFrame *data, float *frame)
 {
 	int ret;
 
+	//printf("OPUS dec: %s\n", data->_frame);
+	std::cout << "size:" << data->_size << std::endl;
+	std::cout << "encoded data size: " << this->_encoded_data_size << std::endl;
 	frame = new (float[this->_encoded_data_size]);
 	ret = opus_decode_float(this->_dec, data->_frame, this->_encoded_data_size, frame, FRAMES_PER_BUFFER, 0);
+	std::cout << "ret:" << ret << std::endl;
 	return (frame);
 }
