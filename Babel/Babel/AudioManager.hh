@@ -13,12 +13,17 @@ public:
 	AudioManager();
 	~AudioManager();
 	void	mainLoop();
-	void	setIn();
+	void	setIn(unsigned char*, int);
 	void	setOut();
+	void			initLoop();
+	void			recordAndPlay();
 private:
-	bool					_isRecording;
-	opusFrame*			_in;
-	opusFrame*			_out;
+	const float *	getRecord;
+	bool			_isRecording;
+	opusFrame*		_in;
+	opusFrame*		_out;
+	opusFrame*		encode;
+	float*			decode;
 	PortAudioIO		_paio;
 	OpusCompressor	_opus;
 };

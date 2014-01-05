@@ -14,7 +14,7 @@ public:
 	virtual bool			init(void) = 0;
 	virtual bool			cleanup(void) = 0;
 	virtual bool			startRecording(void) = 0;
-	virtual float			*paLoop(float *) = 0;
+	virtual float			*paLoop() = 0;
 	virtual const std::string	&getError() = 0;
 	virtual	~IAudioIO() {};
 };

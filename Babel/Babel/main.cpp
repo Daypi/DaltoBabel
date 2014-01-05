@@ -12,5 +12,7 @@ int	main(void)
   */
 	AudioManager	mgr;
 	std::cout << "LOOP" << std::endl; 
-	mgr.mainLoop();
+	//mgr.mainLoop();
+	mgr.initLoop();
+while (42)	mgr.recordAndPlay();
 }
