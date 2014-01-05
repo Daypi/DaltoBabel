@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <QtWidgets/QWidget>
+#include "Include/Network/AudioManager.hh"
 
 enum eStatus
 {
@@ -29,6 +30,8 @@ class MyContactModel
     Network                 *_net;
     ContactWindow           *_w;
     MyConnectModel          *_connect;
+    AudioManager            _audio;
+    bool                    _isCalling;
 
 public:
     MyContactModel(QWidget *parent = 0);

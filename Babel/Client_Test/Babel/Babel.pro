@@ -33,7 +33,29 @@ HEADERS += \
     Include/Network/CircularBuffer.hpp \
     Include/Network/Util.hpp \
     Include/Network/LibC.h \
-    Include/Network/TimeStamp.h
+    Include/Network/TimeStamp.h \
+    Include/Network/AudioManager.hh \
+    Include/Network/babel_common.h \
+    Include/Network/IAudioIO.hh \
+    Include/Network/ICompressor.hh \
+    Include/Network/OpusCompressor.hh \
+    Include/Network/portaudio.h \
+    Include/Network/PortAudioIO.hh \
+    Include/Network/opus.h \
+    Include/Network/opus_custom.h \
+    Include/Network/opus_defines.h \
+    Include/Network/opus_multistream.h \
+    Include/Network/opus_types.h \
+    Include/Network/dsconf.h \
+    Include/Network/dsound.h \
+    Include/Network/pa_asio.h \
+    Include/Network/pa_jack.h \
+    Include/Network/pa_linux_alsa.h \
+    Include/Network/pa_mac_core.h \
+    Include/Network/pa_win_ds.h \
+    Include/Network/pa_win_wasapi.h \
+    Include/Network/pa_win_waveformat.h \
+    Include/Network/pa_win_wmme.h
 
 SOURCES += \
     Source/main.cpp \
@@ -59,7 +81,10 @@ SOURCES += \
     Source/Network/CondVar.cpp \
     Source/Network/CircularBuffer.cpp \
     Source/Network/LibC.cpp \
-    Source/Network/TimeStamp.cpp
+    Source/Network/TimeStamp.cpp \
+    Source/Network/AudioManager.cpp \
+    Source/Network/OpusCompressor.cpp \
+    Source/Network/PortAudioIO.cpp
 
 FORMS += \
     Source/Window/contactWindow.ui \
@@ -100,4 +125,22 @@ HEADERS += \
     Include/Network/CUSocket.hh \
     Include/Network/CUMutex.h \
     Include/Network/CUCondVar.h
+
 }
+
+unix:!macx: LIBS += -L$$PWD/ -lportaudio
+
+INCLUDEPATH += $$PWD/
+DEPENDPATH += $$PWD/
+
+unix:!macx: PRE_TARGETDEPS += $$PWD/libportaudio.a
+
+
+unix:!macx: LIBS += -lrt
+
+
+unix:!macx: LIBS += -lasound
+
+unix:!macx: LIBS += -ljack
+
+unix:!macx: LIBS += -lopus

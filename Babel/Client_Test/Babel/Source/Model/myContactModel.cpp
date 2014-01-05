@@ -7,7 +7,8 @@ MyContactModel::MyContactModel(QWidget *parent)
     : _status(AVAILABLE),
       _net(new Network(this)),
       _w(new ContactWindow(this, parent)),
-      _connect(new MyConnectModel(_net, this, _w))
+      _connect(new MyConnectModel(_net, this, _w)),
+      _isCalling(false)
 {
 }
 
@@ -142,7 +143,9 @@ void    MyContactModel::openChat(const std::string& login)
         if (*(*it) == login)
         {
             ((*it))->setCalling(true);
-            ((*it)->myShow());
+            this->_audio.initLoop();
+            this->_isCalling = true;
+           ((*it)->myShow());
             break;
         }
     }
@@ -203,6 +206,8 @@ void    MyContactModel::loop()
         try
         {
             this->_net->handleNetwork();
+            if (this->_isCalling)
+                this->_audio.recordAndPlay();
         }
         catch (Exception &e)
         {
