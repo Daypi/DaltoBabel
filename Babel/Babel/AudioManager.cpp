@@ -8,11 +8,11 @@ AudioManager::AudioManager()
 		std::cout << "Portaudio init failed !" << std::endl;
 	else
 		std::cout << "Portaudio Initialised" << std::endl;
-	this->_in = new opusFrame;
-	this->_out = new opusFrame;
+	this->_in = new compressedFrame;
+	this->_out = new compressedFrame;
 	this->_in->_frame = new unsigned char[NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE];
 	this->_out->_frame = new unsigned char[NUM_CHANNELS * NUM_SECONDS * SAMPLE_RATE];
-
+	this->_compressor = new OpusCompressor;
 }
 
 void AudioManager::mainLoop()
@@ -28,18 +28,18 @@ void AudioManager::mainLoop()
 			if (decode != NULL)
 			{
 				printf("N AM: %f\n", this->getRecord [0]);
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 				this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
 			}
 			else
 			{
 				printf("F AM: %f\n", this->getRecord [0]);
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
 				//std::cout << this->_out << std::endl;
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 				//this->_paio.setPlay(const_cast<float *>(decode), 480);
 			}
 		}
@@ -53,7 +53,7 @@ void AudioManager::initLoop()
 	int frameSize = NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS;
 	this->_isRecording = true;
 
-	this->encode = new opusFrame;
+	this->encode = new compressedFrame;
 	encode->_frame = new unsigned char[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
 	this->decode = new float[NUM_SECONDS * SAMPLE_RATE * NUM_CHANNELS];
 	this->_paio.paLoop();
@@ -67,16 +67,16 @@ void AudioManager::recordAndPlay()
 		{
 			if (decode != NULL)
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord , encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 				this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
 			}
 			else
 			{
-				this->_out = this->_opus.encodeFrame(this->getRecord, encode);
+				this->_out = this->_compressor->encodeFrame(this->getRecord, encode);
 				this->_in = this->_out;
-				_opus.decodeFrame(_in, decode);
+				_compressor->decodeFrame(_in, decode);
 			}
 		}
 	}
