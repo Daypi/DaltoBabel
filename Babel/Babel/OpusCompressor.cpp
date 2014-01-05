@@ -25,7 +25,7 @@ OpusCompressor::~OpusCompressor() {
     opus_decoder_destroy(this->_dec);
 }
 
-opusFrame *OpusCompressor::encodeFrame(const float *frame, opusFrame *compressed_buffer)
+compressedFrame *OpusCompressor::encodeFrame(const float *frame, compressedFrame *compressed_buffer)
 {
 	int ret;
 
@@ -40,7 +40,7 @@ opusFrame *OpusCompressor::encodeFrame(const float *frame, opusFrame *compressed
 	return (compressed_buffer);
 }
 
-float *OpusCompressor::decodeFrame(const opusFrame *data, float *frame)
+float *OpusCompressor::decodeFrame(const compressedFrame *data, float *frame)
 {
 	int ret;
 	printf("decoding.\n");
