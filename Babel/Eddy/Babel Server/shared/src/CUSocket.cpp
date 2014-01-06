@@ -99,7 +99,6 @@ ISocket			*CUSocket::accept()
 
 void		CUSocket::send(const char *message, int size)
 {
-
 	if (this->_func == ISocket::NONE)
 		throw Exception("This socket type isn't initialized.");
 	if ((this->_type == ISocket::TCP) || ((this->_func == ISocket::CLIENT) && (this->_sock != -1)))

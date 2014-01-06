@@ -21,7 +21,10 @@ class SocketAvd : public Socket
 	SeleKtor	*_pool;
 public:
 	SocketAvd(Thread<SeleKtor, void, void *> *thread, SeleKtor *pool, ISocket::TypeSocket type = ISocket::TCP);
+	SocketAvd(ISocket::TypeSocket type = ISocket::TCP);
 	virtual ~SocketAvd();
+
+	SocketAvd			*accept();
 	void				init(Thread<SeleKtor, void, void *> *thread, SeleKtor *pool);
 	bool				isWritable();
 	bool				isReadable();

@@ -40,13 +40,12 @@ void	SocketServerTCP::init(int port, int nbListen)
 
 std::pair<unsigned int, char *>	&SocketServerTCP::checkConnection()
 {
-	ISocket		*tmp;
 	SocketAvd	*tmpCasted;
 
 	this->_socketPool.getMutex()->lock("SELEKTOR");
 	try
 	{
-		tmp = this->_sock->accept();
+		tmpCasted = this->_sock->accept();
 	}
 	catch (const Exception& e)
 	{
@@ -55,11 +54,6 @@ std::pair<unsigned int, char *>	&SocketServerTCP::checkConnection()
 	}
 
 	this->_sock->iReaded();
-	if ((tmpCasted = reinterpret_cast<SocketAvd *>(tmp)) == NULL)
-	{
-		this->_socketPool.getMutex()->unLock("SELEKTOR");
-		throw Exception("Init new socket has failed in accept method.");
-	}
 	++this->_uid;
 	this->_tabSock[this->_uid] = tmpCasted;
 	this->_tabSock[this->_uid]->init(this->_th, &this->_socketPool); //TODO EXECPTION

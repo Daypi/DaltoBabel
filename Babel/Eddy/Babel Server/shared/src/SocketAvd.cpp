@@ -19,9 +19,33 @@ SocketAvd::SocketAvd(Thread<SeleKtor, void, void *> *thread, SeleKtor *pool, ISo
 	this->_pool = pool;
 }
 
+SocketAvd::SocketAvd(ISocket::TypeSocket type) : Socket(type)
+{
+
+}
+
 SocketAvd::~SocketAvd()
 {
 
+}
+
+SocketAvd			*SocketAvd::accept()
+{
+	sockaddr_in	tmpInfo;
+	int			sizeTmp = sizeof(tmpInfo);
+	int		tmp;
+	SocketAvd	*newSocket = new SocketAvd(this->_type);
+
+	newSocket->_func = ISocket::CLIENT;
+	if (this->_type == ISocket::UDP)
+		throw Exception("This socket type is UDP.");
+	if (this->_func != ISocket::SERVER)
+		throw Exception(((this->_func == ISocket::NONE) ? ("this socket isn't initialized.") : ("this socket isn't socket server.")));
+	if ((tmp = ::accept(this->_sock, (SOCKADDR*) &tmpInfo, (socklen_t *) &sizeTmp)) == -1)
+		throw Exception("accept has failed.");
+	newSocket->setSocket(tmp);
+	newSocket->setInfo(tmpInfo);
+	return (newSocket);
 }
 
 void		SocketAvd::init(Thread<SeleKtor, void, void *> *thread, SeleKtor *pool)
