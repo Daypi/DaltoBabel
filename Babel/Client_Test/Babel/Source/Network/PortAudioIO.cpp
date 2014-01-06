@@ -160,77 +160,77 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
                                       PaStreamCallbackFlags statusFlags)
 {
     PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
-        const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
-        SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
-        long framesToCalc;
-        long i;
-        bool endbuffer = false;
-        unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-        if(framesLeft < framesPerBuffer)
+    const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
+    SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
+    long framesToCalc;
+    long i;
+    bool endbuffer = false;
+    unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
+    if(framesLeft < framesPerBuffer)
+    {
+        framesToCalc = framesLeft;
+        endbuffer = true;
+        this->_recordBuffers[this->_recordingBuffer].available = true;
+    }
+    else
+        framesToCalc = framesPerBuffer;
+    if( inputBuffer == NULL )
+    {
+        for( i=0; i<framesToCalc; i++ )
         {
-            framesToCalc = framesLeft;
-            endbuffer = true;
-            this->_recordBuffers[this->_recordingBuffer].available = true;
+            *wptr++ = SAMPLE_SILENCE;  /* left */
+            if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
         }
-        else
-            framesToCalc = framesPerBuffer;
-        if( inputBuffer == NULL )
+    }
+    else
+    {
+        for( i=0; i<framesToCalc; i++ )
         {
-            for( i=0; i<framesToCalc; i++ )
-            {
-                *wptr++ = SAMPLE_SILENCE;  /* left */
-                if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
-            }
+            *wptr++ = *rptr++;  /* left */
+            if(NUM_CHANNELS == 2)
+                *wptr++ = *rptr++;  /* right */
         }
-        else
+    }
+    data->frameIndex += framesToCalc;
+    if (endbuffer)
+        this->switchBuffer(RECORD);
+    if (PLAYBACK)
+    {
+        SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
+        SAMPLE *wptr = (SAMPLE*)outputBuffer;
+        unsigned int i2;
+        unsigned long framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
+        bool endbuffer2 = false;
+        if( framesLeft2 < framesPerBuffer )
         {
-            for( i=0; i<framesToCalc; i++ )
+            /* final buffer... */
+            endbuffer2 = true;
+            for( i2=0; i2<framesLeft2; i2++ )
             {
                 *wptr++ = *rptr++;  /* left */
-                if(NUM_CHANNELS == 2)
-                    *wptr++ = *rptr++;  /* right */
+                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
             }
-        }
-        data->frameIndex += framesToCalc;
-        if (endbuffer)
-            this->switchBuffer(RECORD);
-        if (this->_playback)
-        {
-            SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
-            SAMPLE *wptr = (SAMPLE*)outputBuffer;
-            unsigned int i2;
-            unsigned long framesLeft2 = _playBuffers[_playingBuffer].maxFrameIndex - _playBuffers[_playingBuffer].frameIndex;
-            bool endbuffer2 = false;
-            if( framesLeft2 < framesPerBuffer )
+            for( ; i2<framesPerBuffer; i2++ )
             {
-                /* final buffer... */
-                endbuffer2 = true;
-                for( i2=0; i2<framesLeft2; i2++ )
-                {
-                    *wptr++ = *rptr++;  /* left */
-                    if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
-                }
-                for( ; i2<framesPerBuffer; i2++ )
-                {
-                    *wptr++ = 0;  /* left */
-                    if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
-                }
-                this->_playBuffers[this->_playingBuffer].frameIndex += framesLeft2;
+                *wptr++ = 0;  /* left */
+                if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
+            }
+            this->_playBuffers[this->_playingBuffer].frameIndex += framesLeft2;
 
-            }
-            else
-            {
-                for( i2=0; i2<framesPerBuffer; i2++ )
-                {
-                    *wptr++ = *rptr++;  /* left */
-                    if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
-                }
-                this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
-            }
-            if (endbuffer2)
-                this->switchBuffer(PLAY);
         }
-        return paContinue;
+        else
+        {
+            for( i2=0; i2<framesPerBuffer; i2++ )
+            {
+                *wptr++ = *rptr++;  /* left */
+                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+            }
+            this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
+        }
+        if (endbuffer2)
+            this->switchBuffer(PLAY);
+    }
+    return paContinue;
 
 
 
