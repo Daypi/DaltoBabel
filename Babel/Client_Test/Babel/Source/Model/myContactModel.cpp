@@ -198,6 +198,7 @@ void    MyContactModel::setPlayback(bool value)
 
 void    MyContactModel::play(const unsigned char *buffer, int size)
 {
+    std::cout << "setin called" << std::endl;
     this->_audio.setIn(buffer, size);
 }
 
@@ -221,8 +222,10 @@ void    MyContactModel::loop()
             if (this->_isCalling)
             {
                 this->_toSend = this->_audio.recordAndPlay(&size);
-                if (size != 0)
+                if (size != 0) {
+                    std::cout << "senddial" << std::endl;
                     this->_net->sendDial(this->_toSend, size);
+                }
             }
         }
         catch (Exception &e)
