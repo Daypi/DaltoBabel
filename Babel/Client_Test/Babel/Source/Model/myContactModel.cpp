@@ -179,13 +179,13 @@ void    MyContactModel::showChat(const std::string& name)
     }
 }
 
-void    MyContactModel::displayMsg(const std::string& login, const std::string& msg)
+void    MyContactModel::displayMsg(const std::string& login, const std::string& msg, bool me)
 {
     for (std::vector<Contact *>::iterator it = _contactList.begin(); it != _contactList.end(); ++it)
     {
         if (*(*it) == login)
         {
-            (*it)->displayMsg(login, msg);
+            (*it)->displayMsg((me ? "Me" : login), msg);
             break;
         }
     }

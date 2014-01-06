@@ -58,7 +58,7 @@ public:
     void    setPlayback(bool value);
     void    play(const unsigned char *buffer, int size);
     void    showChat(const std::string &login);
-    void    displayMsg(const std::string& login, const std::string& msg);
+    void    displayMsg(const std::string& login, const std::string& msg, bool me);
     void    close();
     bool    isClosed();
     void    loop();

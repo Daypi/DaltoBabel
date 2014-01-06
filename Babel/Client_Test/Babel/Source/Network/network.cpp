@@ -320,6 +320,7 @@ void    Network::sendMsg(const std::string& login, const std::string& msg)
     Packet  *pack = new Packet(this->getUID(), Packet::CHAT);
 
     pack->setFormat("ss");
+    pack->setRequestUID(42);
     pack->updateData(4 + login.size() + 4 + msg.size());
     pack->appendToData(0, login);
     pack->appendToData(1, msg);
@@ -335,7 +336,6 @@ void    Network::addContact(const std::string& name)
     pack->updateData(4 + name.size());
     pack->appendToData(0, name);
     this->_sendQueueTCP.push(pack);
-    this->sendList();
 }
 
 void    Network::rmContact(const std::string& name)
@@ -346,7 +346,6 @@ void    Network::rmContact(const std::string& name)
     pack->updateData(4 + name.size());
     pack->appendToData(0, name);
     this->_sendQueueTCP.push(pack);
-    this->sendList();
 }
 
 void    Network::blockContact(const std::string& name)
@@ -357,7 +356,6 @@ void    Network::blockContact(const std::string& name)
     pack->updateData(4 + name.size());
     pack->appendToData(0, name);
     this->_sendQueueTCP.push(pack);
-    this->sendList();
 }
 
 void    Network::sendAccept(const std::string& login)
@@ -563,7 +561,10 @@ void    Network::receiveChat(Packet *packet)
         std::cout << packet->getString(1) << std::endl;
         return;
     }
-    this->_model->displayMsg(packet->getString(1), packet->getString(2));
+    if (packet->getRequestUID() == 0)
+        this->_model->displayMsg(packet->getString(1), packet->getString(2), false);
+    else
+        this->_model->displayMsg(packet->getString(1), packet->getString(2), true);
 }
 
 int     Network::getUID()

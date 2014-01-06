@@ -73,7 +73,6 @@ void ChatWindow::on_send_clicked()
     if (!this->ui->msg->text().isEmpty())
     {
         this->_model->sendMsg(this->ui->name->text().toStdString(), this->ui->msg->text().toStdString());
-        this->addMsg("Me : " + this->ui->msg->text().toStdString());
         this->ui->msg->clear();
     }
 }
