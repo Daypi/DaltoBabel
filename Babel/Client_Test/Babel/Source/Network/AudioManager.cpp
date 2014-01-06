@@ -69,14 +69,14 @@ unsigned char *AudioManager::recordAndPlay(int *ret)
 			if (decode != NULL)
 			{
 				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
-				this->_in = this->_out;
-				_compressor->decodeFrame(_in, decode);
-				this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
+                //this->_in = this->_out;
+                //_compressor->decodeFrame(_in, decode);
+                //this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
 			}
 			else
 			{
 				this->_out = this->_compressor->encodeFrame(this->getRecord, encode);
-				this->_in = this->_out;
+                //this->_in = this->_out;
 				_compressor->decodeFrame(_in, decode);
             }
             *ret = this->_out->_size;
@@ -90,6 +90,7 @@ unsigned char *AudioManager::recordAndPlay(int *ret)
 
 void AudioManager::setIn(const unsigned char * buffer, int i)
 {
+    std::cout << "setin" << std::endl;
     this->_in->_frame = const_cast<unsigned char *>(buffer);
 	this->_in->_size = i;
 }
