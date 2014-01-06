@@ -1,5 +1,5 @@
 #include "Include/Network/AudioManager.hh"
-
+#include "Include/Network/LibC.h"
 
 AudioManager::AudioManager()
 {
@@ -12,6 +12,8 @@ AudioManager::AudioManager()
 	this->_out = new compressedFrame;
     this->_in->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
     this->_out->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
+    LibC::memset(this->_in->_frame, 0, NUM_CHANNELS * FRAMES_PER_BUFFER);
+    LibC::memset(this->_out->_frame, 0, NUM_CHANNELS * FRAMES_PER_BUFFER);
 	this->_compressor = new OpusCompressor;
 }
 
