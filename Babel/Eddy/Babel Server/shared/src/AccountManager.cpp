@@ -318,17 +318,17 @@ bool				AccountManager::blockContact(Account *account, const std::string& name)
 
 bool				AccountManager::blockContact(unsigned int id, const std::string& name)
 {
-	return (this->removeContact(this->getAccountById(id), name));
+	return (this->blockContact(this->getAccountById(id), name));
 }
 
 bool				AccountManager::blockContact(const std::string& name, const std::string& nameToAdd)
 {
-	return (this->removeContact(this->getAccountByName(name), nameToAdd));
+	return (this->blockContact(this->getAccountByName(name), nameToAdd));
 }
 
 bool				AccountManager::blockContact(const char *name, const std::string& nameToAdd)
 {
-	return (this->removeContact(this->getAccountByName(name), nameToAdd));
+	return (this->blockContact(this->getAccountByName(name), nameToAdd));
 }
 
 void				AccountManager::writeAccount(std::ofstream& ofs, Account *account)

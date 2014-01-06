@@ -139,7 +139,7 @@ bool		Account::blockContact(const std::string& name)
 	{
 		if (*this->_contactList[i].first == name)
 		{
-			this->_contactList[i].second = false;
+			this->_contactList[i].second = !this->_contactList[i].second;
 			return (true);
 		}
 	}
