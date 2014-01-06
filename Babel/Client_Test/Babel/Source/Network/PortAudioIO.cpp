@@ -146,9 +146,10 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
                                       const PaStreamCallbackTimeInfo* timeInfo,
                                       PaStreamCallbackFlags statusFlags)
 {
+     PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
     if (!this->_playback)
    {
-        PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
+
         const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
         SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
         long framesToCalc;
