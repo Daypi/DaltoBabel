@@ -223,7 +223,7 @@ void    MyContactModel::loop()
             {
                 this->_toSend = this->_audio.recordAndPlay(&size);
                 if (size != 0) {
-                    std::cout << "senddial" << std::endl;
+                    std::cout << "senddial and size = " << size << std::endl;
                     this->_net->sendDial(this->_toSend, size);
                 }
             }

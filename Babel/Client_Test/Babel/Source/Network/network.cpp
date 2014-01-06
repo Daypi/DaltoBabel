@@ -183,15 +183,20 @@ void	Network::handleNetworkUDP()
 
 void	Network::handleNetworkUDPServ()
 {
+//    std::cout << "HANDLENETWORKUDPSERV 1" << std::endl;
     if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1 && this->_idCall != 0)
     {
+        std::cout << "HANDLENETWORKUDPSERV 1" << std::endl;
         this->_currentServ = true;
         this->_currentClient = false;
         std::pair<unsigned char *, int> *tmp = this->_sendQueueUDPServ.front();
         this->_sendQueueUDPServ.pop();
+        std::cout << "HANDLENETWORKUDPSERV 2" << std::endl;
+
         try
         {
             _sockUDPServ->send(this->_idCall, reinterpret_cast<char *>(tmp->first), tmp->second);
+            std::cout << "HANDLENETWORKUDPSERV 3" << std::endl;
         }
         catch (Exception &e)
         {
@@ -203,16 +208,18 @@ void	Network::handleNetworkUDPServ()
         }
         delete tmp;
     }
-    if (_sockUDPServ->isReadable().size() == 1)
+    if (_sockUDPServ->isIAmReadable())
     {
         int rdSize = 0;
         std::map<unsigned int, std::pair<const char *, int> >   map;
 
+        std::cout << "HANDLENETWORKUDPSERV 4" << std::endl;
         this->_currentServ = true;
         this->_currentClient = false;
         try
         {
             map = _sockUDPServ->recv(4096);
+            std::cout << "HANDLENETWORKUDPSERV 6" << std::endl;
             for (std::map<unsigned int, std::pair<const char *, int> >::iterator it = map.begin(); it != map.end(); ++it)
             {
                 this->_idCall = (*it).first;
@@ -367,6 +374,7 @@ void    Network::sendAccept(const std::string& login)
     pack->appendToData(0, login);
     this->_sendQueueTCP.push(pack);
     this->_currentServ = true;
+    this->_currentClient = false;
     this->_model->openChat(login);
     this->_model->setPlayback(true);
 }
@@ -523,9 +531,10 @@ void    Network::acceptCall(Packet *packet)
 
     this->_sockUDP->close();
     this->_sockUDP->init(1337, ip.c_str());
+    this->_currentServ = false;
     this->_currentClient = true;
     this->_model->openChat(login);
-    this->_model->setPlayback(false);
+    this->_model->setPlayback(true);
 }
 
 void    Network::rejectCall(Packet *packet)

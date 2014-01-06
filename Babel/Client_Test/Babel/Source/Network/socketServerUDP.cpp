@@ -131,7 +131,7 @@ std::vector<unsigned int>&	SocketServerUDP::send(unsigned int id, const char *me
 	{
 		this->_socketPool.getMutex()->lock("SELEKTOR");
 		this->_socketPool.getCondVar().wait();
-		if (this->_sock->isAllowWritable() == true)
+        if (this->_sock->isAllowWritable() == true)
 		{
 			try
 			{
