@@ -28,4 +28,5 @@ private:
     float*          	decode;
     PortAudioIO         _paio;
     ICompressor         *_compressor;
+    bool                 _inIsUp;
 };

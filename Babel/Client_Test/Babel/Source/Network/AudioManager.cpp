@@ -4,6 +4,7 @@
 
 AudioManager::AudioManager()
 {
+    this->_inIsUp = false;
 	this->_isRecording = false;
 	if (!this->_paio.init() || this->_paio.startRecording() == false)
 		std::cout << "Portaudio init failed !" << std::endl;
@@ -71,8 +72,12 @@ unsigned char *AudioManager::recordAndPlay(int *ret)
 			{
 				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
                 //this->_in = this->_out;
-                _compressor->decodeFrame(_in, this->decode);
-                this->_paio.setPlay(this->decode, 480);
+                if (this->_inIsUp == true)
+                {
+                    _compressor->decodeFrame(_in, this->decode);
+                    this->_paio.setPlay(this->decode, 480);
+                    this->_inIsUp = false;
+                }
 			}
 			else
 			{
@@ -94,6 +99,7 @@ void AudioManager::setIn(const unsigned char * buffer, int i)
     std::cout << "setin" << std::endl;
     this->_in->_frame = const_cast<unsigned char *>(buffer);
 	this->_in->_size = i;
+    this->_inIsUp = true;
 }
 
 void AudioManager::setOut()
