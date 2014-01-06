@@ -118,10 +118,10 @@ void						Server::timeout()
 		{
 			// Disconnect the user
 			this->_sockTCP.releaseClient(userList[i]->getSockId());
-			account = this->_accountManager.getAccountById(userList[i]->getUID());
+			account = this->_accountManager.getAccountByName(userList[i]->getName());
 			if (account)
 				account->disconnect();
-			this->_userCollection.removeUserById(userList[i]->getUID());
+			this->_userCollection.removeUserByName(userList[i]->getName());
 			std::cout << "User disconnected on timeout" << std::endl;
 		}
 	}
@@ -143,10 +143,10 @@ Packet					*Server::getPacket(User *user, bool first)
 	if (this->_received.size() == 0)
 	{
 		//user->disconnect();
-		account = this->_accountManager.getAccountById(user->getUID());
+		account = this->_accountManager.getAccountByName(user->getName());
 		if (account)
 			account->disconnect();
-		this->_userCollection.removeUserById(user->getUID());
+		this->_userCollection.removeUserByName(user->getName());
 		std::cout << "User disconnected on recv" << std::endl;
 		//std::cin.get();
 	}
@@ -194,10 +194,10 @@ void									Server::sendTCP()
 					if (user)
 					{
 						//user->disconnect();
-						account = this->_accountManager.getAccountById(user->getUID());
+						account = this->_accountManager.getAccountByName(user->getName());
 						if (account)
 							account->disconnect();
-						this->_userCollection.removeUserById(user->getUID());
+						this->_userCollection.removeUserByName(user->getName());
 						std::cout << "User disconnected on send" << std::endl;
 						//std::cin.get();
 					}
@@ -263,7 +263,7 @@ void											Server::list(User *user, unsigned short req)
 		{
 			toSend->appendToData(id, contactList[i].first->getName());
 			toSend->appendToData(id + 1, contactList[i].first->getStatusText());
-			toSend->appendToData<char>(id + 2, contactList[i].first->getStatus());
+			toSend->appendToData<char>(id + 2, contactList[i].first->contactBlocked(user->getName()) ? Account::INVISIBLE : contactList[i].first->getStatus());
 			id += 3;
 		}
 	}
@@ -323,6 +323,7 @@ void				Server::hangUp(User *user, Packet *packet)
 	Account			*toCall;
 	Packet			*toSend = 0;
 	std::string		response = "";
+	User			*tmp = 0;
 
 	std::cout << "HANGUP" << std::endl;
 	login = user->getName();
@@ -344,6 +345,7 @@ void				Server::hangUp(User *user, Packet *packet)
 	toSend->updateData(3 + 4 + response.size() + (status ? 0 : (4 + toCall->getName().size())));
 	toSend->appendToData<char>(0, status);
 	toSend->appendToData(1, response);
+	tmp = user;
 	if (status)
 	{
 		fromCall->setCurrentCall(0);
@@ -354,7 +356,8 @@ void				Server::hangUp(User *user, Packet *packet)
 	}
 	else
 		toSend->appendToData(2, toCall->getName());
-	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, tmp->getSockId()));
+	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(new Packet(*toSend), user->getSockId()));
 }
 
 void				Server::statusText(User *user, Packet *packet)
@@ -387,8 +390,7 @@ void						Server::statusText(User *user, unsigned short req, char status, const 
 	userList = this->_userCollection.getUserList();
 	for (unsigned int i = 0; i < userList.size(); ++i)
 	{
-		if (userList[i]->getSockId() != user->getSockId())
-			this->list(userList[i], (unsigned short)0);
+	  this->list(userList[i], (unsigned short)0);
 	}
 }
 
@@ -429,8 +431,7 @@ void						Server::status(User *user, unsigned short req, char status, char stat,
 	userList = this->_userCollection.getUserList();
 	for (unsigned int i = 0; i < userList.size(); ++i)
 	{
-		if (userList[i]->getSockId() != user->getSockId())
-			this->list(userList[i], (unsigned short)0);
+	  this->list(userList[i], (unsigned short)0);
 	}
 }
 
@@ -619,7 +620,7 @@ void				Server::addContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	//this->list(user, (unsigned short)0);
+	this->list(user, (unsigned short)0);
 }
 
 void				Server::removeContact(User *user, Packet *packet)
@@ -643,7 +644,7 @@ void				Server::removeContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
-	//this->list(user, (unsigned short)0);
+	this->list(user, (unsigned short)0);
 }
 
 void				Server::blockContact(User *user, Packet *packet)
@@ -667,6 +668,9 @@ void				Server::blockContact(User *user, Packet *packet)
 	if (!status)
 		toSend->appendToData(1, response);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	user = this->_userCollection.getUserByName(login);
+	if (user)
+	  this->list(user, (unsigned short)0);
 }
 
 void				Server::chat(User *user, Packet *packet)
@@ -681,7 +685,7 @@ void				Server::chat(User *user, Packet *packet)
 	std::cout << "CHAT" << std::endl;
 	login = packet->getString(0);
 	msg = packet->getString(1);
-	response = user->getName();
+	response = login;
 	toChat = this->_accountManager.getAccountByName(login);
 	if (!toChat)
 	{
@@ -696,8 +700,20 @@ void				Server::chat(User *user, Packet *packet)
 	if (status)
 		toSend->appendToData(2, msg);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	if (status)
+	  response = user->getName();
 	user = this->_userCollection.getUserByName(login);
-	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(new Packet(*toSend), user->getSockId()));
+	if (user)
+	  {
+	    toSend = new Packet(0, Packet::CHAT);
+	    toSend->setFormat(status ? "css" : "cs");
+	    toSend->updateData(3 + 4 + response.size() + (status ? (4 + msg.size()) : 0));
+	    toSend->appendToData<char>(0, status);
+	    toSend->appendToData(1, response);
+	    if (status)
+	      toSend->appendToData(2, msg);
+	    this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	  }
 }
 
 void				Server::error(User *, Packet *)
@@ -714,10 +730,10 @@ void				Server::handshake(User *user, Packet *)
 	{
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
-		account = this->_accountManager.getAccountById(user->getUID());
+		account = this->_accountManager.getAccountByName(user->getName());
 		if (account)
 			account->disconnect();
-		this->_userCollection.removeUserById(user->getUID());
+		this->_userCollection.removeUserByName(user->getName());
 		std::cout << "User Disconnected on handshake" << std::endl;
 		//std::cin.get();
 	}
@@ -732,10 +748,10 @@ void				Server::ping(User *user, Packet *)
 	{
 		// Disconnect the user
 		this->_sockTCP.releaseClient(user->getSockId());
-		account = this->_accountManager.getAccountById(user->getUID());
+		account = this->_accountManager.getAccountByName(user->getName());
 		if (account)
 			account->disconnect();
-		this->_userCollection.removeUserById(user->getUID());
+		this->_userCollection.removeUserByName(user->getName());
 		std::cout << "User Disconnected on ping" << std::endl;
 		//std::cin.get();
 	}
