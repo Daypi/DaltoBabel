@@ -20,12 +20,12 @@ public:
     void            setPlayback(bool);
     unsigned char *			recordAndPlay(int *);
 private:
-	const float *	getRecord;
-	bool			_isRecording;
-	compressedFrame*		_in;
-	compressedFrame*		_out;
-	compressedFrame*		encode;
-	float*			decode;
-	PortAudioIO		_paio;
-	ICompressor		*_compressor;
+    const float *       getRecord;
+    bool                _isRecording;
+    compressedFrame*	_in;
+    compressedFrame*	_out;
+    compressedFrame*	encode;
+    float*          	decode;
+    PortAudioIO         _paio;
+    ICompressor         *_compressor;
 };

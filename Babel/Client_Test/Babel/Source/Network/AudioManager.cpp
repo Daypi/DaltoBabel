@@ -57,6 +57,7 @@ void AudioManager::initLoop()
 	this->encode = new compressedFrame;
     encode->_frame = new unsigned char[NUM_CHANNELS * FRAMES_PER_BUFFER];
     this->decode = new float[NUM_CHANNELS * FRAMES_PER_BUFFER];
+    LibC::memset(this->decode, 0, (NUM_CHANNELS * FRAMES_PER_BUFFER) * sizeof(float));
 	this->_paio.paLoop();
 }
 
@@ -70,8 +71,8 @@ unsigned char *AudioManager::recordAndPlay(int *ret)
 			{
 				this->_out = this->_compressor->encodeFrame(this->getRecord , encode);
                 //this->_in = this->_out;
-                //_compressor->decodeFrame(_in, decode);
-                //this->_paio.setPlay(const_cast<float *>(this->getRecord), 480);
+                _compressor->decodeFrame(_in, this->decode);
+                this->_paio.setPlay(this->decode, 480);
 			}
 			else
 			{

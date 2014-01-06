@@ -1,14 +1,17 @@
 #include	"Include/Network/PortAudioIO.hh"
-
+#include    "Include/Network/LibC.h"
 
 PortAudioIO::PortAudioIO()
 {
+    int i;
     this->_err = Pa_Initialize();
     int totalFrames = NUM_SECONDS * SAMPLE_RATE;
     int numSamples = totalFrames * NUM_CHANNELS;
 
     this->_errorString = "";
     this->_lastGetRecord = 1;
+    this->_playback = true;
+
     this->_recordingBuffer = 0;
     this->_recordBuffers[0].recordedSamples = new float[2400];
     this->_recordBuffers[1].recordedSamples = new float[2400];
@@ -26,7 +29,15 @@ PortAudioIO::PortAudioIO()
     this->_playBuffers[1].maxFrameIndex = totalFrames;
     this->_playBuffers[0].recordedSamples = new float[numSamples];
     this->_playBuffers[1].recordedSamples = new float[numSamples];
-    this->_playback = true;
+
+    for (i = 0; i < totalFrames; i++)
+    {
+        this->_recordBuffers[0].recordedSamples[i] = 0;
+        this->_recordBuffers[1].recordedSamples[i] = 0;
+
+        this->_playBuffers[0].recordedSamples[i] = 0;
+        this->_playBuffers[1].recordedSamples[i] = 0;
+    }
 }
 
 bool	PortAudioIO::init(void)
@@ -220,19 +231,6 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
                 this->switchBuffer(PLAY);
         }
         return paContinue;
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
