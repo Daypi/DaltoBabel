@@ -191,7 +191,7 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
         {
             /* final buffer... */
             endbuffer2 = true;
-            for( i2=0; i2<framesLeft2; i2++ )
+            for( i2=0; i2 < framesLeft2; i2++ )
             {
                 *wptr++ = *rptr++;  /* left */
                 if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
