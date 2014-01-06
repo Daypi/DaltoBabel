@@ -9,6 +9,7 @@
 #include "Include/Network/OpusCompressor.hh"
 #include "Include/Network/LibC.h"
 
+
 OpusCompressor::OpusCompressor()
 {
 	this->_maxSize = MAX_SIZE;

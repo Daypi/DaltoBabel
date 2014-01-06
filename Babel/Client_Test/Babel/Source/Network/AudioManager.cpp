@@ -1,6 +1,7 @@
 #include "Include/Network/AudioManager.hh"
 #include "Include/Network/LibC.h"
 
+
 AudioManager::AudioManager()
 {
 	this->_isRecording = false;
