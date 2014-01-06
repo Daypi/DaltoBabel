@@ -7,6 +7,7 @@ MyContactModel::MyContactModel(QWidget *parent)
 {
     this->_isCalling = false;
     this->_status = AVAILABLE;
+    this->_toSend = NULL;
     this->_net = new Network(this);
     this->_w = new ContactWindow(this, parent);
     this->_connect = new MyConnectModel(_net, this, _w);
@@ -190,9 +191,20 @@ void    MyContactModel::displayMsg(const std::string& login, const std::string& 
     }
 }
 
+void    MyContactModel::setPlayback(bool value)
+{
+    this->_audio.setPlayback(value);
+}
+
+void    MyContactModel::play(const unsigned char *buffer, int size)
+{
+    this->_audio.setIn(buffer, size);
+}
+
 void    MyContactModel::loop()
 {
     TimeStamp   time;
+    int         size;
 
     while (!this->_w->isClosed())
     {
@@ -207,7 +219,11 @@ void    MyContactModel::loop()
         {
             this->_net->handleNetwork();
             if (this->_isCalling)
-                this->_audio.recordAndPlay();
+            {
+                this->_toSend = this->_audio.recordAndPlay(&size);
+                if (size != 0)
+                    this->_net->sendDial(this->_toSend, size);
+            }
         }
         catch (Exception &e)
         {

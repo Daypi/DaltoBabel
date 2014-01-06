@@ -33,6 +33,7 @@ typedef struct
 class	PortAudioIO : public IAudioIO
 {
 private:
+  bool                  _playback;
   PaStreamParameters		_inputParams;
   PaStreamParameters		_outputParams;
   PortAudioBuffer		_recordBuffers[2];
@@ -57,5 +58,6 @@ public:
   void					switchBuffer(eBuffType);
   const float					*getRecord();
   void					setPlay(float *, int);
+  void                  setPlayback(bool);
   virtual ~PortAudioIO();
 };

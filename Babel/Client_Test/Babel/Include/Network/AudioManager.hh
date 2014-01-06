@@ -13,10 +13,11 @@ public:
 	AudioManager();
 	~AudioManager();
 	void	mainLoop();
-	void	setIn(unsigned char*, int);
+    void	setIn(const unsigned char*, int);
 	void	setOut();
 	void			initLoop();
-	void			recordAndPlay();
+    void            setPlayback(bool);
+    unsigned char *			recordAndPlay(int *);
 private:
 	const float *	getRecord;
 	bool			_isRecording;

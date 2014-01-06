@@ -32,6 +32,7 @@ class MyContactModel
     MyConnectModel          *_connect;
     AudioManager            _audio;
     bool                    _isCalling;
+    unsigned char           *_toSend;
 
 public:
     MyContactModel(QWidget *parent = 0);
@@ -54,6 +55,8 @@ public:
     void    handleCall(const std::string&, const std::string&);
     void    closeCall();
     void    show();
+    void    setPlayback(bool value);
+    void    play(const unsigned char *buffer, int size);
     void    showChat(const std::string &login);
     void    displayMsg(const std::string& login, const std::string& msg);
     void    close();

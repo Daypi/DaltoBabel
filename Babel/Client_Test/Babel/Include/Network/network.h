@@ -12,13 +12,14 @@
 class		Network
 {
 private:
-    std::queue<Packet *>	_sendQueueUDP;
-    std::queue<Packet *>	_sendQueueUDPServ;
+    std::queue<std::pair<unsigned char *, int> *>   _sendQueueUDP;
+    std::queue<std::pair<unsigned char *, int> *>	_sendQueueUDPServ;
     std::queue<Packet *>	_sendQueueTCP;
     SocketClientUDP         *_sockUDP;
     bool                    _currentClient;
     SocketServerUDP         *_sockUDPServ;
     bool                    _currentServ;
+    unsigned int            _idCall;
     SocketClientTCP         *_sockTCP;
     PacketFactory           _factory;
     bool                    _init;
@@ -38,7 +39,6 @@ public:
     void	connect(const std::string &ip, int port);
     void	setInit(bool b);
     void	handleNetwork();
-    void	pushUDP(Packet *packet);
     void	pushTCP(Packet *packet);
     void	handleNetworkUDP();
     void	handleNetworkUDPServ();
@@ -59,6 +59,7 @@ public:
     void    sendHangUp();
     void    sendPing();
     void    sendMsg(const std::string& login, const std::string& msg);
+    void    sendDial(unsigned char *buff, int size);
 
     void    checkLogin(Packet *packet);
     void    refreshStatusText(Packet *packet);

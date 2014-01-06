@@ -57,7 +57,7 @@ void AudioManager::initLoop()
 	this->_paio.paLoop();
 }
 
-void AudioManager::recordAndPlay()
+unsigned char *AudioManager::recordAndPlay(int *ret)
 {
 	if ((this->_paio._err = Pa_IsStreamActive(this->_paio._Stream)) == 1)
 	{
@@ -75,21 +75,30 @@ void AudioManager::recordAndPlay()
 				this->_out = this->_compressor->encodeFrame(this->getRecord, encode);
 				this->_in = this->_out;
 				_compressor->decodeFrame(_in, decode);
-			}
+            }
+            *ret = this->_out->_size;
 		}
+        else
+            *ret = 0;
 	}
 
+    return (this->_out->_frame);
 }
 
-void AudioManager::setIn(unsigned char * buffer, int i)
+void AudioManager::setIn(const unsigned char * buffer, int i)
 {
-	this->_in->_frame = buffer;
+    this->_in->_frame = const_cast<unsigned char *>(buffer);
 	this->_in->_size = i;
 }
 
 void AudioManager::setOut()
 {
 
+}
+
+void AudioManager::setPlayback(bool playback)
+{
+    this->_paio.setPlayback(playback);
 }
 
 AudioManager::~AudioManager()

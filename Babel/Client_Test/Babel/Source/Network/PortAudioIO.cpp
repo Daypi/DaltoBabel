@@ -25,6 +25,7 @@ PortAudioIO::PortAudioIO()
     this->_playBuffers[1].maxFrameIndex = totalFrames;
     this->_playBuffers[0].recordedSamples = new float[numSamples];
     this->_playBuffers[1].recordedSamples = new float[numSamples];
+    this->_playback = true;
 }
 
 bool	PortAudioIO::init(void)
@@ -145,42 +146,45 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
                                       const PaStreamCallbackTimeInfo* timeInfo,
                                       PaStreamCallbackFlags statusFlags)
 {
-    PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
-    const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
-    SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
-    long framesToCalc;
-    long i;
-    bool endbuffer = false;
-    unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
-    if(framesLeft < framesPerBuffer)
-    {
-        framesToCalc = framesLeft;
-        endbuffer = true;
-        this->_recordBuffers[this->_recordingBuffer].available = true;
-    }
-    else
-        framesToCalc = framesPerBuffer;
-    if( inputBuffer == NULL )
-    {
-        for( i=0; i<framesToCalc; i++ )
+    if (!this->_playback)
+   {
+        PortAudioBuffer	*data = &this->_recordBuffers[this->_recordingBuffer];
+        const SAMPLE *rptr = (const SAMPLE*)inputBuffer;
+        SAMPLE *wptr = &data->recordedSamples[data->frameIndex * NUM_CHANNELS];
+        long framesToCalc;
+        long i;
+        bool endbuffer = false;
+        unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
+        if(framesLeft < framesPerBuffer)
         {
-            *wptr++ = SAMPLE_SILENCE;  /* left */
-            if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
+            framesToCalc = framesLeft;
+            endbuffer = true;
+            this->_recordBuffers[this->_recordingBuffer].available = true;
         }
-    }
-    else
-    {
-        for( i=0; i<framesToCalc; i++ )
+        else
+            framesToCalc = framesPerBuffer;
+        if( inputBuffer == NULL )
         {
-            *wptr++ = *rptr++;  /* left */
-            if(NUM_CHANNELS == 2)
-                *wptr++ = *rptr++;  /* right */
+            for( i=0; i<framesToCalc; i++ )
+            {
+                *wptr++ = SAMPLE_SILENCE;  /* left */
+                if( NUM_CHANNELS == 2 ) *wptr++ = SAMPLE_SILENCE;  /* right */
+            }
         }
+        else
+        {
+            for( i=0; i<framesToCalc; i++ )
+            {
+                *wptr++ = *rptr++;  /* left */
+                if(NUM_CHANNELS == 2)
+                    *wptr++ = *rptr++;  /* right */
+            }
+        }
+        data->frameIndex += framesToCalc;
+        if (endbuffer)
+            this->switchBuffer(RECORD);
     }
-    data->frameIndex += framesToCalc;
-    if (endbuffer)
-        this->switchBuffer(RECORD);
-    if (PLAYBACK)
+    if (this->_playback)
     {
         SAMPLE *rptr = &_playBuffers[_playingBuffer].recordedSamples[_playBuffers[_playingBuffer].frameIndex * NUM_CHANNELS];
         SAMPLE *wptr = (SAMPLE*)outputBuffer;
@@ -189,17 +193,17 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
         bool endbuffer2 = false;
         if( framesLeft2 < framesPerBuffer )
         {
-            /* final buffer... */
+            //final buffer... /
             endbuffer2 = true;
             for( i2=0; i2 < framesLeft2; i2++ )
             {
-                *wptr++ = *rptr++;  /* left */
-                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+                *wptr++ = *rptr++;  // left /
+                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  //right /
             }
             for( ; i2<framesPerBuffer; i2++ )
             {
-                *wptr++ = 0;  /* left */
-                if( NUM_CHANNELS == 2 ) *wptr++ = 0;  /* right */
+                *wptr++ = 0;  // left /
+                if( NUM_CHANNELS == 2 ) *wptr++ = 0;  // right /
             }
             this->_playBuffers[this->_playingBuffer].frameIndex += framesLeft2;
 
@@ -208,8 +212,8 @@ int PortAudioIO::memberrecordCallback( const void *inputBuffer, void *outputBuff
         {
             for( i2=0; i2<framesPerBuffer; i2++ )
             {
-                *wptr++ = *rptr++;  /* left */
-                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  /* right */
+                *wptr++ = *rptr++;  // left //
+                if( NUM_CHANNELS == 2 ) *wptr++ = *rptr++;  // right /
             }
             this->_playBuffers[this->_playingBuffer].frameIndex += framesPerBuffer;
         }
@@ -262,6 +266,11 @@ void PortAudioIO::setPlay(float *buff, int buffsize)
     this->_playingBuffer == 0 ? setbuff = 1 : setbuff = 0;
     this->_playBuffers[setbuff].recordedSamples = buff;
     this->_playBuffers[setbuff].frameIndex = 0;
+}
+
+void PortAudioIO::setPlayback(bool isPlayback)
+{
+    this->_playback = isPlayback;
 }
 
 PortAudioIO::~PortAudioIO()

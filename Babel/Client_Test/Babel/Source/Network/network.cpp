@@ -8,6 +8,7 @@ Network::Network(MyContactModel *model)
     this->_currentClient = false;
     _sockUDPServ = NULL;
     this->_currentServ = false;
+    this->_idCall = 0;
     _sockTCP = NULL;
     _init = false;
     _handshake = false;
@@ -132,11 +133,6 @@ void	Network::handleNetwork()
     }
 }
 
-void	Network::pushUDP(Packet *packet)
-{
-    this->_sendQueueUDP.push(packet);
-}
-
 void	Network::pushTCP(Packet *packet)
 {
     this->_sendQueueTCP.push(packet);
@@ -148,11 +144,11 @@ void	Network::handleNetworkUDP()
     {
         this->_currentClient = true;
         this->_currentServ = false;
-        Packet	*packet = this->_sendQueueUDP.front();
+        std::pair<unsigned char *, int> *tmp = this->_sendQueueUDP.front();
         this->_sendQueueUDP.pop();
         try
         {
-            _sockUDP->send(packet->serialize(), packet->size());
+            _sockUDP->send(reinterpret_cast<char *>(tmp->first), tmp->second);
         }
         catch (Exception &e)
         {
@@ -161,7 +157,7 @@ void	Network::handleNetworkUDP()
             _init = false;
             throw Exception(e);
         }
-        delete packet;
+        delete tmp;
     }
     if (_sockUDP->isReadable())
     {
@@ -181,34 +177,34 @@ void	Network::handleNetworkUDP()
             _init = false;
             throw Exception(e);
         }
-        _factory.feed(buffer, rdSize);
+       this->_model->play(reinterpret_cast<const unsigned char *>(buffer), rdSize);
     }
 }
 
 void	Network::handleNetworkUDPServ()
 {
-    if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1)
+    if (_sendQueueUDPServ.empty() == false && _sockUDPServ->isWritable().size() == 1 && this->_idCall != 0)
     {
         this->_currentServ = true;
         this->_currentClient = false;
-        Packet	*packet = this->_sendQueueUDPServ.front();
+        std::pair<unsigned char *, int> *tmp = this->_sendQueueUDPServ.front();
         this->_sendQueueUDPServ.pop();
         try
         {
-            _sockUDPServ->send(1, packet->serialize(), packet->size());
+            _sockUDPServ->send(this->_idCall, reinterpret_cast<char *>(tmp->first), tmp->second);
         }
         catch (Exception &e)
         {
             delete _sockUDPServ;
             _sockUDPServ = NULL;
             _init = false;
+            this->_idCall = 0;
             throw Exception(e);
         }
-        delete packet;
+        delete tmp;
     }
     if (_sockUDPServ->isReadable().size() == 1)
     {
-        char buffer[4098];
         int rdSize = 0;
         std::map<unsigned int, std::pair<const char *, int> >   map;
 
@@ -219,17 +215,19 @@ void	Network::handleNetworkUDPServ()
             map = _sockUDPServ->recv(4096);
             for (std::map<unsigned int, std::pair<const char *, int> >::iterator it = map.begin(); it != map.end(); ++it)
             {
+                this->_idCall = (*it).first;
                 rdSize = (*it).second.second;
+                this->_model->play(reinterpret_cast<const unsigned char *>((*it).second.first), rdSize);
             }
         }
-        catch (Exception &e)
+        catch (const Exception &e)
         {
             delete _sockUDPServ;
             _sockUDPServ = NULL;
             _init = false;
+            this->_idCall = 0;
             throw Exception(e);
         }
-        _factory.feed(buffer, rdSize);
     }
 }
 void	Network::handleNetworkTCP()
@@ -372,6 +370,7 @@ void    Network::sendAccept(const std::string& login)
     this->_sendQueueTCP.push(pack);
     this->_currentServ = true;
     this->_model->openChat(login);
+    this->_model->setPlayback(true);
 }
 
 void    Network::sendReject(const std::string& login)
@@ -410,6 +409,15 @@ void    Network::sendHangUp()
 void    Network::sendPing()
 {
     this->_sendQueueTCP.push(new Packet(this->getUID(), Packet::PING));
+}
+
+void    Network::sendDial(unsigned char *buff, int size)
+{
+    std::pair<unsigned char *, int> *tmp = new std::pair<unsigned char *, int>(buff, size);
+    if (this->_currentServ)
+        this->_sendQueueUDPServ.push(tmp);
+    else
+        this->_sendQueueUDP.push(tmp);
 }
 
 void    Network::checkLogin(Packet *packet)
@@ -519,6 +527,7 @@ void    Network::acceptCall(Packet *packet)
     this->_sockUDP->init(1337, ip.c_str());
     this->_currentClient = true;
     this->_model->openChat(login);
+    this->_model->setPlayback(false);
 }
 
 void    Network::rejectCall(Packet *packet)
