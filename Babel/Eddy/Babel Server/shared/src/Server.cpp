@@ -387,7 +387,8 @@ void						Server::statusText(User *user, unsigned short req, char status, const 
 	userList = this->_userCollection.getUserList();
 	for (unsigned int i = 0; i < userList.size(); ++i)
 	{
-		this->list(userList[i], (unsigned short)0);
+		if (userList[i]->getSockId() != user->getSockId())
+			this->list(userList[i], (unsigned short)0);
 	}
 }
 
@@ -410,6 +411,7 @@ void						Server::status(User *user, unsigned short req, char status, char stat,
 {
 	Packet					*toSend = 0;
 	Account					*account;
+	std::vector<User *>		userList;
 
 	std::cout << "STATUS" << std::endl;
 	account = this->_accountManager.getAccountByName(user->getName());
@@ -424,6 +426,12 @@ void						Server::status(User *user, unsigned short req, char status, char stat,
 	else
 		toSend->appendToData(1, stat);
 	this->_toSendTCP.push(std::pair<Packet *, unsigned int>(toSend, user->getSockId()));
+	userList = this->_userCollection.getUserList();
+	for (unsigned int i = 0; i < userList.size(); ++i)
+	{
+		if (userList[i]->getSockId() != user->getSockId())
+			this->list(userList[i], (unsigned short)0);
+	}
 }
 
 void				Server::acceptCall(User *user, Packet *packet)
